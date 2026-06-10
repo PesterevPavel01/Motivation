@@ -1,0 +1,15 @@
+<Solution>
+  <Folder Name="/IdentityServer/">
+    <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Domain/Motivation.IdentityServer.Domain.csproj" Id="a147d3e4-1ee5-49e9-b223-fdf4dd165ec9" />
+    <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Infrastructure/Motivation.IdentityServer.Infrastructure.csproj" Id="820cca7e-4012-4ff5-935b-641955843cf9" />
+    <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Web/Motivation.IdentityServer.Web.csproj" Id="1ba1b92c-8a9b-4e58-97c7-d98502434a72" />
+  </Folder>
+  <Folder Name="/Элементы решения/">
+    <File Path="README.md" />
+  </Folder>
+  <Project Path="Motivation.Application/Motivation.Application.csproj" Id="a7088c41-4fcb-4f50-94b6-533cd2b6ddd6" />
+  <Project Path="Motivation.Contracts/Motivation.Contracts.csproj" Id="25173914-b40b-4527-ab4b-ccb857d61060" />
+  <Project Path="Motivation.Domain/Motivation.Domain.csproj" Id="c7a021fb-5760-4c7a-b465-0f2b9dc7bce1" />
+  <Project Path="Motivation.Infrastructure/Motivation.Infrastructure.csproj" Id="6d242890-b953-408d-a433-69e8f4535eca" />
+  <Project Path="Motivation.SynchronisationService/Motivation.SynchronisationService.Web/Motivation.SynchronisationService.Web.csproj" Id="a258166f-0e3d-4ab7-92be-e7e575b235d3" />
+</Solution>

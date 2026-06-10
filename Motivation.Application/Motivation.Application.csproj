@@ -1,0 +1,15 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Motivation.Contracts\Motivation.Contracts.csproj" />
+    <ProjectReference Include="..\Motivation.Domain\Motivation.Domain.csproj" />
+    <ProjectReference Include="..\Motivation.IdentityServer\Motivation.IdentityServer.Domain\Motivation.IdentityServer.Domain.csproj" />
+  </ItemGroup>
+
+</Project>

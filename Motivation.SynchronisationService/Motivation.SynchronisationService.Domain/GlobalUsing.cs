@@ -1,0 +1,1 @@
+﻿global using Motivation.SynchronisationService.Domain.Base;
