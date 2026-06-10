@@ -1,5 +1,8 @@
-classDiagram
+markdown
+---
+
 ```mermaid
+classDiagram
     class Identity {
         <<abstract>>
         +Guid Id
@@ -208,4 +211,5 @@ classDiagram
     AggregateRoot <|-- Position
     AggregateRoot <|-- Employee
 
-    ```
+```
+---
