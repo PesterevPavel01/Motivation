@@ -4,7 +4,7 @@ using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Motivation.Application.Mappings;
 using Motivation.Contracts.Dto;
-using Motivation.Domain.Entities;
+using Motivation.Domain.Entities.Kpis;
 
 namespace Motivation.SynchronisationService.Web.Application.Messaging.KpiMessages.Queries;
 

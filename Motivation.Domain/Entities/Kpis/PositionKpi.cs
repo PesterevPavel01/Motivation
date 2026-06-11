@@ -2,10 +2,11 @@
 using Motivation.Domain.Entities.Base;
 using Motivation.Domain.ValueObjects;
 
-namespace Motivation.Domain.Entities;
+namespace Motivation.Domain.Entities.Kpis;
 
 public sealed class PositionKpi : Auditable
 {
+    private readonly List<KpiTarget> _targetHistory = [];
     private PositionKpi(
         Guid id,
         int orderNumber,
@@ -23,16 +24,12 @@ public sealed class PositionKpi : Auditable
     public Guid Id { get; }
     public DateTime ValidFrom { get; private set; }
     public DateTime ValidTo { get; private set; }
-    public TargetValue Target { get; private set; } = null!;
-    public FactValue Fact { get; private set; } = null!;
-    public AchievementValue Achievement { get; private set; } = null!;
-    public BonusAmountValue BonusAmount { get; private set; } = null!;
     public int OrderNumber { get; private set; }
     public WeightValue Weight  { get; private set; } = null!;
-
     public Position Position { get; private set; } = null!;
     public Kpi Kpi { get; private set; } = null!;
 
+    public IReadOnlyCollection<KpiTarget> TargetHistory => _targetHistory.AsReadOnly();
 
     public static Operation<PositionKpi, string> Create(
         Kpi kpi,
@@ -59,6 +56,15 @@ public sealed class PositionKpi : Auditable
         if (kpi is null)
             return Operation.Error("Kpi is null!");
         Kpi = kpi;
+        return true;
+    }
+
+    public Operation<bool, string> AddTarget(KpiTarget target)
+    {
+        if (target is null)
+            return Operation.Error("KpiTarget is null!");
+
+        _targetHistory.Add(target);
         return true;
     }
 

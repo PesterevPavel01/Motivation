@@ -1,7 +1,7 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
 using Mediator;
-using Motivation.SynchronisationService.Web.Application.Messaging.EventItemMessages.ViewModels;
+using Motivation.Contracts.ViewModels;
 using Motivation.SynchronisationService.Web.Definitions.Mediator.Base;
 
 namespace Motivation.SynchronisationService.Web.Definitions.Mediator

@@ -1,25 +1,27 @@
 ﻿using Calabonga.OperationResults;
 using Motivation.Domain.Entities.Base;
+using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.Enum;
 using Motivation.Domain.ValueObjects;
 
 namespace Motivation.Domain.Entities;
 
-public class Position : SimpleEntity
+public class Position : AggregateRoot
 {
     private readonly List<EmployeePosition> _employeePositions = [];
     private readonly List<PositionKpi> _positionKpiHistory = [];
 
-    private Position(TitleValue title, CodeValue code, Guid id, SalaryValue baseSalary, WorkWeekType workWeekType) : base(title, code, id)
+    private Position(TitleValue title, CodeValue code, Guid id, SalaryValue baseSalary, WorkWeekType workWeekType) : base(id, code)
     {
         BaseSalary = baseSalary;
         WorkWeekType = workWeekType;
+        Title = title;
     }
 
     public SalaryValue BaseSalary { get; private set; }
     public WorkWeekType WorkWeekType { get; private set; }
     public MotivationPart MotivationPart { get; private set; } = null!;
-
+    public TitleValue Title { get; protected set; }
     public IReadOnlyCollection<EmployeePosition> EmployeePositions => _employeePositions.AsReadOnly();
     public IReadOnlyCollection<PositionKpi> PositionKpiHistory => _positionKpiHistory.AsReadOnly();
 

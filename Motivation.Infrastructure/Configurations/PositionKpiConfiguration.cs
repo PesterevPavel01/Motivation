@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Motivation.Domain.Entities;
+using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.ValueObjects;
 
 namespace Motivation.Infrastructure.Configurations;
@@ -42,26 +42,6 @@ internal sealed class PositionKpiConfiguration : IEntityTypeConfiguration<Positi
         );
 
         builder
-            .Property(x => x.Target)
-            .IsRequired()
-            .HasConversion(x => x.Value, x => TargetValue.Create(x).Result);
-
-        builder
-            .Property(x => x.Fact)
-            .IsRequired()
-            .HasConversion(x => x.Value, x => FactValue.Create(x).Result);
-
-        builder
-            .Property(x => x.Achievement)
-            .IsRequired()
-            .HasConversion(x => x.Value, x => AchievementValue.Create(x).Result);
-
-        builder
-            .Property(x => x.BonusAmount)
-            .IsRequired()
-            .HasConversion(x => x.Value, x => BonusAmountValue.Create(x).Result);
-
-        builder
             .Property(x => x.Weight)
             .IsRequired()
             .HasConversion(x => x.Value, x => WeightValue.Create(x).Result);
@@ -69,6 +49,11 @@ internal sealed class PositionKpiConfiguration : IEntityTypeConfiguration<Positi
         builder
             .HasOne(x => x.Position)
             .WithMany(x => x.PositionKpiHistory)
+            .HasPrincipalKey(x => x.Id);
+
+        builder
+            .HasMany(x => x.TargetHistory)
+            .WithOne(x => x.PositionKpi)
             .HasPrincipalKey(x => x.Id);
 
         builder

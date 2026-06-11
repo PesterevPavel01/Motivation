@@ -1,5 +1,7 @@
 ﻿using Microsoft.EntityFrameworkCore.Metadata.Builders;
 using Motivation.Domain.Entities;
+using Motivation.Domain.Entities.Kpis;
+using Motivation.Domain.Enum;
 using Motivation.Domain.ValueObjects;
 using Motivation.Infrastructure.Configurations.Base;
 
@@ -36,6 +38,10 @@ internal class KpiConfiguration : EntityConfiguration<Kpi>
 
         builder
             .HasMany(x => x.Filters);
+
+        builder.HasDiscriminator(x => x.KpiType)
+            .HasValue<SalesKpi>(KpiType.Sales)
+            .HasValue<ComplexityKpi>(KpiType.Complexity);
     }
 
     protected override string TableName()

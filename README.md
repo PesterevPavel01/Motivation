@@ -1,5 +1,8 @@
-classDiagram
+markdown
+---
+
 ```mermaid
+classDiagram
     class Identity {
         <<abstract>>
         +Guid Id
@@ -141,14 +144,30 @@ classDiagram
         +Guid Id
         +DateTime ValidFrom
         +DateTime ValidTo
-        +TargetValue Target
-        +FactValue Fact
-        +AchievementValue Achievement
-        +BonusAmountValue BonusAmount
         +int OrderNumber
         +WeightValue Weight
         +Position Position
         +Kpi Kpi
+        +IReadOnlyCollection~KpiTarget~ TargetHistory
+        +Create()
+        +AddTarget()
+    }
+
+    class KpiTarget {
+        +Guid Id
+        +DateTime ValidFrom
+        +DateTime ValidTo
+        +TargetValue Target
+        +KpiFact? KpiFact
+        +PositionKpi PositionKpi
+        +Create()
+        +SetFact()
+    }
+
+    class KpiFact {
+        +FactValue Fact
+        +AchievementValue Achievement
+        +BonusAmountValue BonusAmount
         +Create()
     }
 
@@ -201,11 +220,14 @@ classDiagram
     Position --> PositionKpi
 
     PositionKpi --> Kpi
+    PositionKpi "1" --> "*" KpiTarget
 
+    KpiTarget --> KpiFact
     Kpi --> MeasurementUnit
     Kpi --> KpiFilter
 
     AggregateRoot <|-- Position
     AggregateRoot <|-- Employee
 
-    ```
+```
+---

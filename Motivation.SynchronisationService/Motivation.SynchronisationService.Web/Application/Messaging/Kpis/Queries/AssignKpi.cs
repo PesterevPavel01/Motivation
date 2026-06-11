@@ -3,6 +3,7 @@ using Calabonga.UnitOfWork;
 using Mediator;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
+using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.ValueObjects;
 
 namespace Motivation.SynchronisationService.Web.Application.Messaging.Kpis.Queries;

@@ -10,6 +10,8 @@
   <Project Path="Motivation.Application/Motivation.Application.csproj" Id="a7088c41-4fcb-4f50-94b6-533cd2b6ddd6" />
   <Project Path="Motivation.Contracts/Motivation.Contracts.csproj" Id="25173914-b40b-4527-ab4b-ccb857d61060" />
   <Project Path="Motivation.Domain/Motivation.Domain.csproj" Id="c7a021fb-5760-4c7a-b465-0f2b9dc7bce1" />
+  <Project Path="Motivation.HRService/Motivation.HRService.csproj" Id="c0abdbbc-3910-45cb-b992-08622b1abf7f" />
   <Project Path="Motivation.Infrastructure/Motivation.Infrastructure.csproj" Id="6d242890-b953-408d-a433-69e8f4535eca" />
+  <Project Path="Motivation.KpiService/Motivation.KpiService.csproj" Id="10965496-f784-4a25-8ec6-db26d58e008f" />
   <Project Path="Motivation.SynchronisationService/Motivation.SynchronisationService.Web/Motivation.SynchronisationService.Web.csproj" Id="a258166f-0e3d-4ab7-92be-e7e575b235d3" />
 </Solution>

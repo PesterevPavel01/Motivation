@@ -33,6 +33,11 @@ public sealed class UserToServiceClientConfiguration : IIdentityClientConfigurat
                 new Uri("https://www.thunderclient.com/oauth/callback"),            // https://www.thunderclient.com/
                 new Uri($"{_authConfig.Url}/swagger/oauth2-redirect.html"),         // https://swagger.io/ for IdentityModule as Example
                 new Uri("https://localhost:20001/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
+                new Uri("https://localhost:20002/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
+                new Uri("https://localhost:20003/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
+                new Uri("https://localhost:20004/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
+                new Uri("https://localhost:20005/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
+                new Uri("https://localhost:20006/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
                 new Uri("https://localhost:7207/signin-oidc"),                      // BlazorApp see folder ClientSamples in repository
                 new Uri("https://localhost:30001/callback/login/local")             // RazorPagesUI
             },

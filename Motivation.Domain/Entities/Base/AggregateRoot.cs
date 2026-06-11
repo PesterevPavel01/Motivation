@@ -3,11 +3,11 @@ using Motivation.Domain.ValueObjects;
 
 namespace Motivation.Domain.Entities.Base;
 
-public abstract class AggregateRoot : SimpleEntity
+public abstract class AggregateRoot : Entity
 {
     private readonly List<IDomainEvent> _domainEvents = [];
 
-    protected AggregateRoot(TitleValue title, CodeValue code, Guid id) : base(title, code, id){}
+    protected AggregateRoot(Guid id, CodeValue code) : base(id, code) {}
 
     public IReadOnlyCollection<IDomainEvent> GetDomainEvents()
     {

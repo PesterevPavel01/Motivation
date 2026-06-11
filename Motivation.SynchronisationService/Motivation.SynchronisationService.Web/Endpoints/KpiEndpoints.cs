@@ -5,7 +5,6 @@ using Motivation.Contracts.Dto;
 using Motivation.IdentityServer.Domain.Base;
 using Motivation.SynchronisationService.Web.Application.Messaging.KpiMessages.Queries;
 using Motivation.SynchronisationService.Web.Application.Messaging.Kpis.Queries;
-using Motivation.SynchronisationService.Web.Application.Messaging.PositionMessages.Queries;
 
 namespace Motivation.SynchronisationService.Web.Endpoints;
 
@@ -21,8 +20,8 @@ internal static class KpiEndpointsDefinitionExtensions
     {
         var group = routes.MapGroup("/api/kpi").WithTags("Kpis");
 
-        group.MapPost("create", async ([FromServices] IMediator mediator,[FromBody] KpiCreateDto kpi, HttpContext context)
-                => await mediator.Send(new PostKpi.Request(kpi), context.RequestAborted))
+        group.MapPost("sales/create", async ([FromServices] IMediator mediator,[FromBody] KpiCreateDto kpi, HttpContext context)
+                => await mediator.Send(new PostSalesKpi.Request(kpi), context.RequestAborted))
             .RequireAuthorization(AppData.SystemAdministratorRoleName)
             .Produces(200)
             .ProducesProblem(401)

@@ -1,5 +1,6 @@
 ﻿using Calabonga.OperationResults;
 using Motivation.Domain.Entities.Base;
+using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.ValueObjects;
 
 namespace Motivation.Domain.Entities;

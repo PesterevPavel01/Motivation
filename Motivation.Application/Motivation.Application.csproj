@@ -7,6 +7,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Calabonga.Microservices.BackgroundWorkers" Version="2.0.3" />
+  </ItemGroup>
+
+  <ItemGroup>
     <ProjectReference Include="..\Motivation.Contracts\Motivation.Contracts.csproj" />
     <ProjectReference Include="..\Motivation.Domain\Motivation.Domain.csproj" />
     <ProjectReference Include="..\Motivation.IdentityServer\Motivation.IdentityServer.Domain\Motivation.IdentityServer.Domain.csproj" />

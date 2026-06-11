@@ -198,59 +198,6 @@ namespace Motivation.Infrastructure.Migrations
                     b.ToTable("extra_parts", (string)null);
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.Kpi", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Abbreviation")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("CalculationType")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<string>("Code")
-                        .IsRequired()
-                        .HasMaxLength(50)
-                        .HasColumnType("character varying(50)");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<bool>("Enabled")
-                        .HasColumnType("boolean");
-
-                    b.Property<Guid?>("MeasurementUnitId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<int>("Type")
-                        .HasColumnType("integer");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("Code")
-                        .IsUnique();
-
-                    b.HasIndex("MeasurementUnitId");
-
-                    b.HasIndex("Title");
-
-                    b.ToTable("kpis", (string)null);
-                });
-
             modelBuilder.Entity("Motivation.Domain.Entities.KpiFilter", b =>
                 {
                     b.Property<Guid>("Id")
@@ -287,6 +234,130 @@ namespace Motivation.Infrastructure.Migrations
                     b.UseTphMappingStrategy();
                 });
 
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.Kpi", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Abbreviation")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("CalculationType")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<string>("Code")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("character varying(50)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("KpiType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("MeasurementUnitId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<int>("Type")
+                        .HasColumnType("integer");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Code")
+                        .IsUnique();
+
+                    b.HasIndex("MeasurementUnitId");
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("kpis", (string)null);
+
+                    b.HasDiscriminator<int>("KpiType");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiTarget", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<Guid>("PositionKpiId")
+                        .HasColumnType("uuid");
+
+                    b.Property<decimal>("Target")
+                        .HasColumnType("numeric");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("PositionKpiId");
+
+                    b.ToTable("kpi_targets", (string)null);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.PositionKpi", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<Guid>("KpiId")
+                        .HasColumnType("uuid");
+
+                    b.Property<int>("OrderNumber")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid>("PositionId")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ValidFrom")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<DateTime>("ValidTo")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<decimal>("Weight")
+                        .HasColumnType("numeric");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KpiId");
+
+                    b.HasIndex("PositionId");
+
+                    b.ToTable("position_kpis", (string)null);
+                });
+
             modelBuilder.Entity("Motivation.Domain.Entities.MeasurementUnit", b =>
                 {
                     b.Property<Guid>("Id")
@@ -320,6 +391,40 @@ namespace Motivation.Infrastructure.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("measurement_unit", (string)null);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.OutboxMessage", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(4096)
+                        .HasColumnType("character varying(4096)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(8192)
+                        .HasColumnType("character varying(8192)");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("outbox_messages", (string)null);
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Position", b =>
@@ -363,57 +468,6 @@ namespace Motivation.Infrastructure.Migrations
                     b.HasIndex("Title");
 
                     b.ToTable("positions", (string)null);
-                });
-
-            modelBuilder.Entity("Motivation.Domain.Entities.PositionKpi", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Achievement")
-                        .HasColumnType("numeric");
-
-                    b.Property<decimal>("BonusAmount")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("Fact")
-                        .HasColumnType("numeric");
-
-                    b.Property<Guid>("KpiId")
-                        .HasColumnType("uuid");
-
-                    b.Property<int>("OrderNumber")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid>("PositionId")
-                        .HasColumnType("uuid");
-
-                    b.Property<decimal>("Target")
-                        .HasColumnType("numeric");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ValidFrom")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<DateTime>("ValidTo")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<decimal>("Weight")
-                        .HasColumnType("numeric");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KpiId");
-
-                    b.HasIndex("PositionId");
-
-                    b.ToTable("position_kpis", (string)null);
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.StandardHours", b =>
@@ -468,6 +522,20 @@ namespace Motivation.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue(1);
                 });
 
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.ComplexityKpi", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.Kpi");
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.SalesKpi", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.Kpi");
+
+                    b.HasDiscriminator().HasValue(0);
+                });
+
             modelBuilder.Entity("Motivation.Domain.Entities.Deduction", b =>
                 {
                     b.HasOne("Motivation.Domain.Entities.EmployeePosition", "EmployeePosition")
@@ -509,7 +577,14 @@ namespace Motivation.Infrastructure.Migrations
                     b.Navigation("EmployeePosition");
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.Kpi", b =>
+            modelBuilder.Entity("Motivation.Domain.Entities.KpiFilter", b =>
+                {
+                    b.HasOne("Motivation.Domain.Entities.Kpis.Kpi", null)
+                        .WithMany("Filters")
+                        .HasForeignKey("KpiId");
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.Kpi", b =>
                 {
                     b.HasOne("Motivation.Domain.Entities.MeasurementUnit", "MeasurementUnit")
                         .WithMany("Kpis")
@@ -518,11 +593,62 @@ namespace Motivation.Infrastructure.Migrations
                     b.Navigation("MeasurementUnit");
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.KpiFilter", b =>
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiTarget", b =>
                 {
-                    b.HasOne("Motivation.Domain.Entities.Kpi", null)
-                        .WithMany("Filters")
-                        .HasForeignKey("KpiId");
+                    b.HasOne("Motivation.Domain.Entities.Kpis.PositionKpi", "PositionKpi")
+                        .WithMany("TargetHistory")
+                        .HasForeignKey("PositionKpiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Motivation.Domain.Entities.Kpis.KpiFact", "KpiFact", b1 =>
+                        {
+                            b1.Property<Guid>("KpiTargetId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<decimal>("Achievement")
+                                .HasColumnType("numeric");
+
+                            b1.Property<decimal>("BonusAmount")
+                                .HasColumnType("numeric");
+
+                            b1.Property<decimal>("Fact")
+                                .HasColumnType("numeric");
+
+                            b1.HasKey("KpiTargetId");
+
+                            b1.ToTable("kpi_targets");
+
+                            b1
+                                .ToJson("KpiFact")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("KpiTargetId");
+                        });
+
+                    b.Navigation("KpiFact");
+
+                    b.Navigation("PositionKpi");
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.PositionKpi", b =>
+                {
+                    b.HasOne("Motivation.Domain.Entities.Kpis.Kpi", "Kpi")
+                        .WithMany()
+                        .HasForeignKey("KpiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.HasOne("Motivation.Domain.Entities.Position", "Position")
+                        .WithMany("PositionKpiHistory")
+                        .HasForeignKey("PositionId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Kpi");
+
+                    b.Navigation("Position");
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Position", b =>
@@ -554,25 +680,6 @@ namespace Motivation.Infrastructure.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.PositionKpi", b =>
-                {
-                    b.HasOne("Motivation.Domain.Entities.Kpi", "Kpi")
-                        .WithMany()
-                        .HasForeignKey("KpiId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("Motivation.Domain.Entities.Position", "Position")
-                        .WithMany("PositionKpiHistory")
-                        .HasForeignKey("PositionId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Kpi");
-
-                    b.Navigation("Position");
-                });
-
             modelBuilder.Entity("Motivation.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("EmployeePositions");
@@ -585,9 +692,14 @@ namespace Motivation.Infrastructure.Migrations
                     b.Navigation("ExtraPartHistory");
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.Kpi", b =>
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.Kpi", b =>
                 {
                     b.Navigation("Filters");
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.PositionKpi", b =>
+                {
+                    b.Navigation("TargetHistory");
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.MeasurementUnit", b =>

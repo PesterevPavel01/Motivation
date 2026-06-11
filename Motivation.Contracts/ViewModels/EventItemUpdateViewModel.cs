@@ -1,6 +1,6 @@
 ﻿using Motivation.Contracts.ViewModels;
 
-namespace Motivation.SynchronisationService.Web.Application.Messaging.EventItemMessages.ViewModels
+namespace Motivation.Contracts.ViewModels
 {
     public class EventItemUpdateViewModel : ViewModelBase
     {

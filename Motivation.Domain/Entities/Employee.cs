@@ -4,7 +4,7 @@ using Motivation.Domain.ValueObjects;
 
 namespace Motivation.Domain.Entities;
 
-public class Employee : Entity
+public class Employee : AggregateRoot
 {
     private readonly List<EmployeePosition> _employeePositions = [];
 

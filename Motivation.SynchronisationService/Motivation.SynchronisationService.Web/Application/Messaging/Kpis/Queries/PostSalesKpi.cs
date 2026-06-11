@@ -4,11 +4,12 @@ using Mediator;
 using Motivation.Application.Mappings;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
+using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.ValueObjects;
 
-namespace Motivation.SynchronisationService.Web.Application.Messaging.PositionMessages.Queries;
+namespace Motivation.SynchronisationService.Web.Application.Messaging.Kpis.Queries;
 
-public class PostKpi
+public class PostSalesKpi
 {
     public record Request(KpiCreateDto Model) : IRequest<Operation<bool, string>>;
 
@@ -17,7 +18,7 @@ public class PostKpi
     {
         public async ValueTask<Operation<bool, string>> Handle(Request kpiRequest, CancellationToken cancellationToken)
         {
-            logger.LogDebug("Creating new Kpi");
+            logger.LogDebug("Creating new SalesKpi");
 
             var code = CodeValue.Create(kpiRequest.Model.Code);
             if (!code.Ok)
@@ -60,7 +61,7 @@ public class PostKpi
                 return Operation.Error("MeasurementUnit not found!");
             }
 
-            var kpi = Kpi.Create(
+            var kpi = SalesKpi.Create(
                 title.Result,
                 code.Result,
                 abbreviation.Result,

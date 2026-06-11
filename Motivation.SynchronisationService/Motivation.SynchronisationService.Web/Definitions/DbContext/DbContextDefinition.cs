@@ -26,7 +26,8 @@ namespace Motivation.SynchronisationService.Web.Definitions.DbContext
                     connectionString,
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
                         .AddInterceptors(
-                            serviceProvider.GetRequiredService<AuditableDataInterceptor>());
+                            serviceProvider.GetRequiredService<AuditableDataInterceptor>(),
+                            serviceProvider.GetRequiredService<ConvertDomainEventToOutboxMessageInterceptor>());
             });
         }
     }
