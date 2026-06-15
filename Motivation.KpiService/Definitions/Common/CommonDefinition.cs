@@ -1,6 +1,7 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Motivation.Contracts.Interfaces;
-using Motivation.Domain.Events;
+using Motivation.Domain.DomainEvents.KpiDomainEvents;
+using Motivation.Domain.Events.KpiDomainEvents;
 using Motivation.Infrastructure.Options;
 using Motivation.Infrastructure.Processors;
 
@@ -27,7 +28,9 @@ namespace Motivation.KpiService.Definitions.Common
             builder.Services.Configure<OutboxProcessorOptions>(options =>
             {
                 options.SupportedEventTypes = [
-                    typeof(PositionCreatedEvent).Name
+                    typeof(KpiCreatedDomainEvent).Name,
+                    typeof(KpiUpdatedDomainEvent).Name,
+                    typeof(AssignKpiToPositionDomainEvent).Name,
                 ];
             });
             builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();

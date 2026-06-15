@@ -1,11 +1,10 @@
-﻿using Catalog.NotificationService.InfrastructureInfrastructure.Base;
-using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Design;
 using System.Reflection;
 
 namespace Motivation.Infrastructure
 {
-    public class MotivationDbContext : DbContextBase
+    public class MotivationDbContext : DbContext
     {
         public MotivationDbContext(DbContextOptions<MotivationDbContext> options): base(options) 
         {
@@ -14,9 +13,8 @@ namespace Motivation.Infrastructure
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
-            base.OnModelCreating(modelBuilder);
-
             modelBuilder.ApplyConfigurationsFromAssembly(Assembly.GetExecutingAssembly());
+            base.OnModelCreating(modelBuilder);
         }
     }
 

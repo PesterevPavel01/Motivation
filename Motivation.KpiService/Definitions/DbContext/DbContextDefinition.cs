@@ -27,8 +27,9 @@ namespace Motivation.KpiService.Definitions.DbContext
                     connectionString,
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
                         .AddInterceptors(
-                            serviceProvider.GetRequiredService<AuditableDataInterceptor>(),
-                            serviceProvider.GetRequiredService<ConvertDomainEventToOutboxMessageInterceptor>());
+                            //Порядок обязателен!!!
+                            serviceProvider.GetRequiredService<ConvertDomainEventToOutboxMessageInterceptor>(),
+                            serviceProvider.GetRequiredService<AuditableDataInterceptor>());
             });
         }
     }

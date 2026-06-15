@@ -1,5 +1,7 @@
 ﻿using Calabonga.OperationResults;
 using Motivation.Domain.Entities.Base;
+using Motivation.Domain.Events;
+using Motivation.Domain.Events.EmployeeDomainEvents;
 using Motivation.Domain.ValueObjects;
 
 namespace Motivation.Domain.Entities;
@@ -34,6 +36,9 @@ public class Employee : AggregateRoot
         if (fullName is null)
             return Operation.Error("Full name is null!");
         var employee = new Employee(Guid.CreateVersion7(), code, firstName, lastName, secondName, fullName);
+
+        employee.RaiseDomainEvent(new EmployeeCreatedDomainEvent(employee.Id));
+
         return employee;
     }
 
@@ -49,6 +54,8 @@ public class Employee : AggregateRoot
             return Operation.Error(employeePositionResult.Error);
 
         _employeePositions.Add(employeePositionResult.Result);
+
+        RaiseDomainEvent(new AssignEmployeeToPositionDomainEvent(Id, position.Id));
 
         return true;
     }

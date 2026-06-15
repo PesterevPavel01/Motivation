@@ -49,6 +49,10 @@ namespace Motivation.Infrastructure.Configurations
                 .Property(x => x.Year)
                 .IsRequired()
                 .HasConversion(x => x.Value, x => YearValue.Create(x).Result);
+
+
+            builder.HasIndex(x => new { x.Month, x.Year, x.StandardHoursValue })
+                .IsUnique();
         }
     }
 }

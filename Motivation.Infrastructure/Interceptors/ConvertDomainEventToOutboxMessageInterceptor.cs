@@ -44,7 +44,7 @@ public class ConvertDomainEventToOutboxMessageInterceptor : SaveChangesIntercept
 
         var outboxMessages = many.Select(x => new OutboxMessage(Guid.NewGuid())
         {
-            CreatedAt = DateTime.Now,
+            //CreatedAt = DateTime.Now,
             Type = x.GetType().Name,
             Content = JsonSerializer.Serialize(x, OutboxMessage.JsonSettings)
         }).ToList();

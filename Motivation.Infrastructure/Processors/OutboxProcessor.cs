@@ -55,7 +55,7 @@ public sealed class OutboxProcessor : IOutboxProcessor
 
             await _publisher.Publish(domainEvent, cancellationToken);
 
-            message.ProcessedAt = _timerProvider.GetLocalNow().DateTime;
+            message.ProcessedAt = _timerProvider.GetUtcNow().DateTime;
 
             await _unitOfWork.SaveChangesAsync();
 

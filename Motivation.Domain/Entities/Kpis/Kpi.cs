@@ -17,7 +17,7 @@ public abstract class Kpi : AggregateRoot
     }
 
     public KpiType Type { get; private set; }
-    public AbbreviationValue Abbreviation { get; private set; } = null!;
+    public AbbreviationValue Abbreviation { get; protected set; } = null!;
     public CalculationType CalculationType { get; private set; }
     public MeasurementUnit MeasurementUnit { get; private set; } = null!;
     public TitleValue Title { get; protected set; }
@@ -33,8 +33,19 @@ public abstract class Kpi : AggregateRoot
         MeasurementUnit = measurementUnit;
         return true;
     }
-    public void AddFilter(KpiFilter item)
+    protected Operation<bool, string> SetFilters(List<KpiFilter> filters)
     {
-        _filters.Add(item);
+        if(filters is null)
+            return Operation.Error("KpiFilters is null!");
+        var clearFilters = ClearFilters();
+        if (!clearFilters.Ok)
+            return Operation.Error(clearFilters.Error);
+        _filters.AddRange(filters);
+        return true;
+    }
+    protected Operation<bool, string> ClearFilters()
+    {
+        _filters.Clear();
+        return true;
     }
 }

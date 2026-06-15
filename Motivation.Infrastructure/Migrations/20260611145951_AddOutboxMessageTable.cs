@@ -16,6 +16,7 @@ namespace Motivation.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
                     Type = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
                     Content = table.Column<string>(type: "character varying(4096)", maxLength: 4096, nullable: false),
                     ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),

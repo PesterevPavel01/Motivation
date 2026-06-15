@@ -34,4 +34,12 @@ public class StandardHours : Auditable
         return new StandardHours(Guid.CreateVersion7(), standardHours, weekType, month, year);
     }
 
+    public Operation<StandardHours, string> Update(StandardHoursValue standardHours)
+    {
+        if (standardHours is null)
+            return Operation.Error("Standard hours is null!");
+        StandardHoursValue = standardHours;
+        return this;
+    }
+
 }

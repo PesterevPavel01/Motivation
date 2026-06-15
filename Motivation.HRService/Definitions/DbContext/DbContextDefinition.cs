@@ -17,6 +17,7 @@ namespace Motivation.HRService.Definitions.DbContext
         public override void ConfigureServices(WebApplicationBuilder builder)
         {
             builder.Services.AddScoped<AuditableDataInterceptor>();
+            builder.Services.AddScoped<ConvertDomainEventToOutboxMessageInterceptor>();
 
             var connectionString = builder.Configuration.GetConnectionString("AppDbConnectionString");
 
@@ -26,8 +27,9 @@ namespace Motivation.HRService.Definitions.DbContext
                     connectionString,
                     o => o.UseQuerySplittingBehavior(QuerySplittingBehavior.SplitQuery))
                         .AddInterceptors(
-                            serviceProvider.GetRequiredService<AuditableDataInterceptor>(),
-                            serviceProvider.GetRequiredService<ConvertDomainEventToOutboxMessageInterceptor>());
+                            //Порядок обязателен!!!
+                            serviceProvider.GetRequiredService<ConvertDomainEventToOutboxMessageInterceptor>(),
+                            serviceProvider.GetRequiredService<AuditableDataInterceptor>());
             });
         }
     }

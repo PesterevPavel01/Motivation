@@ -1,7 +1,10 @@
 ﻿using Calabonga.OperationResults;
+using Motivation.Domain.DomainEvents.KpiDomainEvents;
+using Motivation.Domain.DomainEvents.PositionDomainEvents;
 using Motivation.Domain.Entities.Base;
 using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.Enum;
+using Motivation.Domain.Events.PositionDomainEvents;
 using Motivation.Domain.ValueObjects;
 
 namespace Motivation.Domain.Entities;
@@ -38,10 +41,12 @@ public class Position : AggregateRoot
 
         position.SetMotivationPart(motivationPart);
 
+        position.RaiseDomainEvent(new PositionCreatedDomainEvent(position.Id));
+
         return position;
     }
 
-    public Operation<bool, string> SetMotivationPart(MotivationPart motivationPart) 
+    private Operation<bool, string> SetMotivationPart(MotivationPart motivationPart) 
     {
         if (motivationPart is null)
             return Operation.Error("Motivation part is null!");
@@ -54,6 +59,35 @@ public class Position : AggregateRoot
         if (positionKpi is null)
             return Operation.Error("PositionKpi is null!");
         _positionKpiHistory.Add(positionKpi);
+
+        RaiseDomainEvent(new AssignKpiToPositionDomainEvent(Id, positionKpi.Id));
+        
         return true;
+    }
+
+    public Operation<Position, string> Update(
+        TitleValue title, 
+        CodeValue code, 
+        SalaryValue baseSalary, 
+        WorkWeekType workWeekType, 
+        MotivationPart motivationPart)
+    {
+        if (code is null)
+            return Operation.Error("Code is null!");
+        if (title is null)
+            return Operation.Error("Title is null!");
+        if (baseSalary is null)
+            return Operation.Error("Base salary is null!");
+
+        BaseSalary = baseSalary;
+        WorkWeekType = workWeekType;
+        Title = title;
+        Code = code;
+
+        SetMotivationPart(motivationPart);
+
+        RaiseDomainEvent(new PositionUpdatedDomainEvent(Id));
+
+        return this;
     }
 }

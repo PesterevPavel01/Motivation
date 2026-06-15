@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Motivation.Infrastructure.Migrations
 {
     [DbContext(typeof(MotivationDbContext))]
-    [Migration("20260611075930_AddOutboxMessageTable")]
-    partial class AddOutboxMessageTable
+    [Migration("20260614053640_AddUniqueIndexToStandardHours")]
+    partial class AddUniqueIndexToStandardHours
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -410,6 +410,9 @@ namespace Motivation.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Error")
                         .HasMaxLength(8192)
                         .HasColumnType("character varying(8192)");
@@ -500,6 +503,9 @@ namespace Motivation.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Month", "Year", "StandardHoursValue")
+                        .IsUnique();
 
                     b.ToTable("standard_hours", (string)null);
                 });

@@ -4,20 +4,28 @@ using System.Text.Json.Serialization;
 
 namespace Motivation.Domain.Entities
 {
-    public sealed class OutboxMessage : Auditable
+    public class OutboxMessage : Auditable
     {
         public OutboxMessage(Guid id)
         {
             Id = id;
         }
         public static JsonSerializerOptions JsonSettings 
-            => new JsonSerializerOptions
+            => new()
                 {
                     PropertyNameCaseInsensitive = true,
                     Converters = { new JsonStringEnumConverter() }
                 };
 
         public Guid Id { get; }
+
+        public bool Enabled { get; protected set; } = true;
+
+        public void Disable()
+        {
+            Enabled = false;
+        }
+        
         public required string Type { get; set; }
 
         public required string Content { get; set; }

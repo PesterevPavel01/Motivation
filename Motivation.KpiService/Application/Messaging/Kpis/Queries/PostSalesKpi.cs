@@ -61,20 +61,48 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
                     return Operation.Error("MeasurementUnit not found!");
                 }
 
+                var kpiFilters = CreateKpiFilters(
+                    customerFilter: kpiRequest.Model.CustomerFilter,
+                    productFilter: kpiRequest.Model.ProductFilter,
+                    companyFilter: kpiRequest.Model.CompanyFilter);
+
+                if (!kpiFilters.Ok)
+                {
+                    return Operation.Error(kpiFilters.Error);
+                }
+
                 var kpi = SalesKpi.Create(
                     title.Result,
                     code.Result,
                     abbreviation.Result,
                     calculationType.Result,
-                    measurementUnit);
+                    measurementUnit,
+                    kpiFilters.Result);
                 if (!kpi.Ok)
                 {
                     return Operation.Error(kpi.Error);
                 }
 
-                if (kpiRequest.Model.CustomerFilter.Any())
+                await unitOfWork.GetRepository<Kpi>().InsertAsync(kpi.Result, cancellationToken);
+                var result = await unitOfWork.SaveChangesAsync();
+                if (unitOfWork.Result.Exception is not null)
                 {
-                    foreach (var item in kpiRequest.Model.CustomerFilter)
+                    return Operation.Error(unitOfWork.Result.Exception.Message);
+                }
+
+                return true;
+            }
+
+            private Operation<List<KpiFilter>, string> CreateKpiFilters(
+                IEnumerable<string> customerFilter,
+                IEnumerable<string> productFilter,
+                IEnumerable<string> companyFilter)
+            {
+                List<KpiFilter> kpiFilters = [];
+
+                if (customerFilter.Any())
+                {
+                    foreach (var item in customerFilter)
                     {
                         var filterTitle = TitleValue.Create(item);
                         if (!filterTitle.Ok)
@@ -86,12 +114,12 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
                         {
                             return Operation.Error(filterItem.Error);
                         }
-                        kpi.Result.AddFilter(filterItem.Result);
+                        kpiFilters.Add(filterItem.Result);
                     }
                 }
-                if (kpiRequest.Model.ProductFilter.Any())
+                if (productFilter.Any())
                 {
-                    foreach (var item in kpiRequest.Model.ProductFilter)
+                    foreach (var item in productFilter)
                     {
                         var filterTitle = TitleValue.Create(item);
                         if (!filterTitle.Ok)
@@ -103,12 +131,12 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
                         {
                             return Operation.Error(filterItem.Error);
                         }
-                        kpi.Result.AddFilter(filterItem.Result);
+                        kpiFilters.Add(filterItem.Result);
                     }
                 }
-                if (kpiRequest.Model.CompanyFilter.Any())
+                if (companyFilter.Any())
                 {
-                    foreach (var item in kpiRequest.Model.CompanyFilter)
+                    foreach (var item in companyFilter)
                     {
                         var filterTitle = TitleValue.Create(item);
                         if (!filterTitle.Ok)
@@ -120,18 +148,10 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
                         {
                             return Operation.Error(filterItem.Error);
                         }
-                        kpi.Result.AddFilter(filterItem.Result);
+                        kpiFilters.Add(filterItem.Result);
                     }
                 }
-
-                await unitOfWork.GetRepository<Kpi>().InsertAsync(kpi.Result, cancellationToken);
-                var result = await unitOfWork.SaveChangesAsync();
-                if (unitOfWork.Result.Exception is not null)
-                {
-                    return Operation.Error(unitOfWork.Result.Exception.Message);
-                }
-
-                return true;
+                return kpiFilters;
             }
         }
     }

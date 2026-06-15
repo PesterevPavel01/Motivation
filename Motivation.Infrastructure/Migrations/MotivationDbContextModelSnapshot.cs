@@ -407,6 +407,9 @@ namespace Motivation.Infrastructure.Migrations
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
                     b.Property<string>("Error")
                         .HasMaxLength(8192)
                         .HasColumnType("character varying(8192)");
@@ -497,6 +500,9 @@ namespace Motivation.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Month", "Year", "StandardHoursValue")
+                        .IsUnique();
 
                     b.ToTable("standard_hours", (string)null);
                 });

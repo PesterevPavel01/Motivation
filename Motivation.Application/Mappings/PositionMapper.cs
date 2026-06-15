@@ -1,6 +1,5 @@
 ﻿using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
-using Motivation.Domain.Enum;
 
 namespace Motivation.Application.Mappings;
 

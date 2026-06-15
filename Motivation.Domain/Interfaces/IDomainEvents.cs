@@ -1,23 +1,19 @@
 ﻿using Mediator;
+using Motivation.Domain.DomainEvents.KpiDomainEvents;
+using Motivation.Domain.DomainEvents.PositionDomainEvents;
+using Motivation.Domain.Events.EmployeeDomainEvents;
+using Motivation.Domain.Events.KpiDomainEvents;
+using Motivation.Domain.Events.PositionDomainEvents;
 using System.Text.Json.Serialization;
 
-namespace Motivation.Domain.Interfaces
-{
-    /*[JsonDerivedType(typeof(OrderCreatedDomainEvent), typeDiscriminator: "order-created")]
-    [JsonDerivedType(typeof(AddOrderItemDomainEvent), typeDiscriminator: "order-add-item")]
-    [JsonDerivedType(typeof(AddMessageDomainEvent), typeDiscriminator: "order-add-message")]
-    [JsonDerivedType(typeof(OrderItemQuantityChangedDomainEvent), typeDiscriminator: "order-item-quantity-change")]
-    [JsonDerivedType(typeof(OrderDisabledDomainEvent), typeDiscriminator: "order-disabled")]
-    [JsonDerivedType(typeof(CompleteProductionDomainEvent), typeDiscriminator: "order-produced")]
-    [JsonDerivedType(typeof(OrderInProductionDomainEvent), typeDiscriminator: "order-in-production")]
-    [JsonDerivedType(typeof(RemoveOrderItemDomainEvent), typeDiscriminator: "remove-order-item")]
-    [JsonDerivedType(typeof(ApprovalCompletedDomainEvent), typeDiscriminator: "approval-completed")]
-    [JsonDerivedType(typeof(WorkflowCreatedDomainEvent), typeDiscriminator: "workflow-created")]
-    [JsonDerivedType(typeof(ModuleChangedDomainEvent), typeDiscriminator: "custom-module-changed")]
-    [JsonDerivedType(typeof(OrderCancelledDomainEvent), typeDiscriminator: "order-cancelled")]
-    [JsonDerivedType(typeof(OrderRejectedDomainEvent), typeDiscriminator: "order-rejected")]
-    [JsonDerivedType(typeof(OrderRejectFromProductionDomainEvent), typeDiscriminator: "order-rejected-from-production")]
-    [JsonDerivedType(typeof(OrderCompletedDomainEvent), typeDiscriminator: "order-completed")]*/
-    
-    public interface IDomainEvent : INotification { }
-}
+namespace Motivation.Domain.Interfaces;
+
+[JsonDerivedType(typeof(PositionCreatedDomainEvent), typeDiscriminator: "position-created")]
+[JsonDerivedType(typeof(PositionUpdatedDomainEvent), typeDiscriminator: "position-updated")]
+[JsonDerivedType(typeof(KpiCreatedDomainEvent), typeDiscriminator: "kpi-created")]
+[JsonDerivedType(typeof(KpiUpdatedDomainEvent), typeDiscriminator: "kpi-updated")]
+[JsonDerivedType(typeof(EmployeeCreatedDomainEvent), typeDiscriminator: "employee-created")]
+[JsonDerivedType(typeof(AssignEmployeeToPositionDomainEvent), typeDiscriminator: "assign-to-position")]
+[JsonDerivedType(typeof(AssignKpiToPositionDomainEvent), typeDiscriminator: "assign-kpi")]
+
+public interface IDomainEvent : INotification { }

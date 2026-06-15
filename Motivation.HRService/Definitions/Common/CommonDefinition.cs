@@ -1,6 +1,8 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Motivation.Contracts.Interfaces;
-using Motivation.Domain.Events;
+using Motivation.Domain.DomainEvents.PositionDomainEvents;
+using Motivation.Domain.Events.EmployeeDomainEvents;
+using Motivation.Domain.Events.PositionDomainEvents;
 using Motivation.Infrastructure.Options;
 using Motivation.Infrastructure.Processors;
 
@@ -27,7 +29,10 @@ namespace Motivation.HRService.Definitions.Common
             builder.Services.Configure<OutboxProcessorOptions>(options =>
             {
                 options.SupportedEventTypes = [
-                    typeof(PositionCreatedEvent).Name
+                    typeof(PositionCreatedDomainEvent).Name,
+                    typeof(PositionUpdatedDomainEvent).Name,
+                    typeof(EmployeeCreatedDomainEvent).Name,
+                    typeof(AssignEmployeeToPositionDomainEvent).Name
                 ];
             });
             builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();
