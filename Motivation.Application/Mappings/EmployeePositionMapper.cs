@@ -17,7 +17,8 @@ public static class EmployeePositionMapper
             Position = source.Position.MapToDto(),
             AssignmentDate = source.AssignmentDate,
             ExtraPartHistory = source.ExtraPartHistory?.Select(x => x.MapToDto()),
-            DeductionHistory = source.DeductionHistory?.Select(x => x.MapToDto())
+            DeductionHistory = source.DeductionHistory?.Select(x => x.MapToDto()),
+            ActualHoursHistory = source.ActualHoursHistory?.Select(x => x.MapToDto())
         };
     }
 }

@@ -67,5 +67,4 @@ public sealed class PositionKpi : Auditable
         _targetHistory.Add(target);
         return true;
     }
-
 }

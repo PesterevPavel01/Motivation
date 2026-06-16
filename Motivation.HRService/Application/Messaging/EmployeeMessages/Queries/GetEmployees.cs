@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Motivation.Application.Mappings;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
-using Motivation.Domain.ValueObjects;
 
 namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
 {
@@ -18,14 +17,14 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
         {
             public async ValueTask<Operation<IEnumerable<EmployeeDto>, string>> Handle(Request employeeRequest, CancellationToken cancellationToken)
             {
-                logger.LogDebug("Get Employees");
-
                 var employeesResult = await unitOfWork.GetRepository<Employee>()
                     .GetAllAsync(
                         predicate: x => x.Enabled == true,
                         include: query => query
                             .Include(x => x.EmployeePositions)
                                 .ThenInclude(x => x.Position)
+                            .Include(x => x.EmployeePositions)
+                                .ThenInclude(x => x.ActualHoursHistory)
                             .Include(x => x.EmployeePositions)
                                 .ThenInclude(x => x.ExtraPartHistory)
                             .Include(x => x.EmployeePositions)

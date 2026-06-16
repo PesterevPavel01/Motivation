@@ -14,9 +14,8 @@ namespace Motivation.Infrastructure.Configurations.Base
 
             builder.HasKey(x => x.Id);
 
-            builder
-                .Property(x => x.Id)
-                .ValueGeneratedOnAdd();
+            builder.Property(x => x.Id)
+                .ValueGeneratedNever();
 
             builder
                 .HasIndex(x => x.Code)

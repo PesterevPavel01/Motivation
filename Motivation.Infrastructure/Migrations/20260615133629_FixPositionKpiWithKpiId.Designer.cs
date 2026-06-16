@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Motivation.Infrastructure.Migrations
 {
     [DbContext(typeof(MotivationDbContext))]
-    [Migration("20260610094214_AddKpiTargetAndFact")]
-    partial class AddKpiTargetAndFact
+    [Migration("20260615133629_FixPositionKpiWithKpiId")]
+    partial class FixPositionKpiWithKpiId
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Deduction", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -75,7 +74,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Employee", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -157,7 +155,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.ExtraPart", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -240,7 +237,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.Kpi", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Abbreviation")
@@ -325,7 +321,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.PositionKpi", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -364,7 +359,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.MeasurementUnit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -396,10 +390,46 @@ namespace Motivation.Infrastructure.Migrations
                     b.ToTable("measurement_unit", (string)null);
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.Position", b =>
+            modelBuilder.Entity("Motivation.Domain.Entities.OutboxMessage", b =>
                 {
                     b.Property<Guid>("Id")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Content")
+                        .IsRequired()
+                        .HasMaxLength(4096)
+                        .HasColumnType("character varying(4096)");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Enabled")
+                        .HasColumnType("boolean");
+
+                    b.Property<string>("Error")
+                        .HasMaxLength(8192)
+                        .HasColumnType("character varying(8192)");
+
+                    b.Property<DateTime?>("ProcessedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<string>("Type")
+                        .IsRequired()
+                        .HasMaxLength(512)
+                        .HasColumnType("character varying(512)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.ToTable("outbox_messages", (string)null);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Position", b =>
+                {
+                    b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("BaseSalary")
@@ -466,6 +496,9 @@ namespace Motivation.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Month", "Year", "StandardHoursValue")
+                        .IsUnique();
 
                     b.ToTable("standard_hours", (string)null);
                 });
@@ -606,7 +639,7 @@ namespace Motivation.Infrastructure.Migrations
                     b.HasOne("Motivation.Domain.Entities.Kpis.Kpi", "Kpi")
                         .WithMany()
                         .HasForeignKey("KpiId")
-                        .OnDelete(DeleteBehavior.Cascade)
+                        .OnDelete(DeleteBehavior.Restrict)
                         .IsRequired();
 
                     b.HasOne("Motivation.Domain.Entities.Position", "Position")

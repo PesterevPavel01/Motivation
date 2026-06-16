@@ -6,4 +6,5 @@ public sealed record EmployeePositionDto()
     public DateTime AssignmentDate { get; set; }
     public IEnumerable<ExtraPartDto?>? ExtraPartHistory { get; set; } = [];
     public IEnumerable<DeductionDto?>? DeductionHistory { get; set; } = [];
+    public IEnumerable<ActualHoursDto?>? ActualHoursHistory { get; set; } = [];
 };

@@ -21,6 +21,15 @@ public class MotivationPart
         return new MotivationPart(motivationPartValue);
     }
 
+    public Operation<bool, string> Update(MotivationPartValue motivationPartValue)
+    {
+        if (motivationPartValue is null)
+            return Operation.Error("Motivation part is null!");
+
+        MotivationPartValue = motivationPartValue;
+        return true;
+    }
+
     public Operation<bool, string> SetRecalculateToHours(bool recalculateToHours) 
     {
         RecalculateToHours = recalculateToHours;

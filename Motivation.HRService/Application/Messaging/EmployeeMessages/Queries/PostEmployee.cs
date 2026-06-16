@@ -16,34 +16,32 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
         {
             public async ValueTask<Operation<bool, string>> Handle(Request employeeRequest, CancellationToken cancellationToken)
             {
-                logger.LogDebug("Creating new Employee");
+                var code = CodeValue.Create(employeeRequest.Model.Code??Guid.CreateVersion7().ToString());
 
-                var codeValueResult = CodeValue.Create(employeeRequest.Model.Code);
-
-                if (!codeValueResult.Ok)
+                if (!code.Ok)
                 {
-                    return Operation.Error(codeValueResult.Error);
+                    return Operation.Error(code.Error);
                 }
 
-                var firstNameValueResult = FirstNameValue.Create(employeeRequest.Model.FirstName);
+                var firstName = FirstNameValue.Create(employeeRequest.Model.FirstName);
 
-                if (!firstNameValueResult.Ok)
+                if (!firstName.Ok)
                 {
-                    return Operation.Error(firstNameValueResult.Error);
+                    return Operation.Error(firstName.Error);
                 }
 
-                var lastNameValueResult = LastNameValue.Create(employeeRequest.Model.LastName);
+                var lastName = LastNameValue.Create(employeeRequest.Model.LastName);
 
-                if (!lastNameValueResult.Ok)
+                if (!lastName.Ok)
                 {
-                    return Operation.Error(lastNameValueResult.Error);
+                    return Operation.Error(lastName.Error);
                 }
 
-                var fullNameValueResult = FullNameValue.Create(employeeRequest.Model.FullName);
+                var fullName = FullNameValue.Create(employeeRequest.Model.FullName);
 
-                if (!fullNameValueResult.Ok)
+                if (!fullName.Ok)
                 {
-                    return Operation.Error(fullNameValueResult.Error);
+                    return Operation.Error(fullName.Error);
                 }
 
                 SecondNameValue? secondNameValue = null;
@@ -53,17 +51,17 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
                     var secondNameResult = SecondNameValue.Create(employeeRequest.Model.SecondName);
                     if (!secondNameResult.Ok)
                     {
-                        return Operation.Error(fullNameValueResult.Error);
+                        return Operation.Error(fullName.Error);
                     }
                     secondNameValue = secondNameResult.Result;
                 }
 
                 var entityResult = Employee.Create(
-                    code: codeValueResult.Result,
-                    firstName: firstNameValueResult.Result,
-                    lastName: lastNameValueResult.Result,
+                    code: code.Result,
+                    firstName: firstName.Result,
+                    lastName: lastName.Result,
                     secondName: secondNameValue,
-                    fullName: fullNameValueResult.Result);
+                    fullName: fullName.Result);
 
                 if (!entityResult.Ok)
                 {

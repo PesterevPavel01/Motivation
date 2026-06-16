@@ -1,5 +1,4 @@
-﻿using Calabonga.Microservices.Core;
-using Calabonga.OperationResults;
+﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
 using Mediator;
 using Motivation.Contracts.Dto;
@@ -24,7 +23,7 @@ public class PutHours
                 return Operation.Error("Standard hours not found!");
             }
 
-            var standardHoursValue = StandardHoursValue.Create(hoursRequest.Model.Value);
+            var standardHoursValue = HoursValue.Create(hoursRequest.Model.Value);
             if (!standardHoursValue.Ok)
             {
                 return Operation.Error(standardHoursValue.Error);

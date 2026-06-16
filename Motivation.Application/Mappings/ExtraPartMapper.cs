@@ -16,7 +16,6 @@ public static class ExtraPartMapper
             Title: source.Title.Value,
             Code: source.Code.Value,
             PositionCode: source.EmployeePosition?.Position?.Code.Value ?? string.Empty,
-            EmployeeCode: source.EmployeePosition?.Employee?.Code.Value ?? string.Empty,
             Value: source.ExtraPartValue.Value,
             ValidFrom: source.ValidFrom,
             ValidTo: source.ValidTo

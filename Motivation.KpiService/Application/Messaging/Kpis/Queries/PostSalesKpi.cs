@@ -18,8 +18,6 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
         {
             public async ValueTask<Operation<bool, string>> Handle(Request kpiRequest, CancellationToken cancellationToken)
             {
-                logger.LogDebug("Creating new SalesKpi");
-
                 var code = CodeValue.Create(kpiRequest.Model.Code);
                 if (!code.Ok)
                 {
@@ -61,7 +59,7 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
                     return Operation.Error("MeasurementUnit not found!");
                 }
 
-                var kpiFilters = CreateKpiFilters(
+                var kpiFilters = KpiFilterMapper.FromString(
                     customerFilter: kpiRequest.Model.CustomerFilter,
                     productFilter: kpiRequest.Model.ProductFilter,
                     companyFilter: kpiRequest.Model.CompanyFilter);
@@ -91,67 +89,6 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
                 }
 
                 return true;
-            }
-
-            private Operation<List<KpiFilter>, string> CreateKpiFilters(
-                IEnumerable<string> customerFilter,
-                IEnumerable<string> productFilter,
-                IEnumerable<string> companyFilter)
-            {
-                List<KpiFilter> kpiFilters = [];
-
-                if (customerFilter.Any())
-                {
-                    foreach (var item in customerFilter)
-                    {
-                        var filterTitle = TitleValue.Create(item);
-                        if (!filterTitle.Ok)
-                        {
-                            return Operation.Error(filterTitle.Error);
-                        }
-                        var filterItem = KpiFilterCustomer.Create(filterTitle.Result);
-                        if (!filterItem.Ok)
-                        {
-                            return Operation.Error(filterItem.Error);
-                        }
-                        kpiFilters.Add(filterItem.Result);
-                    }
-                }
-                if (productFilter.Any())
-                {
-                    foreach (var item in productFilter)
-                    {
-                        var filterTitle = TitleValue.Create(item);
-                        if (!filterTitle.Ok)
-                        {
-                            return Operation.Error(filterTitle.Error);
-                        }
-                        var filterItem = KpiFilterProduct.Create(filterTitle.Result);
-                        if (!filterItem.Ok)
-                        {
-                            return Operation.Error(filterItem.Error);
-                        }
-                        kpiFilters.Add(filterItem.Result);
-                    }
-                }
-                if (companyFilter.Any())
-                {
-                    foreach (var item in companyFilter)
-                    {
-                        var filterTitle = TitleValue.Create(item);
-                        if (!filterTitle.Ok)
-                        {
-                            return Operation.Error(filterTitle.Error);
-                        }
-                        var filterItem = KpiFilterCompany.Create(filterTitle.Result);
-                        if (!filterItem.Ok)
-                        {
-                            return Operation.Error(filterItem.Error);
-                        }
-                        kpiFilters.Add(filterItem.Result);
-                    }
-                }
-                return kpiFilters;
             }
         }
     }

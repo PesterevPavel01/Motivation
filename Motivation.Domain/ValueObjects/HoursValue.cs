@@ -3,27 +3,27 @@ using Motivation.Domain.Entities.Base;
 
 namespace Motivation.Domain.ValueObjects;
 
-public class StandardHoursValue : ValueObject
+public class HoursValue : ValueObject
 {
     public const int MinValue = 0;
     public const int MaxValue = 255;
 
-    public StandardHoursValue(int value)
+    public HoursValue(int value)
     {
         Value = value;
     }
 
     public int Value { get; }
 
-    public static Operation<StandardHoursValue, string> Create(int value)
+    public static Operation<HoursValue, string> Create(int value)
     {
         if (value < MinValue)
-            return Operation.Error($"Standard hours cannot be less than {MinValue}.");
+            return Operation.Error($"Hours cannot be less than {MinValue}.");
 
         if (value > MaxValue)
-            return Operation.Error($"Standard hours cannot be greater than {MaxValue}.");
+            return Operation.Error($"Hours cannot be greater than {MaxValue}.");
 
-        return new StandardHoursValue(value);
+        return new HoursValue(value);
     }
 
     protected override IEnumerable<object> GetEqualityComponents()

@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Motivation.Infrastructure.Migrations
 {
     [DbContext(typeof(MotivationDbContext))]
-    [Migration("20260614053640_AddUniqueIndexToStandardHours")]
-    partial class AddUniqueIndexToStandardHours
+    [Migration("20260616052253_AddActualHoursToEmployeePosition")]
+    partial class AddActualHoursToEmployeePosition
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -28,7 +28,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Deduction", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -75,7 +74,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Employee", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -126,7 +124,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.EmployeePosition", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("AssignmentDate")
@@ -157,7 +154,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.ExtraPart", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -204,7 +200,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.KpiFilter", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -240,7 +235,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.Kpi", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Abbreviation")
@@ -300,7 +294,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiTarget", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<Guid>("PositionKpiId")
@@ -325,7 +318,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.PositionKpi", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
@@ -364,7 +356,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.MeasurementUnit", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<string>("Code")
@@ -436,7 +427,6 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Position", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<decimal>("BaseSalary")
@@ -479,16 +469,15 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.StandardHours", b =>
                 {
                     b.Property<Guid>("Id")
-                        .ValueGeneratedOnAdd()
                         .HasColumnType("uuid");
 
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("timestamp with time zone");
 
-                    b.Property<int>("Month")
+                    b.Property<int>("Hours")
                         .HasColumnType("integer");
 
-                    b.Property<int>("StandardHoursValue")
+                    b.Property<int>("Month")
                         .HasColumnType("integer");
 
                     b.Property<DateTime>("UpdatedAt")
@@ -504,7 +493,7 @@ namespace Motivation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Month", "Year", "StandardHoursValue")
+                    b.HasIndex("Month", "Year", "Hours")
                         .IsUnique();
 
                     b.ToTable("standard_hours", (string)null);
@@ -569,6 +558,47 @@ namespace Motivation.Infrastructure.Migrations
                         .HasForeignKey("PositionId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.OwnsMany("Motivation.Domain.Entities.ActualHours", "ActualHoursHistory", b1 =>
+                        {
+                            b1.Property<Guid>("EmployeePositionId")
+                                .HasColumnType("uuid");
+
+                            b1.Property<int>("__synthesizedOrdinal")
+                                .ValueGeneratedOnAdd()
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTime>("CreatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<int>("Hours")
+                                .HasColumnType("integer");
+
+                            b1.Property<int>("Month")
+                                .HasColumnType("integer");
+
+                            b1.Property<DateTime>("UpdatedAt")
+                                .HasColumnType("timestamp with time zone");
+
+                            b1.Property<int>("Year")
+                                .HasColumnType("integer");
+
+                            b1.HasKey("EmployeePositionId", "__synthesizedOrdinal");
+
+                            b1.HasIndex("Month", "Year")
+                                .IsUnique();
+
+                            b1.ToTable("employee_positions");
+
+                            b1
+                                .ToJson("ActualHoursHistory")
+                                .HasColumnType("jsonb");
+
+                            b1.WithOwner()
+                                .HasForeignKey("EmployeePositionId");
+                        });
+
+                    b.Navigation("ActualHoursHistory");
 
                     b.Navigation("Employee");
 

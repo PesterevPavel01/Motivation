@@ -38,6 +38,7 @@ internal sealed class EmployeeConfiguration : EntityConfiguration<Employee>
         builder
             .HasMany(x => x.EmployeePositions)
             .WithOne(x => x.Employee)
+            .HasForeignKey(x => x.EmployeeId)
             .HasPrincipalKey(x => x.Id);
 
         builder

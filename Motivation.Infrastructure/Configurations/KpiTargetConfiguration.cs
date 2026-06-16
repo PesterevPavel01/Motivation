@@ -12,10 +12,10 @@ namespace Motivation.Infrastructure.Configurations
             builder.ToTable("kpi_targets");
 
             builder.HasKey(x => x.Id);
-
+            
             builder
                 .Property(x => x.Id)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedNever();
 
             builder
                 .Property(x => x.Target)

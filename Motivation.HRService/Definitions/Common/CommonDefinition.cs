@@ -1,5 +1,6 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Motivation.Contracts.Interfaces;
+using Motivation.Domain.DomainEvents.EmployeeDomainEvents;
 using Motivation.Domain.DomainEvents.PositionDomainEvents;
 using Motivation.Domain.Events.EmployeeDomainEvents;
 using Motivation.Domain.Events.PositionDomainEvents;
@@ -32,7 +33,14 @@ namespace Motivation.HRService.Definitions.Common
                     typeof(PositionCreatedDomainEvent).Name,
                     typeof(PositionUpdatedDomainEvent).Name,
                     typeof(EmployeeCreatedDomainEvent).Name,
-                    typeof(AssignEmployeeToPositionDomainEvent).Name
+                    typeof(EmployeeUpdatedDomainEvent).Name,
+                    typeof(AssignEmployeeToPositionDomainEvent).Name,
+                    typeof(SetActualHoursDomainEvent).Name,
+                    typeof(RemoveActualHoursDomainEvent).Name,
+                    typeof(SetDeductionDomainEvent).Name,
+                    typeof(RemoveDeductionDomainEvent).Name,
+                    typeof(SetExtraPartDomainEvent).Name,
+                    typeof(RemoveExtraPartDomainEvent).Name,
                 ];
             });
             builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();

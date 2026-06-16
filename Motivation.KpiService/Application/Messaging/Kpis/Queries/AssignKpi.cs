@@ -5,6 +5,7 @@ using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.ValueObjects;
+using Motivation.Infrastructure;
 
 namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
 {
@@ -12,7 +13,7 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
     {
         public record Request(AssignKpiToPositionDto Model) : IRequest<Operation<bool, string>>;
 
-        public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
+        public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger, IServiceProvider serviceProvider)
             : IRequestHandler<Request, Operation<bool, string>>
         {
             public async ValueTask<Operation<bool, string>> Handle(Request positionRequest, CancellationToken cancellationToken)
@@ -69,6 +70,9 @@ namespace Motivation.KpiService.Application.Messaging.Kpis.Queries
                 {
                     return Operation.Error(assignKpiResult.Error);
                 }
+
+                var dbContext = serviceProvider.GetRequiredService<MotivationDbContext>();
+                var entries = dbContext.ChangeTracker.Entries();
 
                 var result = await unitOfWork.SaveChangesAsync();
                 if (unitOfWork.Result.Exception is not null)

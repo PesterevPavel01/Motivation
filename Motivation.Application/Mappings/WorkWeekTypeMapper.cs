@@ -7,7 +7,7 @@ public static class WorkWeekTypeMapper
 {
     public static Operation<WorkWeekType, string> FromRussianString(string workWeekType)
     {
-        return workWeekType switch
+        return workWeekType.Trim().ToLower() switch
         {
             "пятидневка" => WorkWeekType.FiveDayWeek,
             "шестидневка" => WorkWeekType.SixDayWeek,

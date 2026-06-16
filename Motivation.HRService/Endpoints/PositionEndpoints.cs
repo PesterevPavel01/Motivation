@@ -20,14 +20,39 @@ internal static class PositionEndpointsDefinitionExtensions
         var group = routes.MapGroup("/api/positions").WithTags("Positions");
 
         group.MapPost("create", async ([FromServices] IMediator mediator, [FromBody] PositionCreateDto position, HttpContext context)
-                => await mediator.Send(new PostPosition.Request(position), context.RequestAborted))
-            .RequireAuthorization(AppData.SystemAdministratorRoleName)
-            .Produces(200)
-            .ProducesProblem(401)
-            .WithOpenApi();
+            =>
+        {
+            var result = await mediator.Send(new PostPosition.Request(position), context.RequestAborted);
+            if (!result.Ok)
+                return Results.BadRequest(result.Error);
+            return Results.Ok(result.Result);
+        })
+        .RequireAuthorization(AppData.SystemAdministratorRoleName)
+        .Produces(200)
+        .ProducesProblem(401)
+        .WithOpenApi();
+
+        group.MapPut("{code}/update", async ([FromServices] IMediator mediator, string code,  [FromBody] PositionCreateDto position, HttpContext context)
+            =>
+        {
+            var result = await mediator.Send(new PutPosition.Request(code, position), context.RequestAborted);
+            if (!result.Ok)
+                return Results.BadRequest(result.Error);
+            return Results.Ok(result.Result);
+        })
+        .RequireAuthorization(AppData.SystemAdministratorRoleName)
+        .Produces(200)
+        .ProducesProblem(401)
+        .WithOpenApi();
 
         group.MapGet("all", async ([FromServices] IMediator mediator, HttpContext context)
-            => await mediator.Send(new GetPositions.Request(), context.RequestAborted))
+            =>
+        {
+            var result = await mediator.Send(new GetPositions.Request(), context.RequestAborted);
+            if (!result.Ok)
+                return Results.BadRequest(result.Error);
+            return Results.Ok(result.Result);
+        })
         .RequireAuthorization(AppData.SystemAdministratorRoleName)
         .Produces(200)
         .ProducesProblem(401)

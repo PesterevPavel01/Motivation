@@ -13,10 +13,9 @@ internal class KpiFilterConfiguration : IEntityTypeConfiguration<KpiFilter>
         builder.ToTable("kpi_filters");
 
         builder.HasKey(x => x.Id);
-
-        builder
-            .Property(x => x.Id)
-            .ValueGeneratedOnAdd();
+        
+        builder.Property(x => x.Id)
+            .ValueGeneratedNever();
 
         builder
             .Property(x => x.Title)

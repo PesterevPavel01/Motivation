@@ -22,4 +22,14 @@ public class MeasurementUnit : SimpleEntity
             return Operation.Error("Code is null!");
         return new MeasurementUnit(title, code, Guid.CreateVersion7());
     }
+    public Operation<bool, string> Update(TitleValue title, CodeValue code)
+    {
+        if (title is null)
+            return Operation.Error("Title is null!");
+        if (code is null)
+            return Operation.Error("Code is null!");
+        Code = code;
+        Title = title;
+        return true;
+    }
 }

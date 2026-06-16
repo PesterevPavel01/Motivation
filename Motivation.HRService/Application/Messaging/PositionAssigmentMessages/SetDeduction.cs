@@ -4,21 +4,19 @@ using Mediator;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.ValueObjects;
-
+using Microsoft.EntityFrameworkCore;
 namespace Motivation.HRService.Application.Messaging.PositionAssigmentMessages;
 
-public class SetDeductionPart
+public class SetDeduction
 {
-    public record Request(DeductionDto Model) : IRequest<Operation<bool, string>>;
+    public record Request(string EmployeeCode, DeductionDto Model) : IRequest<Operation<bool, string>>;
 
     public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
         : IRequestHandler<Request, Operation<bool, string>>
     {
         public async ValueTask<Operation<bool, string>> Handle(Request setDeductionRequest, CancellationToken cancellationToken)
         {
-            logger.LogDebug($"Set deduction.");
-
-            if (String.IsNullOrWhiteSpace(setDeductionRequest.Model.EmployeeCode))
+            if (String.IsNullOrWhiteSpace(setDeductionRequest.EmployeeCode))
             {
                 return Operation.Error("Employee code is null or white space!");
             }
@@ -28,7 +26,7 @@ public class SetDeductionPart
                 return Operation.Error("Position code is null or white space!");
             }
 
-            var code = CodeValue.Create(setDeductionRequest.Model.Code);
+            var code = CodeValue.Create(setDeductionRequest.Model.Code ?? Guid.CreateVersion7().ToString());
             if (!code.Ok)
             {
                 return Operation.Error(code.Error);
@@ -64,7 +62,7 @@ public class SetDeductionPart
                 return Operation.Error(deduction.Error);
             }
 
-            var employeeCode = CodeValue.Create(setDeductionRequest.Model.EmployeeCode);
+            var employeeCode = CodeValue.Create(setDeductionRequest.EmployeeCode);
             if (!employeeCode.Ok)
             {
                 return Operation.Error(employeeCode.Error);
@@ -76,22 +74,30 @@ public class SetDeductionPart
                 return Operation.Error(positionCode.Error);
             }
 
-            var employeePosition = await unitOfWork.GetRepository<EmployeePosition>()
+            var repository = unitOfWork.GetRepository<Employee>();
+
+            var employee = await repository
                 .GetFirstOrDefaultAsync(
-                predicate: x => x.Employee.Code == employeeCode.Result
-                    && x.Position.Code == positionCode.Result,
+                predicate: x => x.Code == employeeCode.Result,
+                include: query => query
+                    .Include(x => x.EmployeePositions)
+                        .ThenInclude(x => x.Position)
+                    .Include(x => x.EmployeePositions)
+                        .ThenInclude(x => x.DeductionHistory),
                 trackingType: TrackingType.Tracking);
-            if (employeePosition is null)
+            
+            if (employee is null)
             {
                 return Operation.Error("Employee position is not found!");
             }
 
-            var setDeductionResult = employeePosition.SetDeduction(deduction.Result);
+            var setDeductionResult = employee.SetDeduction(positionCode.Result, deduction.Result);
             if (!setDeductionResult.Ok)
             {
                 return Operation.Error(setDeductionResult.Error);
             }
 
+            repository.Update(employee);
             var result = await unitOfWork.SaveChangesAsync();
 
             if (unitOfWork.Result.Exception is not null)

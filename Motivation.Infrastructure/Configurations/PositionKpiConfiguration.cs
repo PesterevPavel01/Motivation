@@ -15,7 +15,7 @@ internal sealed class PositionKpiConfiguration : IEntityTypeConfiguration<Positi
 
         builder
             .Property(x => x.Id)
-            .ValueGeneratedOnAdd();
+            .ValueGeneratedNever();
 
         builder.Property(x => x.CreatedAt).IsRequired().HasConversion
         (
@@ -47,16 +47,15 @@ internal sealed class PositionKpiConfiguration : IEntityTypeConfiguration<Positi
             .HasConversion(x => x.Value, x => WeightValue.Create(x).Result);
 
         builder
-            .HasOne(x => x.Position)
-            .WithMany(x => x.PositionKpiHistory)
-            .HasPrincipalKey(x => x.Id);
-
-        builder
             .HasMany(x => x.TargetHistory)
             .WithOne(x => x.PositionKpi)
             .HasPrincipalKey(x => x.Id);
 
-        builder
-            .HasOne(x => x.Kpi);
+        builder.HasOne(x => x.Kpi)
+            .WithMany();
+
+        builder.HasOne(x => x.Position)
+            .WithMany(x => x.PositionKpiHistory)
+            .OnDelete(DeleteBehavior.Cascade);
     }
 }

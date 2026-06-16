@@ -12,8 +12,8 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Motivation.Infrastructure.Migrations
 {
     [DbContext(typeof(MotivationDbContext))]
-    [Migration("20260611145951_AddOutboxMessageTable")]
-    partial class AddOutboxMessageTable
+    [Migration("20260615124929_InitialCreate")]
+    partial class InitialCreate
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -503,6 +503,9 @@ namespace Motivation.Infrastructure.Migrations
                         .HasColumnType("integer");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("Month", "Year", "StandardHoursValue")
+                        .IsUnique();
 
                     b.ToTable("standard_hours", (string)null);
                 });

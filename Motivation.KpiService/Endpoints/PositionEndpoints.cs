@@ -20,7 +20,13 @@ namespace Motivation.KpiService.Endpoints
             var group = routes.MapGroup("/api/positions").WithTags("Positions");
 
             group.MapPost("/add-kpi", async ([FromBody] AssignKpiToPositionDto assignModel, [FromServices] IMediator mediator, HttpContext context)
-                => await mediator.Send(new AssignKpi.Request(assignModel), context.RequestAborted))
+                =>
+            {
+                var result = await mediator.Send(new AssignKpi.Request(assignModel), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
             .RequireAuthorization(AppData.SystemAdministratorRoleName)
             .Produces(200)
             .ProducesProblem(401)

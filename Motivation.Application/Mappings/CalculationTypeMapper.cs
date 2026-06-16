@@ -7,11 +7,11 @@ public static class CalculationTypeMapper
 {
     public static Operation<CalculationType, string> FromRussianString(string calculationType)
     {
-        return calculationType switch
+        return calculationType.Trim().ToLower() switch
         {
-            "Стандарт" => CalculationType.Standard,
-            "Обратный" => CalculationType.Reversed,
-            "Сдельный" => CalculationType.Progressive,
+            "стандарт" => CalculationType.Standard,
+            "обратный" => CalculationType.Reversed,
+            "сдельный" => CalculationType.Progressive,
             _ => Operation.Error($"Unknown calculation type: {calculationType}")
         };
     }
@@ -23,9 +23,9 @@ public static class CalculationTypeExtensions
     {
         return type switch
         {
-            CalculationType.Standard => "Стандарт",
-            CalculationType.Reversed => "Обратный",
-            CalculationType.Progressive => "Сдельный",
+            CalculationType.Standard => "стандарт",
+            CalculationType.Reversed => "обратный",
+            CalculationType.Progressive => "сдельный",
             _ => type.ToString()
         };
     }

@@ -18,8 +18,7 @@ public static class DeductionMapper
             Value: source.DeductionValue.Value,
             Month: source.Month.Value,
             Year: source.Year.Value,
-            PositionCode: source.EmployeePosition?.Position?.Code.Value ?? string.Empty,
-            EmployeeCode: source.EmployeePosition?.Employee?.Code.Value ?? string.Empty
+            PositionCode: source.EmployeePosition?.Position?.Code.Value ?? string.Empty
         );
     }
 }

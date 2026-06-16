@@ -1,6 +1,7 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
 using Mediator;
+using Motivation.Application.Mappings;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.Enum;
@@ -17,9 +18,7 @@ namespace Motivation.HRService.Application.Messaging.PositionMessages.Queries
         {
             public async ValueTask<Operation<bool, string>> Handle(Request positionRequest, CancellationToken cancellationToken)
             {
-                logger.LogDebug("Creating new Position");
-
-                var codeResult = CodeValue.Create(positionRequest.Model.Code);
+                var codeResult = CodeValue.Create(positionRequest.Model.Code ?? Guid.CreateVersion7().ToString());
                 if (!codeResult.Ok)
                 {
                     return Operation.Error(codeResult.Error);
@@ -49,11 +48,13 @@ namespace Motivation.HRService.Application.Messaging.PositionMessages.Queries
                     return Operation.Error(motivationPartResult.Error);
                 }
 
-                WorkWeekType workWeekType = positionRequest.Model.WorkWeekType.Trim().ToLower() == "шестидневка" ?
-                    WorkWeekType.SixDayWeek
-                    : WorkWeekType.FiveDayWeek;
+                var workWeekType = WorkWeekTypeMapper.FromRussianString(positionRequest.Model.WorkWeekType);
+                if (!workWeekType)
+                {
+                    return Operation.Error("Work week type not found!");
+                }
 
-                var positionResult = Position.Create(titleResult.Result, codeResult.Result, baseSalaryResult.Result, workWeekType, motivationPartResult.Result);
+                var positionResult = Position.Create(titleResult.Result, codeResult.Result, baseSalaryResult.Result, workWeekType.Result, motivationPartResult.Result);
                 if (!positionResult.Ok)
                 {
                     return Operation.Error(positionResult.Error);

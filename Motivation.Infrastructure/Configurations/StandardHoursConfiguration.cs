@@ -15,7 +15,7 @@ namespace Motivation.Infrastructure.Configurations
 
             builder
                 .Property(x => x.Id)
-                .ValueGeneratedOnAdd();
+                .ValueGeneratedNever();
 
             builder.Property(x => x.CreatedAt).IsRequired().HasConversion
             (
@@ -36,9 +36,9 @@ namespace Motivation.Infrastructure.Configurations
                 .HasConversion<string>();
 
             builder
-                .Property(x => x.StandardHoursValue)
+                .Property(x => x.Hours)
                 .IsRequired()
-                .HasConversion(x => x.Value, x => StandardHoursValue.Create(x).Result);
+                .HasConversion(x => x.Value, x => HoursValue.Create(x).Result);
 
             builder
                 .Property(x => x.Month)
@@ -51,7 +51,8 @@ namespace Motivation.Infrastructure.Configurations
                 .HasConversion(x => x.Value, x => YearValue.Create(x).Result);
 
 
-            builder.HasIndex(x => new { x.Month, x.Year, x.StandardHoursValue })
+            builder
+                .HasIndex(x => new { x.Month, x.Year, x.Hours })
                 .IsUnique();
         }
     }

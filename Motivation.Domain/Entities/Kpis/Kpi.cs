@@ -26,7 +26,7 @@ public abstract class Kpi : AggregateRoot
 
     public virtual KpiType KpiType { get; private set; }
 
-    protected Operation<bool, string> SetMeasurementUnit(MeasurementUnit measurementUnit)
+    public Operation<bool, string> SetMeasurementUnit(MeasurementUnit measurementUnit)
     {
         if (measurementUnit is null)
             return Operation.Error("Measurement unit is null!");
@@ -37,9 +37,9 @@ public abstract class Kpi : AggregateRoot
     {
         if(filters is null)
             return Operation.Error("KpiFilters is null!");
-        var clearFilters = ClearFilters();
-        if (!clearFilters.Ok)
-            return Operation.Error(clearFilters.Error);
+        var clearResult = ClearFilters();
+        if(!clearResult.Ok)
+            return Operation.Error(clearResult.Error);
         _filters.AddRange(filters);
         return true;
     }

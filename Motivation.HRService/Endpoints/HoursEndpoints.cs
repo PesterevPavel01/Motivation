@@ -17,22 +17,22 @@ internal static class HoursEndpointsDefinitionExtensions
 {
     public static void MapHoursEndpoints(this IEndpointRouteBuilder routes)
     {
-        var group = routes.MapGroup("/api/hours").WithTags("Hours");
+        var group = routes.MapGroup("/api/standard-hours").WithTags("StandardHours");
 
-        group.MapPost("standard/create", async ([FromServices] IMediator mediator, [FromBody] StandardHoursCreateDto hours, HttpContext context)
-                =>
+        group.MapPost("create", async ([FromServices] IMediator mediator, [FromBody] StandardHoursCreateDto hours, HttpContext context)
+            =>
         {
             var result = await mediator.Send(new PostHours.Request(hours), context.RequestAborted);
             if (!result.Ok)
                 return Results.BadRequest(result.Error);
             return Results.Ok(result.Result);
         })
-            .RequireAuthorization(AppData.SystemAdministratorRoleName)
-            .Produces(200)
-            .ProducesProblem(401)
-            .WithOpenApi();
+        .RequireAuthorization(AppData.SystemAdministratorRoleName)
+        .Produces(200)
+        .ProducesProblem(401)
+        .WithOpenApi();
 
-        group.MapGet("standard/all", async ([FromServices] IMediator mediator, HttpContext context)
+        group.MapGet("all", async ([FromServices] IMediator mediator, HttpContext context)
             =>
         {
             var result = await mediator.Send(new GetHours.Request(), context.RequestAborted);
@@ -45,7 +45,7 @@ internal static class HoursEndpointsDefinitionExtensions
         .ProducesProblem(401)
         .WithOpenApi();
 
-        group.MapPut("standard/{id:guid}", async (Guid id, [FromServices] IMediator mediator, StandardHoursUpdateDto model, HttpContext context)
+        group.MapPut("{id:guid}/update", async (Guid id, [FromServices] IMediator mediator, StandardHoursUpdateDto model, HttpContext context)
             => 
         { 
             var result = await mediator.Send(new PutHours.Request(id, model), context.RequestAborted);
@@ -58,7 +58,7 @@ internal static class HoursEndpointsDefinitionExtensions
         .ProducesProblem(401)
         .WithOpenApi();
 
-        group.MapDelete("standard/{id:guid}", async (Guid id, [FromServices] IMediator mediator, HttpContext context)
+        group.MapDelete("{id:guid}", async (Guid id, [FromServices] IMediator mediator, HttpContext context)
             =>
         {
             var result = await mediator.Send(new DeleteHours.Request(id), context.RequestAborted);

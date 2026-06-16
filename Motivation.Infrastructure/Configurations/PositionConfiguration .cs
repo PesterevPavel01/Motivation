@@ -36,8 +36,7 @@ internal sealed class PositionConfiguration : EntityConfiguration<Position>
 
         builder
             .HasMany(x => x.PositionKpiHistory)
-            .WithOne(x => x.Position)
-            .HasPrincipalKey(x => x.Id);
+            .WithOne(x => x.Position);
 
         builder.OwnsOne(x => x.MotivationPart, motivationBuilder =>
         {

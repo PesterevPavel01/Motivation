@@ -14,7 +14,7 @@ public static class StandardHoursMapper
 
         return new StandardHoursDto(
             Id: source.Id,
-            Value: source.StandardHoursValue.Value,
+            Value: source.Hours.Value,
             Month: source.Month.Value,
             Year: source.Year.Value,
             WorkWeekType: source.WorkWeekType.ToRussianString()

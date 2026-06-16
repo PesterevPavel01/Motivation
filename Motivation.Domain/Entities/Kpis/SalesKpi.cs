@@ -58,9 +58,9 @@ public sealed class SalesKpi : Kpi
         Code = code;
         Abbreviation = abbreviation;
 
-        var addFilters = SetFilters(filters);
-        if (!addFilters.Ok)
-            return Operation.Error(addFilters.Error);
+        var setFilters = SetFilters(filters);
+        if (!setFilters.Ok)
+            return Operation.Error(setFilters.Error);
 
         RaiseDomainEvent(new KpiUpdatedDomainEvent(Id));
 

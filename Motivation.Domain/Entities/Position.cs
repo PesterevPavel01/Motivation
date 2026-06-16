@@ -69,8 +69,7 @@ public class Position : AggregateRoot
         TitleValue title, 
         CodeValue code, 
         SalaryValue baseSalary, 
-        WorkWeekType workWeekType, 
-        MotivationPart motivationPart)
+        WorkWeekType workWeekType)
     {
         if (code is null)
             return Operation.Error("Code is null!");
@@ -83,8 +82,6 @@ public class Position : AggregateRoot
         WorkWeekType = workWeekType;
         Title = title;
         Code = code;
-
-        SetMotivationPart(motivationPart);
 
         RaiseDomainEvent(new PositionUpdatedDomainEvent(Id));
 

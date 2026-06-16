@@ -6,7 +6,7 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Motivation.Infrastructure.Migrations
 {
     /// <inheritdoc />
-    public partial class Init : Migration
+    public partial class InitialCreate : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
@@ -47,17 +47,35 @@ namespace Motivation.Infrastructure.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "outbox_messages",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
+                    Type = table.Column<string>(type: "character varying(512)", maxLength: 512, nullable: false),
+                    Content = table.Column<string>(type: "character varying(4096)", maxLength: 4096, nullable: false),
+                    ProcessedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: true),
+                    Error = table.Column<string>(type: "character varying(8192)", maxLength: 8192, nullable: true),
+                    CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_outbox_messages", x => x.Id);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "positions",
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     BaseSalary = table.Column<decimal>(type: "numeric", nullable: false),
                     WorkWeekType = table.Column<string>(type: "character varying(100)", maxLength: 100, nullable: false),
+                    Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     MotivationPart = table.Column<string>(type: "jsonb", nullable: false)
                 },
                 constraints: table =>
@@ -91,11 +109,12 @@ namespace Motivation.Infrastructure.Migrations
                     Abbreviation = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     CalculationType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     MeasurementUnitId = table.Column<Guid>(type: "uuid", nullable: true),
+                    Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    KpiType = table.Column<int>(type: "integer", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     UpdatedAt = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     Code = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
-                    Enabled = table.Column<bool>(type: "boolean", nullable: false),
-                    Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false)
+                    Enabled = table.Column<bool>(type: "boolean", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -163,10 +182,6 @@ namespace Motivation.Infrastructure.Migrations
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     ValidFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
                     ValidTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
-                    Target = table.Column<decimal>(type: "numeric", nullable: false),
-                    Fact = table.Column<decimal>(type: "numeric", nullable: false),
-                    Achievement = table.Column<decimal>(type: "numeric", nullable: false),
-                    BonusAmount = table.Column<decimal>(type: "numeric", nullable: false),
                     OrderNumber = table.Column<int>(type: "integer", nullable: false),
                     Weight = table.Column<decimal>(type: "numeric", nullable: false),
                     PositionId = table.Column<Guid>(type: "uuid", nullable: false),
@@ -243,6 +258,28 @@ namespace Motivation.Infrastructure.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.CreateTable(
+                name: "kpi_targets",
+                columns: table => new
+                {
+                    Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    ValidFrom = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    ValidTo = table.Column<DateTime>(type: "timestamp with time zone", nullable: false),
+                    Target = table.Column<decimal>(type: "numeric", nullable: false),
+                    PositionKpiId = table.Column<Guid>(type: "uuid", nullable: false),
+                    KpiFact = table.Column<string>(type: "jsonb", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_kpi_targets", x => x.Id);
+                    table.ForeignKey(
+                        name: "FK_kpi_targets_position_kpis_PositionKpiId",
+                        column: x => x.PositionKpiId,
+                        principalTable: "position_kpis",
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
+                });
+
             migrationBuilder.CreateIndex(
                 name: "IX_deductions_Code",
                 table: "deductions",
@@ -303,6 +340,11 @@ namespace Motivation.Infrastructure.Migrations
                 column: "Title");
 
             migrationBuilder.CreateIndex(
+                name: "IX_kpi_targets_PositionKpiId",
+                table: "kpi_targets",
+                column: "PositionKpiId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_kpis_Code",
                 table: "kpis",
                 column: "Code",
@@ -349,6 +391,12 @@ namespace Motivation.Infrastructure.Migrations
                 name: "IX_positions_Title",
                 table: "positions",
                 column: "Title");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_standard_hours_Month_Year_StandardHoursValue",
+                table: "standard_hours",
+                columns: new[] { "Month", "Year", "StandardHoursValue" },
+                unique: true);
         }
 
         /// <inheritdoc />
@@ -364,7 +412,10 @@ namespace Motivation.Infrastructure.Migrations
                 name: "kpi_filters");
 
             migrationBuilder.DropTable(
-                name: "position_kpis");
+                name: "kpi_targets");
+
+            migrationBuilder.DropTable(
+                name: "outbox_messages");
 
             migrationBuilder.DropTable(
                 name: "standard_hours");
@@ -373,10 +424,13 @@ namespace Motivation.Infrastructure.Migrations
                 name: "employee_positions");
 
             migrationBuilder.DropTable(
-                name: "kpis");
+                name: "position_kpis");
 
             migrationBuilder.DropTable(
                 name: "employees");
+
+            migrationBuilder.DropTable(
+                name: "kpis");
 
             migrationBuilder.DropTable(
                 name: "positions");

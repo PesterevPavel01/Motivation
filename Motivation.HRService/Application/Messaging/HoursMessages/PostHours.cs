@@ -17,8 +17,6 @@ public class PostHours
     {
         public async ValueTask<Operation<bool, string>> Handle(Request hoursRequest, CancellationToken cancellationToken)
         {
-            logger.LogDebug($"Create standard hours.");
-
             if (hoursRequest.Model is null)
                 return Operation.Error("Standard hours model is null!");
 
@@ -33,7 +31,7 @@ public class PostHours
                 return Operation.Error(workWeekType.Error);
             }
 
-            var standardHoursValue = StandardHoursValue.Create(hoursRequest.Model.Value);
+            var standardHoursValue = HoursValue.Create(hoursRequest.Model.Value);
             if (!standardHoursValue.Ok)
             {
                 return Operation.Error(standardHoursValue.Error);
