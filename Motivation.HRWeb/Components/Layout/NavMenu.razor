@@ -1,0 +1,43 @@
+﻿<div class="top-row ps-3 navbar navbar-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="">Мотивация</a>
+    </div>
+</div>
+
+<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+
+<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
+    <nav class="nav flex-column gap-1">
+        <div class="nav-item p-2">
+            <NavLink class="nav-link d-flex" href="" Match="NavLinkMatch.All">
+                <span class="bi bi-house-door-fill-nav-menu m-0" aria-hidden="true"></span>
+                <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">Матрица</p>
+            </NavLink>
+        </div>
+
+        <AuthorizeView>
+            <div class="nav-item p-2">
+                <NavLink class="nav-link d-flex" href="employees">
+                    <span class="bi bi-person m-0 d-flex align-items-center" aria-hidden="true"></span>
+                    <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">Сотрудники</p>
+                </NavLink>
+            </div>
+
+            <div class="nav-item p-2">
+                <NavLink class="nav-link d-flex" href="weather">
+                    <span class="bi bi-briefcase d-flex align-items-center" aria-hidden="true"></span> 
+                    <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">Должности</p>
+                </NavLink>
+            </div>
+
+            <div class="nav-item p-2">
+                <NavLink class="nav-link d-flex" href="user-claims">
+                    <span class="bi bi-graph-up-arrow d-flex align-items-center" aria-hidden="true"></span>
+                    <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">KPI</p>
+                </NavLink>
+            </div>
+        </AuthorizeView>
+
+    </nav>
+</div>
+

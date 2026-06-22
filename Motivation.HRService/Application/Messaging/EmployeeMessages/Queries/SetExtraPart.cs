@@ -6,7 +6,7 @@ using Motivation.Domain.Entities;
 using Motivation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 
-namespace Motivation.HRService.Application.Messaging.PositionAssigmentMessages
+namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
 {
     public class SetExtraPart
     {

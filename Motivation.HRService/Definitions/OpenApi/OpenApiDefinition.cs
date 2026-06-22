@@ -12,6 +12,7 @@ namespace Motivation.HRService.Definitions.OpenApi
         public const string AppVersion = "1.0";
 
         private const string _openApiConfig = "/openapi/v1.json";
+        private const string _prodactionOpenApiConfig = "/hr/openapi/v1.json";
 
         public override void ConfigureServices(WebApplicationBuilder builder)
         {
@@ -25,10 +26,10 @@ namespace Motivation.HRService.Definitions.OpenApi
 
         public override void ConfigureApplication(WebApplication app)
         {
-            if (!app.Environment.IsDevelopment())
+            /*if (!app.Environment.IsDevelopment())
             {
                 return;
-            }
+            }*/
 
             var url = app.Services.GetRequiredService<IConfiguration>().GetValue<string>("AuthServer:Url");
 
@@ -43,7 +44,14 @@ namespace Motivation.HRService.Definitions.OpenApi
 
             app.UseSwaggerUI(settings =>
             {
-                settings.SwaggerEndpoint(_openApiConfig, $"HR service v.{AppVersion}");
+                if (app.Environment.IsProduction())
+                {
+                    settings.SwaggerEndpoint(_prodactionOpenApiConfig, $"HR service v.{AppVersion}");
+                }
+                else 
+                {
+                    settings.SwaggerEndpoint(_openApiConfig, $"HR service v.{AppVersion}");
+                }
 
                 settings.DocumentTitle = "HR service";
                 settings.DefaultModelExpandDepth(0);

@@ -12,12 +12,16 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenApi
     public sealed class OAuth2SecuritySchemeTransformer : IOpenApiDocumentTransformer
     {
         private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
+        private readonly IHostEnvironment _environment;
         private readonly string? _authServerUrl;
+        private readonly string? _serverUrl;
 
-        public OAuth2SecuritySchemeTransformer(IAuthenticationSchemeProvider authenticationSchemeProvider, IConfiguration configuration)
+        public OAuth2SecuritySchemeTransformer(IAuthenticationSchemeProvider authenticationSchemeProvider, IConfiguration configuration, IHostEnvironment environment)
         {
             _authenticationSchemeProvider = authenticationSchemeProvider;
             _authServerUrl = configuration.GetSection("AuthServer").GetValue<string>("Url");
+            _serverUrl = configuration.GetSection("OpenApi").GetValue<string>("ProdactionUrl");
+            _environment = environment;
 
             ArgumentNullException.ThrowIfNull(_authServerUrl);
         }
@@ -25,10 +29,13 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenApi
         public async Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
         {
 
-            document.Servers = new List<OpenApiServer>
+            if (_environment.IsProduction() && !string.IsNullOrWhiteSpace(_serverUrl))
             {
-                new OpenApiServer { Url = _authServerUrl }
-            };
+                document.Servers = new List<OpenApiServer>
+                {
+                    new OpenApiServer { Url = _serverUrl }
+                };
+            }
 
             var authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
             if (authenticationSchemes.Any(authScheme => authScheme.Name == OpenIddictServerAspNetCoreDefaults.AuthenticationScheme))

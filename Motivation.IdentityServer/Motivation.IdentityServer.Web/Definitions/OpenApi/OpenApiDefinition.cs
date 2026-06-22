@@ -13,6 +13,7 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenApi
         public const string AppVersion = "1.0";
 
         private const string _openApiConfig = "/openapi/v1.json";
+        private const string _prodactionOpenApiConfig = "/identity/openapi/v1.json";
 
         public override void ConfigureServices(WebApplicationBuilder builder)
         {
@@ -38,8 +39,16 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenApi
 
             app.UseSwaggerUI(settings =>
             {
-                settings.SwaggerEndpoint(_openApiConfig, $"{AppData.ServiceName} v.{AppVersion}");
-
+                if (app.Environment.IsProduction())
+                {
+                    settings.SwaggerEndpoint(_prodactionOpenApiConfig, $"Identity service v.{AppVersion}");
+                    //var prodactionUrl = app.Configuration["OpenApi:ProdactionUrl"];
+                    //settings.OAuth2RedirectUrl($"{prodactionUrl}/swagger/oauth2-redirect.html");
+                }
+                else
+                {
+                    settings.SwaggerEndpoint(_openApiConfig, $"Identity service v.{AppVersion}");
+                }
                 settings.DocumentTitle = $"{AppData.ServiceName}";
                 settings.DefaultModelExpandDepth(0);
                 settings.DefaultModelRendering(ModelRendering.Model);

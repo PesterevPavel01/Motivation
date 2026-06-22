@@ -28,13 +28,5 @@ public class CommonDefinition : AppDefinition
     /// <param name="app"></param>
     public override void ConfigureApplication(WebApplication app)
     {
-        app.UseForwardedHeaders(new ForwardedHeadersOptions
-        {
-            ForwardedHeaders = ForwardedHeaders.XForwardedFor | ForwardedHeaders.XForwardedProto
-        });
-        app.UseHttpsRedirection();
-        app.UseStaticFiles();
-        app.MapRazorPages();
-        app.MapDefaultControllerRoute();
     }
 }

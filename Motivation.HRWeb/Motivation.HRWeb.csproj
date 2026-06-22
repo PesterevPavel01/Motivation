@@ -1,0 +1,28 @@
+﻿<Project Sdk="Microsoft.NET.Sdk.Web">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UserSecretsId>76e1fe58-f804-49c3-a444-b6b7aa8952f0</UserSecretsId>
+    <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.AspNetCore.Authentication.OpenIdConnect" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.Authorization" Version="9.0.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="9.0.0" />
+    <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.23.0" />
+    <PackageReference Include="OpenIddict.AspNetCore" Version="5.8.0" />
+    <PackageReference Include="OpenIddict.EntityFrameworkCore" Version="5.8.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="wwwroot\lib\bootstrap-icons\" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Motivation.Contracts\Motivation.Contracts.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -1,11 +1,10 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
-using Microsoft.AspNetCore.Hosting.Server;
+using Microsoft.AspNetCore.DataProtection;
 using Motivation.IdentityServer.Domain.Base;
 using Motivation.IdentityServer.Domain.Configuration;
 using Motivation.IdentityServer.Infrastructure;
 using Motivation.IdentityServer.Web.HostedServices;
 using OpenIddict.Abstractions;
-using OpenIddict.Server;
 using System.Security.Cryptography.X509Certificates;
 
 namespace Motivation.IdentityServer.Web.Definitions.OpenIddict
@@ -42,10 +41,20 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenIddict
                         .SetUserInfoEndpointUris("connect/userinfo");
 
                     // Encryption and signing of tokens
-                    options
-                        .AddEphemeralEncryptionKey() // only for Developing mode
-                        .AddEphemeralSigningKey() // only for Developing mode
-                        .DisableAccessTokenEncryption(); // only for Developing mode
+                    if (builder.Environment.IsProduction())
+                    {
+                        options
+                            .AddDevelopmentEncryptionCertificate()
+                            .AddDevelopmentSigningCertificate()
+                            .DisableAccessTokenEncryption();
+                    }
+                    else
+                    {
+                        options
+                            .AddEphemeralEncryptionKey() // only for Developing mode
+                            .AddEphemeralSigningKey() // only for Developing mode
+                            .DisableAccessTokenEncryption(); // only for Developing mode
+                    }
 
                     // Mark the "email", "profile" and "roles" scopes as supported scopes.
                     options.RegisterScopes(
@@ -58,12 +67,6 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenIddict
                         AppData.AudienceApi);
 
                     options.RegisterAudiences(AppData.AudienceApi);
-
-                    var issuerUri = builder.Configuration["AuthServer:IssuerUri"];
-                    if (!string.IsNullOrEmpty(issuerUri))
-                    {
-                        options.SetIssuer(new Uri(issuerUri));
-                    }
 
                     // Register the signing and encryption credentials.
                     var useDevCerts = builder.Configuration.GetValue<bool>("AuthServer:DevCertificates");
@@ -85,14 +88,17 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenIddict
                                .AddSigningCertificate(cert);
                     }
 
-                    // Register the ASP.NET Core host and configure the ASP.NET Core options.
                     options.UseAspNetCore()
-                    .EnableEndSessionEndpointPassthrough()
-                    .EnableTokenEndpointPassthrough()
-                    .EnableAuthorizationEndpointPassthrough()
-                    .DisableTransportSecurityRequirement();
+                        .EnableEndSessionEndpointPassthrough()
+                        .EnableTokenEndpointPassthrough()
+                        .EnableAuthorizationEndpointPassthrough()
+                        .DisableTransportSecurityRequirement();
 
-
+                    var issuerUri = builder.Configuration["AuthServer:IssuerUri"];
+                    if (!string.IsNullOrEmpty(issuerUri))
+                    {
+                        options.SetIssuer(new Uri(issuerUri));
+                    }
                 })
 
                 // Register the OpenIddict validation components.
@@ -104,6 +110,10 @@ namespace Motivation.IdentityServer.Web.Definitions.OpenIddict
                     // Register the ASP.NET Core host.
                     options.UseAspNetCore();
                 });
+
+            builder.Services.AddDataProtection()
+                .PersistKeysToFileSystem(new DirectoryInfo("/app/keys"))
+                .SetApplicationName("MotivationIdentityServer");
 
             builder.Services.AddHostedService<OpenIddictWorker>();
 

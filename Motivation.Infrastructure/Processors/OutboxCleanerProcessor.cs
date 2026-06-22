@@ -27,14 +27,14 @@ public sealed class OutboxCleanerProcessor : IOutboxCleanerProcessor
         var outboxMessageRepository = _unitOfWork
             .GetRepository<OutboxMessage>();
 
-        var removeOutboxMessages = await outboxMessageRepository
+        /*var removeOutboxMessages = await outboxMessageRepository
             .GetAllAsync(
                 predicate: x => 
                     x.ProcessedAt < _timerProvider.GetUtcNow().AddDays(-10)
                     && _supportedEventTypes.Contains(x.Type),
                 trackingType: TrackingType.Tracking);
 
-        outboxMessageRepository.Delete(removeOutboxMessages);
+        outboxMessageRepository.Delete(removeOutboxMessages);*/
 
         await _unitOfWork.SaveChangesAsync();
 

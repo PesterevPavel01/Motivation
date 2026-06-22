@@ -30,22 +30,10 @@ public sealed class UserToServiceClientConfiguration : IIdentityClientConfigurat
             DisplayName = "API testing clients with Authorization Code Flow demonstration",
             RedirectUris = 
             {
-                new Uri("https://www.thunderclient.com/oauth/callback"),            // https://www.thunderclient.com/
-                new Uri($"{_authConfig.Url}/swagger/oauth2-redirect.html"),         // https://swagger.io/ for IdentityModule as Example
-                new Uri("https://localhost:20001/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
-                new Uri("https://localhost:20002/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
-                new Uri("https://localhost:20003/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
-                new Uri("https://localhost:20004/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
-                new Uri("https://localhost:20005/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
-                new Uri("https://localhost:20006/swagger/oauth2-redirect.html"),    // https://swagger.io/ for Module as Example
-                new Uri("https://localhost:7207/signin-oidc"),                      // BlazorApp see folder ClientSamples in repository
-                new Uri("https://localhost:30001/callback/login/local")             // RazorPagesUI
+                new Uri($"{_authConfig.Url}/swagger/oauth2-redirect.html")
             },
             PostLogoutRedirectUris =
-            {
-                new Uri("https://localhost:7207/signout-callback-oidc"),             // Calabonga.BlazorApp see folder ClientSamples in repository
-                new Uri("https://localhost:30001/callback/logout/local")             // Calabonga.Microservices.RazorPagesUI
-            },
+            {},
             Permissions =
             {
                 // Endpoint permissions
@@ -70,6 +58,16 @@ public sealed class UserToServiceClientConfiguration : IIdentityClientConfigurat
                 OpenIddictConstants.Permissions.ResponseTypes.IdToken
             }
         };
+        
+        foreach (var link in clientConfig.RedirectUris)
+        {
+            descriptor.RedirectUris.Add(new Uri(link));
+        }
+
+        foreach (var link in clientConfig.PostLogoutRedirectUris)
+        {
+            descriptor.PostLogoutRedirectUris.Add(new Uri(link));
+        }
 
         return descriptor;
     }

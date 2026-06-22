@@ -7,7 +7,7 @@ using Motivation.Domain.ValueObjects;
 using Motivation.IdentityServer.Domain.Base;
 using Microsoft.EntityFrameworkCore;
 
-namespace Motivation.HRService.Application.Messaging.PositionAssigmentMessages;
+namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries;
 
 public class RemoveDeduction
 {

@@ -1,0 +1,110 @@
+﻿@page "/employees"
+@rendermode InteractiveServer
+@using Motivation.Contracts.Dto
+@using Motivation.HRWeb.Application.Interfaces
+@using Microsoft.AspNetCore.Authorization
+@inject IEmployeeService EmployeeService
+@attribute [Authorize]
+
+<PageTitle>Сотрудники</PageTitle>
+
+<h1>Сотрудники</h1>
+
+@if (isLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Ошибка:</strong> @errorMessage
+    </div>
+}
+else if (employees == null || !employees.Any())
+{
+    <div class="alert alert-info">Сотрудники не найдены.</div>
+}
+else
+{
+    <div class="table-responsive">
+        <table class="table table-bordered table-striped table-hover align-middle">
+            <thead class="table-light">
+                <tr>
+                    <th colspan="5" class="text-center fw-bold bg-secondary text-white">Персональные данные</th>
+                    <th colspan="1" class="text-center fw-bold bg-secondary text-white">Должности</th>
+                </tr>
+                <tr>
+                    <th>Код</th>
+                    <th>Фамилия</th>
+                    <th>Имя</th>
+                    <th>Отчество</th>
+                    <th>Полное имя</th>
+                    <th>Должности</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var emp in employees)
+                {
+                    <tr>
+                        <td><code>@emp.Code</code></td>
+                        <td>@emp.LastName</td>
+                        <td>@emp.FirstName</td>
+                        <td>@(emp.SecondName ?? "—")</td>
+                        <td><strong>@emp.FullName</strong></td>
+                        <td>
+                            @if (emp.Positions != null && emp.Positions.Any())
+                            {
+                                <ul class="list-unstyled mb-0">
+                                    @foreach (var pos in emp.Positions)
+                                    {
+                                        <li>@(pos.Position?.Title ?? "без должности")</li>
+                                    }
+                                </ul>
+                            }
+                            else
+                            {
+                                <span class="text-muted">нет</span>
+                            }
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-3">
+        <span class="badge bg-secondary">Всего: @employees.Count()</span>
+    </div>
+}
+
+<button class="btn btn-primary" @onclick="LoadEmployees" disabled="@isLoading">
+    @(isLoading ? "Загрузка..." : "Загрузить сотрудников")
+</button>
+
+@code {
+    private IEnumerable<EmployeeDto>? employees;
+    private bool isLoading = false;
+    private string? errorMessage;
+
+    private async Task LoadEmployees()
+    {
+        isLoading = true;
+        errorMessage = null;
+        employees = null;
+
+        try
+        {
+            employees = await EmployeeService.GetAllEmployeesAsync(CancellationToken.None);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+}

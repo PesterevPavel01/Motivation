@@ -24,6 +24,12 @@ public class GetAuthorizationCodeGrandTypeToken {
                 return Operation.Error("Invalid grant type");
             }
 
+            var codeVerifier = oidcRequest.CodeVerifier;
+            if (string.IsNullOrEmpty(codeVerifier))
+            {
+                return Operation.Error("Missing code_verifier");
+            }
+
             var authenticateResult = await httpContext.AuthenticateAsync(
                 OpenIddictServerAspNetCoreDefaults.AuthenticationScheme);
 

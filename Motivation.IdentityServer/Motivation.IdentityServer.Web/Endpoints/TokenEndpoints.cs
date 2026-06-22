@@ -70,7 +70,7 @@ namespace Motivation.IdentityServer.Web.Endpoints
 
                 return Results.Problem("The specified grant type is not supported.");
             })
-                //.ExcludeFromDescription()
-                .AllowAnonymous();
+            //.ExcludeFromDescription()
+            .AllowAnonymous();
     }
 }

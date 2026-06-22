@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.OpenApi;
 using Microsoft.OpenApi.Models;
 using Motivation.IdentityServer.Domain.Base;
+using System.Configuration;
 
 namespace Motivation.HRService.Definitions.OpenApi
 {
@@ -11,18 +12,32 @@ namespace Motivation.HRService.Definitions.OpenApi
     public sealed class OAuth2SecuritySchemeTransformer : IOpenApiDocumentTransformer
     {
         private readonly IAuthenticationSchemeProvider _authenticationSchemeProvider;
+        private readonly IHostEnvironment _environment;
         private readonly string? _authServerUrl;
+        private readonly string? _serverUrl;
+        private readonly IConfiguration _configuration;
 
-        public OAuth2SecuritySchemeTransformer(IAuthenticationSchemeProvider authenticationSchemeProvider, IConfiguration configuration)
+
+        public OAuth2SecuritySchemeTransformer(IAuthenticationSchemeProvider authenticationSchemeProvider, IConfiguration configuration, IHostEnvironment environment)
         {
             _authenticationSchemeProvider = authenticationSchemeProvider;
+            _configuration = configuration;
             _authServerUrl = configuration.GetSection("AuthServer").GetValue<string>("Url");
-
+            _serverUrl = configuration.GetSection("OpenApi").GetValue<string>("ProdactionUrl");
+            _environment = environment;
             ArgumentNullException.ThrowIfNull(_authServerUrl);
         }
 
         public async Task TransformAsync(OpenApiDocument document, OpenApiDocumentTransformerContext context, CancellationToken cancellationToken)
         {
+            if (_environment.IsProduction() && !string.IsNullOrWhiteSpace(_serverUrl))
+            {
+                    document.Servers = new List<OpenApiServer>
+                    {
+                        new OpenApiServer { Url = _serverUrl }
+                    };
+            }
+
             var authenticationSchemes = await _authenticationSchemeProvider.GetAllSchemesAsync();
             if (authenticationSchemes.Any())
             {
@@ -54,9 +69,9 @@ namespace Motivation.HRService.Definitions.OpenApi
                 document.Info = new()
                 {
                     License = new OpenApiLicense() { Name = "MIT", Url = new Uri("https://mit-license.org/") },
-                    Title = AppData.ServiceName,
-                    Version = OpenApiDefinition.AppVersion,
-                    Description = AppData.ServiceDescription,
+                    Title = _configuration.GetValue<string>("OpenApi:ServiceName") ?? "Wep-Api",
+                    Version = _configuration.GetValue<string>("OpenApi:Version") ?? "Wep-Api version",
+                    Description = _configuration.GetValue<string>("OpenApi:Description") ?? "Web-Api description",
                     Contact = new() { Name = "Pesterev Pavel", Url = new("https://github.com/PesterevPavel01"), }
                 };
             }
