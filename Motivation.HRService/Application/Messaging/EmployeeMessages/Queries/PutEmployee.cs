@@ -9,7 +9,7 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries;
 
 public class PutEmployee
 {
-    public record Request(string Code, EmployeeCreateDto Model) : IRequest<Operation<bool, string>>;
+    public record Request(string Code, EmployeeUpdateDto Model) : IRequest<Operation<bool, string>>;
 
     public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
         : IRequestHandler<Request, Operation<bool, string>>

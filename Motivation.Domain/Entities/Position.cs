@@ -1,4 +1,5 @@
 ﻿using Calabonga.OperationResults;
+using Motivation.Domain.DomainEvents.EmployeeDomainEvents;
 using Motivation.Domain.DomainEvents.KpiDomainEvents;
 using Motivation.Domain.DomainEvents.PositionDomainEvents;
 using Motivation.Domain.Entities.Base;
@@ -44,6 +45,13 @@ public class Position : AggregateRoot
         position.RaiseDomainEvent(new PositionCreatedDomainEvent(position.Id));
 
         return position;
+    }
+
+    public Operation<bool, string> Delete()
+    {
+        RaiseDomainEvent(new PositionDeletedDomainEvent(Id));
+
+        return true;
     }
 
     private Operation<bool, string> SetMotivationPart(MotivationPart motivationPart) 

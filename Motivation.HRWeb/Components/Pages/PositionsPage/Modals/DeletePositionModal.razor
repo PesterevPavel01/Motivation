@@ -1,0 +1,60 @@
+﻿@using Mediator
+@using Motivation.Contracts.Dto
+@using Motivation.HRWeb.Application.Messages.PositionMessages
+@inject IMediator Mediator
+
+<div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-6 text-danger">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" @onclick="OnCancel"></button>
+            </div>
+            <div class="modal-body">
+                @if (!string.IsNullOrEmpty(deleteErrorMessage))
+                {
+                    <div class="alert alert-danger small mb-3">@deleteErrorMessage</div>
+                }
+                <p class="small fw-bold mb-2">Удалить должность <strong>@Position?.Title</strong>?</p>
+                <ul class="list-group list-group-flush small">
+                    <li class="list-group-item py-1"><strong>Код:</strong> @Position?.Code</li>
+                </ul>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
+                <button type="button" class="btn btn-danger btn-sm" @onclick="HandleDelete" disabled="@isDeleting">
+                    @(isDeleting ? "Удаление..." : "Удалить")
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public PositionDto? Position { get; set; }
+    [Parameter] public EventCallback OnDeleted { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private bool isDeleting = false;
+    private string? deleteErrorMessage;
+
+    private async Task HandleDelete()
+    {
+        if (Position is null) return;
+
+        try
+        {
+            isDeleting = true;
+            var result = await Mediator.Send(new DeletePosition.Request(Position.Code));
+
+            if (!result.Ok)
+                deleteErrorMessage = result.Error ?? "Ошибка удаления.";
+            else
+                await OnDeleted.InvokeAsync();
+        }
+        finally
+        {
+            isDeleting = false;
+        }
+    }
+}

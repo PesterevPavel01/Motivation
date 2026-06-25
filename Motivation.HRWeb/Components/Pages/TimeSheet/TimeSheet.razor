@@ -1,0 +1,174 @@
+﻿@page "/time-sheet"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Motivation.Application.Mappings
+@using Motivation.HRWeb.Components.Pages.TimeSheet.ViewModels
+@inject TimeSheetViewModel ViewModel
+@using Motivation.Contracts
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+<PageTitle>Табель</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fs-4 m-0">Табель учета рабочего времени</h1>
+</div>
+
+@if (ViewModel.IsLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(ViewModel.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Ошибка:</strong> @ViewModel.ErrorMessage
+    </div>
+}
+else
+{
+    <div class="d-flex justify-content-between bg-light p-2 rounded-2 mb-3">
+        <div class="d-flex flex-column justify-content-start">
+            <span class="p-2">Норма часов </span>
+            <table class="table table-sm table-borderless align-middle mb-0 standard-hours-table">
+                <tbody>
+                    @foreach (var weekType in ViewModel.WeekTypes)
+                    {
+                        var weekTypeRussian = weekType.ToRussianString();
+                        var standardHoursModel = ViewModel.StandardHoursList.FirstOrDefault(x => x.WorkWeekType == weekTypeRussian);
+
+                        <tr class="bg-white rounded-1 mb-1 standard-hours-row">
+                            <td class="standard-hours-cell">
+                                <div class="row gx-2 align-items-center">
+                                    <div class="col-6 d-flex justify-content-start">
+                                        <span class="small text-muted text-truncate" title="@weekTypeRussian">@weekTypeRussian</span>
+                                    </div>
+                                    <div class="col-3 d-flex justify-content-end">
+                                        <input type="number"
+                                               class="form-control form-control-sm @(standardHoursModel?.IsEditing == true ? "" : "bg-transparent border-0") hours-input-sm"
+                                               @bind="standardHoursModel.Value"
+                                               min="0"
+                                               readonly="@(!(standardHoursModel?.IsEditing == true))" />
+                                    </div>
+                                    <div class="col-3 d-flex justify-content-end">
+                                        @if (standardHoursModel?.IsEditing == true)
+                                        {
+                                            <button class="btn btn-outline-success btn-sm py-0" @onclick="() => ViewModel.SaveStandardHoursAsync(weekTypeRussian)" disabled="@(standardHoursModel?.IsSaving == true)" title="Сохранить">
+                                                <i class="bi bi-floppy-fill action-icon-sm"></i>
+                                            </button>
+                                            <button class="btn btn-outline-secondary btn-sm py-0" @onclick="() => ViewModel.CancelStandardHours(weekTypeRussian)" title="Отменить">
+                                                <i class="bi bi-x-lg action-icon-sm"></i>
+                                            </button>
+                                        }
+                                        else
+                                        {
+                                            <button class="btn btn-outline-secondary btn-sm py-0" @onclick="() => ViewModel.StartEditingStandardHours(weekTypeRussian)" title="Редактировать">
+                                                <i class="bi bi-pencil-fill action-icon-sm"></i>
+                                            </button>
+                                        }
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+        <div class="d-flex align-items-center gap-1 flex-wrap">
+            <span class="p-2 pb-1">Фильтр</span>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text">Месяц</span>
+                <select class="form-select" @bind="ViewModel.Filter.Month">
+                    @for (int i = 1; i <= 12; i++)
+                    {
+                        <option value="@i">@i</option>
+                    }
+                </select>
+            </div>
+            <div class="input-group input-group-sm">
+                <span class="input-group-text">Год</span>
+                <input type="number" class="form-control" @bind="ViewModel.Filter.Year" min="2020" max="2100" />
+            </div>
+            <button class="btn btn-primary btn-sm" @onclick="() => LoadDataAsync()">
+                <i class="bi bi-arrow-clockwise"></i> Применить
+            </button>
+        </div>
+    </div>
+
+    @if (!ViewModel.FilteredData.Any())
+    {
+        <div class="alert alert-info">Данные по сотрудникам не найдены. Добавьте сотрудников.</div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded bg-white p-2">
+            <table class="table table-sm table-hover table-bordered align-middle small mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-1">Сотрудник</th>
+                        <th class="py-1">Должность</th>
+                        <th class="py-1 text-center">Часы</th>
+                        <th class="py-1 text-center">Действия</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ViewModel.FilteredData)
+                    {
+                        var isEditing = ViewModel.EditingRowKey == $"{row.EmployeeCode}_{row.PositionCode}";
+                        <tr>
+                            <td class="py-1"><strong>@row.EmployeeFullName</strong></td>
+                            <td class="py-1">@row.PositionTitle</td>
+
+                            <td class="py-1 text-center">
+                                @if (isEditing)
+                                {
+                                    <input type="number" class="form-control form-control-sm d-inline-block employee-hours-input"
+                                           @bind="row.EditingValue"
+                                           min="0" />
+                                }
+                                else
+                                {
+                                    <span>@(row.Value.HasValue ? row.Value.Value.ToString() : "—")</span>
+                                }
+                            </td>
+
+                            <td class="py-1 text-center">
+                                @if (isEditing)
+                                {
+                                    <button class="btn btn-outline-success btn-sm me-1" @onclick="() => ViewModel.SaveActualHoursAsync(row)" disabled="@row.IsSaving" title="Сохранить">
+                                        <i class="bi bi-floppy-fill action-icon-sm"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" @onclick="() => ViewModel.CancelEditing(row)" title="Отменить">
+                                        <i class="bi bi-x-lg action-icon-sm"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-secondary btn-sm" @onclick="() => ViewModel.StartEditing(row)" title="Редактировать часы">
+                                        <i class="bi bi-pencil-fill action-icon-sm"></i>
+                                    </button>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var LoadingResult = await ViewModel.LoadAsync();
+        if (!LoadingResult.Ok && LoadingResult.Error == ErrorMessages.Unauthorized)
+        {
+            NavigationManager.NavigateTo("/authentication/login", forceLoad: true);
+        }
+    }
+
+    private async Task LoadDataAsync()
+    {
+        await ViewModel.LoadAsync();
+    }
+}

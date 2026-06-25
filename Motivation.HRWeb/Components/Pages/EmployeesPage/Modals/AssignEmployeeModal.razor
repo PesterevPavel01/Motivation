@@ -1,0 +1,125 @@
+﻿@using Mediator
+@using Motivation.Contracts.Dto
+@using Motivation.HRWeb.Application.Messages.EmployeeMessages
+@using Motivation.HRWeb.Application.Messages.PositionMessages
+@using Motivation.HRWeb.Components.Pages.EmployeesPage.Models
+@using Motivation.HRWeb.Application.Mappings
+@inject IMediator Mediator
+
+<div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-6">Назначение на должность</h5>
+                <button type="button" class="btn-close" @onclick="OnCancel"></button>
+            </div>
+
+            <EditForm Model="assignModel" OnValidSubmit="HandleAssign">
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(errorMessage))
+                    {
+                        <div class="alert alert-danger small mb-3">@errorMessage</div>
+                    }
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Сотрудник</label>
+                        <input type="text" class="form-control form-control-sm" value="@Employee?.FullName" disabled />
+                    </div>
+
+                    @if (isLoadingPositions)
+                    {
+                        <div class="text-center py-2">
+                            <div class="spinner-border spinner-border-sm text-primary" role="status"></div>
+                            <span class="small ms-2">Загрузка должностей...</span>
+                        </div>
+                    }
+                    else
+                    {
+                        <div class="mb-2">
+                            <label class="form-label small fw-bold">Выберите должность *</label>
+                            <InputSelect class="form-select form-select-sm" @bind-Value="assignModel.SelectedPositionCode">
+                                <option value="">-- Выберите должность --</option>
+                                @foreach (var pos in positions)
+                                {
+                                    <option value="@pos.Code">@pos.Title</option>
+                                }
+                            </InputSelect>
+                        </div>
+                    }
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Дата назначения *</label>
+                        <InputDate class="form-control form-control-sm" @bind-Value="assignModel.AssignmentDate" />
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
+                    <button type="submit" class="btn btn-primary btn-sm" disabled="@(isSaving || string.IsNullOrEmpty(assignModel.SelectedPositionCode))">
+                        @(isSaving ? "Назначение..." : "Назначить")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EmployeeDto? Employee { get; set; }
+    [Parameter] public EventCallback OnAssigned { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private AssignEmployeeModel assignModel = new();
+    private List<PositionDto> positions = new();
+    private bool isLoadingPositions = false;
+    private bool isSaving = false;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPositions();
+    }
+
+    private async Task LoadPositions()
+    {
+        isLoadingPositions = true;
+        try
+        {
+            var result = await Mediator.Send(new GetAllPositions.Request());
+            if (result.Ok)
+                positions = result.Result?.ToList() ?? new List<PositionDto>();
+        }
+        finally
+        {
+            isLoadingPositions = false;
+        }
+    }
+
+    private async Task HandleAssign()
+    {
+        if (Employee == null || string.IsNullOrEmpty(assignModel.SelectedPositionCode)) return;
+
+        try
+        {
+            isSaving = true;
+            errorMessage = null;
+
+            var dto = assignModel.ToAssignDto();
+
+            var result = await Mediator.Send(new AssignEmployeeToPosition.Request(Employee.Code, dto));
+
+            if (!result.Ok)
+            {
+                errorMessage = result.Error ?? "Ошибка назначения.";
+            }
+            else
+            {
+                await OnAssigned.InvokeAsync();
+            }
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

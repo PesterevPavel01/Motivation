@@ -1,0 +1,161 @@
+﻿@page "/positions"
+@rendermode InteractiveServer
+@using Mediator
+@using Microsoft.AspNetCore.Authorization
+@using Motivation.Contracts.Dto
+@using Motivation.HRWeb.Application.Messages.PositionMessages
+@using Motivation.HRWeb.Components.Pages.PositionsPage.Modals
+@using Motivation.HRWeb.Exceptions
+@inject NavigationManager NavigationManager
+@inject IMediator Mediator
+@attribute [Authorize]
+
+<PageTitle>Должности</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fs-4 m-0">Должности</h1>
+    <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">
+        <i class="bi bi-plus-lg"></i> Добавить должность
+    </button>
+</div>
+
+@if (isLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+}
+else if (!string.IsNullOrEmpty(errorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Ошибка:</strong> @errorMessage
+    </div>
+}
+else if (positions == null || !positions.Any())
+{
+    <div class="alert alert-info">Должности не найдены.</div>
+}
+else
+{
+    <div class="table-responsive shadow-sm rounded bg-white p-2">
+        <table class="table table-sm table-hover table-bordered align-middle small mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="py-1">Название</th>
+                    <th class="py-1">Оклад</th>
+                    <th class="py-1">Премия</th>
+                    <th class="py-1">Тип недели</th>
+                    <th class="py-1 text-center">Пересчет на часы</th>
+                    <th class="py-1 text-center" style="width: 110px;">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pos in positions)
+                {
+                    <tr>
+                        <td class="py-1"><strong>@pos.Title</strong></td>
+                        <td class="py-1">@pos.BaseSalary</td>
+                        <td class="py-1">@pos.MotivationPart</td>
+                        <td class="py-1">@pos.WorkWeekType</td>
+                        <td class="py-1 text-center">
+                            @(pos.RecalculateToHours ? "Да" : "Нет")
+                        </td>
+                        <td class="py-1 text-center">
+                            <button class="btn btn-outline-secondary btn-sm me-1" @onclick="() => OpenEditModal(pos)" title="Редактировать">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="() => OpenDeleteModal(pos)" title="Удалить">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-2 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge bg-secondary">Всего: @positions.Count()</span>
+        </div>
+    </div>
+}
+
+@if (showCreateModal)
+{
+    <CreatePositionModal OnCreated="OnPositionCreated" OnCancel="CloseModals" />
+}
+
+@if (showEditModal && selectedPosition != null)
+{
+    <EditPositionModal Position="@selectedPosition" OnSaved="OnPositionSaved" OnCancel="CloseModals" />
+}
+
+@if (showDeleteModal && selectedPosition != null)
+{
+    <DeletePositionModal Position="@selectedPosition" OnDeleted="OnPositionDeleted" OnCancel="CloseModals" />
+}
+
+@code {
+    private IEnumerable<PositionDto>? positions;
+    private bool isLoading = false;
+    private string? errorMessage;
+
+    private PositionDto? selectedPosition;
+    private bool showCreateModal = false;
+    private bool showEditModal = false;
+    private bool showDeleteModal = false;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadPositions();
+    }
+
+    private async Task LoadPositions()
+    {
+        isLoading = true;
+        errorMessage = null;
+        positions = null;
+
+        try
+        {
+            var queryResult = await Mediator.Send(new GetAllPositions.Request());
+            if (!queryResult.Ok)
+                errorMessage = queryResult.Error ?? "Ошибка загрузки должностей.";
+            else
+                positions = queryResult.Result;
+        }
+        catch (RedirectToLoginException exception)
+        {
+            NavigationManager.NavigateTo("/authentication/login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            errorMessage = ex.Message;
+        }
+        finally
+        {
+            isLoading = false;
+        }
+    }
+
+    #region Modal State Management
+    private void OpenCreateModal() => showCreateModal = true;
+    private void OpenEditModal(PositionDto pos) { selectedPosition = pos; showEditModal = true; }
+    private void OpenDeleteModal(PositionDto pos) { selectedPosition = pos; showDeleteModal = true; }
+
+    private void CloseModals()
+    {
+        showCreateModal = false;
+        showEditModal = false;
+        showDeleteModal = false;
+        selectedPosition = null;
+    }
+    #endregion
+
+    #region Modal Event Handlers
+    private async Task OnPositionCreated() { CloseModals(); await LoadPositions(); }
+    private async Task OnPositionSaved() { CloseModals(); await LoadPositions(); }
+    private async Task OnPositionDeleted() { CloseModals(); await LoadPositions(); }
+    #endregion
+}

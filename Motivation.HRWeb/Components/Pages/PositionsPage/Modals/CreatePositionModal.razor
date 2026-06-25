@@ -1,0 +1,98 @@
+﻿@using Mediator
+@using Motivation.HRWeb.Application.Mappings
+@using Motivation.HRWeb.Application.Messages.PositionMessages
+@using Motivation.HRWeb.Components.Pages.PositionsPage.ViewModels
+@using Motivation.Domain.Enum
+@using Motivation.Application.Mappings
+@inject IMediator Mediator
+
+<div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-6">Добавление должности</h5>
+                <button type="button" class="btn-close" @onclick="OnCancel"></button>
+            </div>
+
+            <EditForm Model="createModel" OnValidSubmit="HandleCreate">
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(createErrorMessage))
+                    {
+                        <div class="alert alert-danger small mb-3">@createErrorMessage</div>
+                    }
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Название *</label>
+                            <InputText class="form-control form-control-sm" @bind-Value="createModel.Title" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Код (необязательно)</label>
+                            <InputText class="form-control form-control-sm" @bind-Value="createModel.Code" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Базовая ставка</label>
+                            <InputNumber class="form-control form-control-sm" @bind-Value="createModel.BaseSalary" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Мотивационная часть</label>
+                            <InputNumber class="form-control form-control-sm" @bind-Value="createModel.MotivationPart" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Пересчет в часы</label>
+                            <InputCheckbox class="form-check-input ms-2" @bind-Value="createModel.RecalculateToHours" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Тип рабочей недели</label>
+                            <InputSelect class="form-select form-select-sm" @bind-Value="createModel.WorkWeekType">
+                                <option value="Default">-- Выберите --</option>
+                                @foreach (var type in WeekTypes)
+                                {
+                                    <option value="@type.ToRussianString()">
+                                        @type.ToRussianString()
+                                    </option>
+                                }
+                            </InputSelect>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
+                    <button type="submit" class="btn btn-primary btn-sm" disabled="@isCreating">
+                        @(isCreating ? "Сохранение..." : "Добавить")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EventCallback OnCreated { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private CreatePositionViewModel createModel = new();
+    private bool isCreating = false;
+    private string? createErrorMessage;
+
+    private IEnumerable<WorkWeekType> WeekTypes => Enum.GetValues<WorkWeekType>();
+
+    private async Task HandleCreate()
+    {
+        try
+        {
+            isCreating = true;
+            var dtoToSend = createModel.ToCreateDto();
+            var result = await Mediator.Send(new CreatePosition.Request(dtoToSend));
+
+            if (!result.Ok)
+                createErrorMessage = result.Error ?? "Ошибка создания.";
+            else
+                await OnCreated.InvokeAsync();
+        }
+        finally
+        {
+            isCreating = false;
+        }
+    }
+}

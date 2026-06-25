@@ -5,9 +5,12 @@ using Microsoft.AspNetCore.DataProtection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using Motivation.HRWeb;
-using Motivation.HRWeb.Application.Interfaces;
-using Motivation.HRWeb.Application.Services;
+using Motivation.HRWeb.Application.Clients;
+using Motivation.HRWeb.Application.Clients.Base;
 using Motivation.HRWeb.Components;
+using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.ViewModels;
+using Motivation.HRWeb.Components.Pages.TimeSheet.ViewModels;
+using Motivation.HRWeb.Exceptions;
 using Motivation.HRWeb.Extensions;
 using System.Security.Cryptography;
 
@@ -53,6 +56,12 @@ builder.Services.AddAuthentication(AppData.OidcSchemeName)
         };
         options.Events = new OpenIdConnectEvents
         {
+            OnRemoteFailure = context =>
+            {
+                context.Response.Redirect("/authentication/login");
+                context.HandleResponse();
+                return Task.CompletedTask;
+            },
             OnTicketReceived = context =>
             {
                 if (context is null || context.Properties is null || context.Properties.Items is null)
@@ -105,7 +114,16 @@ builder.Services.AddAuthentication(AppData.OidcSchemeName)
 builder.Services.ConfigureCookieOidcRefresh(CookieAuthenticationDefaults.AuthenticationScheme, AppData.OidcSchemeName);
 
 builder.Services.AddAuthorization();
-builder.Services.AddScoped<IEmployeeService, EmployeeService>();
+builder.Services.AddScoped<EmployeeApiClient>();
+builder.Services.AddScoped<PositionApiClient>();
+builder.Services.AddScoped<StandardHoursApiClient>();
+builder.Services.AddScoped<TimeSheetViewModel>();
+builder.Services.AddScoped<ExtraPartAndDeductionViewModel>();
+builder.Services.AddScoped<EditExtraPartModalViewModel>();
+builder.Services.AddMediator(options =>
+{
+    options.ServiceLifetime = ServiceLifetime.Scoped;
+});
 builder.Services.AddHttpClient();
 builder.Services.AddCascadingAuthenticationState();
 builder.Services.AddRazorComponents().AddInteractiveServerComponents();
@@ -140,7 +158,7 @@ app.Use(async (context, next) =>
     {
         await next();
     }
-    catch (CryptographicException ex)
+    catch (CryptographicException exeption)
     {
         throw;
     }

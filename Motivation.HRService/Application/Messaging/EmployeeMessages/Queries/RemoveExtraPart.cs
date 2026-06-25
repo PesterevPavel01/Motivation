@@ -61,10 +61,10 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
                     return Operation.Error("Employee is not found!");
                 }
 
-                var setExtraPartResult = employee.RemoveExtraPart(positionCode.Result, code.Result);
-                if (!setExtraPartResult.Ok)
+                var removeExtraPartResult = employee.RemoveExtraPart(positionCode.Result, code.Result);
+                if (!removeExtraPartResult.Ok)
                 {
-                    return Operation.Error(setExtraPartResult.Error);
+                    return Operation.Error(removeExtraPartResult.Error);
                 }
 
                 repository.Update(employee);

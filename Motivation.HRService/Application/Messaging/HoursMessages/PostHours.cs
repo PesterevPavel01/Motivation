@@ -10,12 +10,12 @@ namespace Motivation.HRService.Application.Messaging.HoursMessages;
 
 public class PostHours
 {
-    public record Request(StandardHoursCreateDto Model) : IRequest<Operation<bool, string>>;
+    public record Request(StandardHoursCreateDto Model) : IRequest<Operation<StandardHoursDto, string>>;
 
     public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
-        : IRequestHandler<Request, Operation<bool, string>>
+        : IRequestHandler<Request, Operation<StandardHoursDto, string>>
     {
-        public async ValueTask<Operation<bool, string>> Handle(Request hoursRequest, CancellationToken cancellationToken)
+        public async ValueTask<Operation<StandardHoursDto, string>> Handle(Request hoursRequest, CancellationToken cancellationToken)
         {
             if (hoursRequest.Model is null)
                 return Operation.Error("Standard hours model is null!");
@@ -63,7 +63,7 @@ public class PostHours
                 return Operation.Error(unitOfWork.Result.Exception.Message);
             }
 
-            return true;
+            return standardHours.Result.MapToDto();
         }
     }
 }

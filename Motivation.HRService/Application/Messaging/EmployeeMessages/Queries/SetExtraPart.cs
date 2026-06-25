@@ -5,17 +5,18 @@ using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using Motivation.Application.Mappings;
 
 namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
 {
     public class SetExtraPart
     {
-        public record Request(string EmployeeCode, ExtraPartDto Model) : IRequest<Operation<bool, string>>;
+        public record Request(string EmployeeCode, CreateExtraPartDto Model) : IRequest<Operation<ExtraPartDto, string>>;
 
         public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
-            : IRequestHandler<Request, Operation<bool, string>>
+            : IRequestHandler<Request, Operation<ExtraPartDto, string>>
         {
-            public async ValueTask<Operation<bool, string>> Handle(Request setExtraPartRequest, CancellationToken cancellationToken)
+            public async ValueTask<Operation<ExtraPartDto, string>> Handle(Request setExtraPartRequest, CancellationToken cancellationToken)
             {
                 if (String.IsNullOrWhiteSpace(setExtraPartRequest.EmployeeCode))
                 {
@@ -33,7 +34,11 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
                     return Operation.Error(code.Error);
                 }
 
-                var title = TitleValue.Create(setExtraPartRequest.Model.Title);
+                var titleContent = string.IsNullOrWhiteSpace(setExtraPartRequest.Model.Title) ?
+                    "default extra part"
+                    : setExtraPartRequest.Model.Title;
+
+                var title = TitleValue.Create(titleContent);
                 if (!title.Ok)
                 {
                     return Operation.Error(title.Error);
@@ -85,14 +90,14 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
                     return Operation.Error(setExtraPartResult.Error);
                 }
 
-                repository.Update();
+                repository.Update(employee);
                 var result = await unitOfWork.SaveChangesAsync();
                 if (unitOfWork.Result.Exception is not null)
                 {
                     return Operation.Error(unitOfWork.Result.Exception.Message);
                 }
 
-                return true;
+                return extraPart.Result.MapToDto();
             }
         }
     }

@@ -13,8 +13,7 @@ internal sealed class EmployeePositionConfiguration : IEntityTypeConfiguration<E
 
         builder.HasKey(x => x.Id);
 
-        builder
-            .Property(x => x.Id)
+        builder.Property(x => x.Id)
             .ValueGeneratedNever();
 
         builder.Property(x => x.CreatedAt).IsRequired().HasConversion
@@ -24,6 +23,12 @@ internal sealed class EmployeePositionConfiguration : IEntityTypeConfiguration<E
         );
 
         builder.Property(x => x.UpdatedAt).IsRequired().HasConversion
+        (
+            src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+            dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc)
+        );
+
+        builder.Property(x => x.AssignmentDate).IsRequired().HasConversion
         (
             src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
             dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc)

@@ -1,0 +1,31 @@
+.standard-hours-table {
+    width: auto;
+    min-width: 320px;
+    max-width: 100%;
+}
+
+.standard-hours-row {
+    display: table-row;
+}
+
+.standard-hours-cell {
+    display: block;
+    width: 100%;
+    padding: 0.5rem !important; /* p-2 */
+}
+
+.hours-input-sm {
+    width: 100%;
+    max-width: 70px;
+    text-align: right;
+    padding: 0.15rem 0.3rem;
+}
+
+.employee-hours-input {
+    width: 80px;
+    text-align: center;
+}
+
+.action-icon-sm {
+    font-size: 0.8rem;
+}

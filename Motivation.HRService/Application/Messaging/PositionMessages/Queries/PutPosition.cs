@@ -10,7 +10,7 @@ namespace Motivation.HRService.Application.Messaging.PositionMessages.Queries;
 
 public class PutPosition
 {
-    public record Request(string Code, PositionCreateDto Model) : IRequest<Operation<bool, string>>;
+    public record Request(string Code, PositionUpdateDto Model) : IRequest<Operation<bool, string>>;
 
     public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
         : IRequestHandler<Request, Operation<bool, string>>

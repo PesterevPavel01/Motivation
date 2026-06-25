@@ -1,43 +1,87 @@
-﻿<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">Мотивация</a>
+﻿<div class="nav-menu @(IsCollapsed ? "collapsed" : "")">
+    <div class="top-row ps-3 navbar navbar-dark">
+        <div class="container-fluid d-flex justify-content-between align-items-center">
+            <a class="navbar-brand d-flex align-items-center" href="">
+                <span class="brand-text">Мотивация</span>
+            </a>
+
+            <button class="navbar-toggler" @onclick="ToggleMenu">
+                <i class="bi bi-list fs-3 text-white icon-menu"></i>
+                <i class="bi bi-x-lg fs-3 text-white icon-close"></i>
+            </button>
+        </div>
+    </div>
+
+    <div class="nav-scrollable">
+        <nav class="nav flex-column gap-1">
+            <div class="nav-item p-2">
+                <NavLink class="nav-link d-flex align-items-center" href="" Match="NavLinkMatch.All">
+                    <i class="bi bi-house-door-fill fs-5 me-0" aria-hidden="true"></i>
+                    <span class="link-text ps-3">Матрица</span>
+                </NavLink>
+            </div>
+
+            <AuthorizeView>
+                <div class="nav-item p-2">
+                    <NavLink class="nav-link d-flex align-items-center" href="employees">
+                        <i class="bi bi-person fs-5 me-0" aria-hidden="true"></i>
+                        <span class="link-text ps-3">Сотрудники</span>
+                    </NavLink>
+                </div>
+
+                <div class="nav-item p-2">
+                    <NavLink class="nav-link d-flex align-items-center" href="positions">
+                        <i class="bi bi-briefcase fs-5 me-0" aria-hidden="true"></i>
+                        <span class="link-text ps-3">Должности</span>
+                    </NavLink>
+                </div>
+
+                <div class="nav-item p-2">
+                    <NavLink class="nav-link d-flex align-items-center" href="time-sheet">
+                        <i class="bi bi-clock-history fs-5 me-0" aria-hidden="true"></i>
+                        <span class="link-text ps-3">Табель</span>
+                    </NavLink>
+                </div>
+
+                <div class="nav-item p-2">
+                    <NavLink class="nav-link d-flex align-items-center" href="extra-part-and-deduction">
+                        <i class="bi bi-wallet2 fs-5 me-0" aria-hidden="true"></i>
+                        <span class="link-text ps-3">Премии и штрафы</span>
+                    </NavLink>
+                </div>
+
+                <div class="nav-item p-2">
+                    <NavLink class="nav-link d-flex align-items-center" href="user-claims">
+                        <i class="bi bi-graph-up-arrow fs-5 me-0" aria-hidden="true"></i>
+                        <span class="link-text ps-3">KPI</span>
+                    </NavLink>
+                </div>
+            </AuthorizeView>
+        </nav>
     </div>
 </div>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
+@code {
+    private bool _isCollapsed = false;
 
-<div class="nav-scrollable" onclick="document.querySelector('.navbar-toggler').click()">
-    <nav class="nav flex-column gap-1">
-        <div class="nav-item p-2">
-            <NavLink class="nav-link d-flex" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu m-0" aria-hidden="true"></span>
-                <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">Матрица</p>
-            </NavLink>
-        </div>
+    [Parameter]
+    public bool IsCollapsed
+    {
+        get => _isCollapsed;
+        set
+        {
+            if (_isCollapsed != value)
+            {
+                _isCollapsed = value;
+                IsCollapsedChanged.InvokeAsync(value);
+            }
+        }
+    }
 
-        <AuthorizeView>
-            <div class="nav-item p-2">
-                <NavLink class="nav-link d-flex" href="employees">
-                    <span class="bi bi-person m-0 d-flex align-items-center" aria-hidden="true"></span>
-                    <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">Сотрудники</p>
-                </NavLink>
-            </div>
+    [Parameter] public EventCallback<bool> IsCollapsedChanged { get; set; }
 
-            <div class="nav-item p-2">
-                <NavLink class="nav-link d-flex" href="weather">
-                    <span class="bi bi-briefcase d-flex align-items-center" aria-hidden="true"></span> 
-                    <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">Должности</p>
-                </NavLink>
-            </div>
-
-            <div class="nav-item p-2">
-                <NavLink class="nav-link d-flex" href="user-claims">
-                    <span class="bi bi-graph-up-arrow d-flex align-items-center" aria-hidden="true"></span>
-                    <p class="d-flex justify-content-start align-items-center m-0 p-0 ps-2">KPI</p>
-                </NavLink>
-            </div>
-        </AuthorizeView>
-
-    </nav>
-</div>
-
+    private void ToggleMenu()
+    {
+        IsCollapsed = !IsCollapsed;
+    }
+}

@@ -1,16 +1,20 @@
 ﻿@inherits LayoutComponentBase
 
-<div class="page">
-    <div class="sidebar">
-        <NavMenu />
+<div class="d-flex flex-row w-100 overflow-hidden" style="height: 100vh; --sidebar-w: @(IsSidebarCollapsed ? "65px" : "260px");">
+
+    <div class="sidebar d-flex flex-column flex-shrink-0"
+         style="width: var(--sidebar-w); background-color: #21104d; transition: width 0.3s ease;">
+        <NavMenu @bind-IsCollapsed="IsSidebarCollapsed" />
     </div>
 
-    <main>
-        <div class="top-row px-4">
+    <main class="d-flex flex-column flex-grow-1 vh-100 overflow-y-auto bg-white"
+          style="transition: margin-left 0.3s ease;">
+
+        <div class="top-row d-flex align-items-center justify-content-end px-4 py-2 border-bottom bg-white flex-shrink-0" style="height: 3.5rem;">
             <LogInOrOut />
         </div>
 
-        <article class="content px-4">
+        <article class="content px-4 py-3 flex-grow-1 overflow-y-auto">
             @Body
         </article>
     </main>
@@ -21,3 +25,7 @@
     <a href="." class="reload">Перезагрузить</a>
     <span class="dismiss">🗙</span>
 </div>
+
+@code {
+    private bool IsSidebarCollapsed = false;
+}

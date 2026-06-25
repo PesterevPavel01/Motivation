@@ -52,7 +52,7 @@ namespace Motivation.Infrastructure.Configurations
 
 
             builder
-                .HasIndex(x => new { x.Month, x.Year, x.Hours })
+                .HasIndex(x => new { x.Month, x.Year, x.WorkWeekType })
                 .IsUnique();
         }
     }

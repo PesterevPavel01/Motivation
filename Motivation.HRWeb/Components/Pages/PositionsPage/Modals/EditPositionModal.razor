@@ -1,0 +1,109 @@
+﻿@using Mediator
+@using Motivation.Contracts.Dto
+@using Motivation.HRWeb.Application.Mappings
+@using Motivation.HRWeb.Application.Messages.PositionMessages
+@using Motivation.HRWeb.Components.Pages.PositionsPage.ViewModels
+@using Motivation.Application.Mappings
+@using Motivation.Domain.Enum
+
+@inject IMediator Mediator
+
+<div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-6">Редактирование должности</h5>
+                <button type="button" class="btn-close" @onclick="OnCancel"></button>
+            </div>
+
+            <EditForm Model="editModel" OnValidSubmit="HandleSave">
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(editErrorMessage))
+                    {
+                        <div class="alert alert-danger small mb-3">@editErrorMessage</div>
+                    }
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Код (не редактируется)</label>
+                        <input type="text" class="form-control form-control-sm" value="@editModel.Code" disabled />
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Название *</label>
+                            <InputText class="form-control form-control-sm" @bind-Value="editModel.Title" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Базовая ставка</label>
+                            <InputNumber class="form-control form-control-sm" @bind-Value="editModel.BaseSalary" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Мотивационная часть</label>
+                            <InputNumber class="form-control form-control-sm" @bind-Value="editModel.MotivationPart" />
+                        </div>
+                        <div class="col-md-6">
+                            <label class="form-label small fw-bold">Тип рабочей недели</label>
+                            <InputSelect class="form-select form-select-sm" @bind-Value="editModel.WorkWeekType">
+                                <option value="Default">-- Выберите --</option>
+                                @foreach (var type in WeekTypes)
+                                {
+                                    <option value="@type.ToRussianString()">
+                                        @type.ToRussianString()
+                                    </option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-md-12">
+                            <label class="form-label small fw-bold">Пересчет в часы</label>
+                            <InputCheckbox class="form-check-input ms-2" @bind-Value="editModel.RecalculateToHours" />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
+                    <button type="submit" class="btn btn-success btn-sm" disabled="@isSaving">
+                        @(isSaving ? "Сохранение..." : "Сохранить")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public PositionDto? Position { get; set; }
+    [Parameter] public EventCallback OnSaved { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private EditPositionViewModel editModel = new();
+    private bool isSaving = false;
+    private string? editErrorMessage;
+
+    private IEnumerable<WorkWeekType> WeekTypes => Enum.GetValues<WorkWeekType>();
+
+    protected override void OnParametersSet()
+    {
+        if (Position != null)
+            editModel = Position.ToUpdateViewModel();
+    }
+
+    private async Task HandleSave()
+    {
+        if (string.IsNullOrEmpty(editModel.Title)) return;
+
+        try
+        {
+            isSaving = true;
+            var dtoToSend = editModel.ToUpdateDto();
+            var result = await Mediator.Send(new UpdatePosition.Request(dtoToSend));
+
+            if (!result.Ok)
+                editErrorMessage = result.Error ?? "Ошибка обновления должности.";
+            else
+                await OnSaved.InvokeAsync();
+        }
+        finally
+        {
+            isSaving = false;
+        }
+    }
+}

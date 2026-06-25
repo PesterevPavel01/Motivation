@@ -5,7 +5,6 @@ using Microsoft.EntityFrameworkCore;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.ValueObjects;
-using Motivation.Infrastructure;
 
 namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries;
 
@@ -28,7 +27,9 @@ public class AssignEmployeeToPosition
             var employee = await repository
                 .GetFirstOrDefaultAsync(
                     predicate: x => x.Code == employeeCode.Result,
-                    include: query => query.Include(x => x.EmployeePositions),
+                    include: query => query
+                        .Include(x => x.EmployeePositions)
+                            .ThenInclude(x => x.Position),
                     trackingType: TrackingType.Tracking);
             if (employee == null)
             {
@@ -58,13 +59,7 @@ public class AssignEmployeeToPosition
                 return Operation.Error(assigmentResult.Error);
             }
 
-            var dbContext = serviceProvider.GetRequiredService<MotivationDbContext>();
-            var entries = dbContext.ChangeTracker.Entries();
-
-            /*await unitOfWork
-                .GetRepository<EmployeePosition>()
-                .InsertAsync(assigmentResult.Result);*/
-
+            repository.Update(employee);
             var result = await unitOfWork.SaveChangesAsync();
             if (unitOfWork.Result.Exception is not null)
             {

@@ -5,16 +5,17 @@ using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
+using Motivation.Application.Mappings;
 namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries;
 
 public class SetDeduction
 {
-    public record Request(string EmployeeCode, DeductionDto Model) : IRequest<Operation<bool, string>>;
+    public record Request(string EmployeeCode, SetDeductionDto Model) : IRequest<Operation<DeductionDto, string>>;
 
     public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
-        : IRequestHandler<Request, Operation<bool, string>>
+        : IRequestHandler<Request, Operation<DeductionDto, string>>
     {
-        public async ValueTask<Operation<bool, string>> Handle(Request setDeductionRequest, CancellationToken cancellationToken)
+        public async ValueTask<Operation<DeductionDto, string>> Handle(Request setDeductionRequest, CancellationToken cancellationToken)
         {
             if (String.IsNullOrWhiteSpace(setDeductionRequest.EmployeeCode))
             {
@@ -32,7 +33,11 @@ public class SetDeduction
                 return Operation.Error(code.Error);
             }
 
-            var title = TitleValue.Create(setDeductionRequest.Model.Title);
+            var titleContent = string.IsNullOrWhiteSpace(setDeductionRequest.Model.Title) ?
+                "default Deduction"
+                : setDeductionRequest.Model.Title;
+
+            var title = TitleValue.Create(titleContent);
             if (!title.Ok)
             {
                 return Operation.Error(title.Error);
@@ -105,7 +110,7 @@ public class SetDeduction
                 return Operation.Error(unitOfWork.Result.Exception.Message);
             }
 
-            return true;
+            return deduction.Result.MapToDto();
         }
     }
 }

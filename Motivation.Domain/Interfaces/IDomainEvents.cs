@@ -11,6 +11,7 @@ namespace Motivation.Domain.Interfaces;
 
 [JsonDerivedType(typeof(PositionCreatedDomainEvent), typeDiscriminator: "position-created")]
 [JsonDerivedType(typeof(PositionUpdatedDomainEvent), typeDiscriminator: "position-updated")]
+[JsonDerivedType(typeof(PositionDeletedDomainEvent), typeDiscriminator: "position-deleted")]
 [JsonDerivedType(typeof(KpiCreatedDomainEvent), typeDiscriminator: "kpi-created")]
 [JsonDerivedType(typeof(KpiUpdatedDomainEvent), typeDiscriminator: "kpi-updated")]
 [JsonDerivedType(typeof(EmployeeCreatedDomainEvent), typeDiscriminator: "employee-created")]
@@ -25,6 +26,5 @@ namespace Motivation.Domain.Interfaces;
 [JsonDerivedType(typeof(RemoveDeductionDomainEvent), typeDiscriminator: "remove-deduction")]
 [JsonDerivedType(typeof(SetExtraPartDomainEvent), typeDiscriminator: "set-extra-part")]
 [JsonDerivedType(typeof(RemoveExtraPartDomainEvent), typeDiscriminator: "remove-extra-part")]
-
 
 public interface IDomainEvent : INotification { }

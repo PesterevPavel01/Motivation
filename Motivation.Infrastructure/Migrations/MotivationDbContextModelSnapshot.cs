@@ -490,7 +490,7 @@ namespace Motivation.Infrastructure.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("Month", "Year", "Hours")
+                    b.HasIndex("Month", "Year", "WorkWeekType")
                         .IsUnique();
 
                     b.ToTable("standard_hours", (string)null);

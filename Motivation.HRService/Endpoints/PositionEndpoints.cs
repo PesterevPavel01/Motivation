@@ -32,10 +32,23 @@ internal static class PositionEndpointsDefinitionExtensions
         .ProducesProblem(401)
         .WithOpenApi();
 
-        group.MapPut("{code}/update", async ([FromServices] IMediator mediator, string code,  [FromBody] PositionCreateDto position, HttpContext context)
+        group.MapPut("{code}/update", async ([FromServices] IMediator mediator, string code,  [FromBody] PositionUpdateDto position, HttpContext context)
             =>
         {
             var result = await mediator.Send(new PutPosition.Request(code, position), context.RequestAborted);
+            if (!result.Ok)
+                return Results.BadRequest(result.Error);
+            return Results.Ok(result.Result);
+        })
+        .RequireAuthorization(AppData.SystemAdministratorRoleName)
+        .Produces(200)
+        .ProducesProblem(401)
+        .WithOpenApi();
+
+        group.MapDelete("{code}", async ([FromServices] IMediator mediator, string code, HttpContext context)
+            =>
+        {
+            var result = await mediator.Send(new DeletePosition.Request(code), context.RequestAborted);
             if (!result.Ok)
                 return Results.BadRequest(result.Error);
             return Results.Ok(result.Result);

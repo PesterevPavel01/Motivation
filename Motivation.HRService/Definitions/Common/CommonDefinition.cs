@@ -32,6 +32,7 @@ namespace Motivation.HRService.Definitions.Common
                 options.SupportedEventTypes = [
                     typeof(PositionCreatedDomainEvent).Name,
                     typeof(PositionUpdatedDomainEvent).Name,
+                    typeof(PositionDeletedDomainEvent).Name,
                     typeof(EmployeeCreatedDomainEvent).Name,
                     typeof(EmployeeUpdatedDomainEvent).Name,
                     typeof(AssignEmployeeToPositionDomainEvent).Name,

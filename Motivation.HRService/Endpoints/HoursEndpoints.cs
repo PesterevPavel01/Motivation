@@ -1,7 +1,11 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Mediator;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Motivation.Application.Mappings;
+using Motivation.Contracts;
 using Motivation.Contracts.Dto;
+using Motivation.Domain.Enum;
 using Motivation.HRService.Application.Messaging.HoursMessages;
 using Motivation.IdentityServer.Domain.Base;
 
@@ -39,6 +43,24 @@ internal static class HoursEndpointsDefinitionExtensions
             if (!result.Ok)
                 return Results.BadRequest(result.Error);
             return Results.Ok(result.Result);
+        })
+        .RequireAuthorization(AppData.SystemAdministratorRoleName)
+        .Produces(200)
+        .ProducesProblem(401)
+        .WithOpenApi();
+
+        group.MapGet("by-month/{month:int}/{year:int}/{workWeekType}", async ([FromServices] IMediator mediator, int month, int year, string workWeekType, HttpContext context)
+            =>
+        {
+            var result = await mediator.Send(new GetHours.Request(workWeekType, month, year), context.RequestAborted);
+            if (!result.Ok)
+                return Results.BadRequest(result.Error);
+
+            var currentModel = result.Result.FirstOrDefault();
+            if(currentModel is null)
+                return Results.BadRequest(ErrorMessages.NotFound);
+
+            return Results.Ok(currentModel);
         })
         .RequireAuthorization(AppData.SystemAdministratorRoleName)
         .Produces(200)

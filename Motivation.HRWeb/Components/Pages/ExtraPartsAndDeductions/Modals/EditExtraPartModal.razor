@@ -1,0 +1,86 @@
+﻿@using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.Models
+@using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.ViewModels
+@inject EditExtraPartModalViewModel ModalViewModel
+
+@implements IDisposable
+
+@if (ModalState.IsOpen)
+{
+    <div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title fs-6">Редактирование надбавки</h5>
+                    <button type="button" class="btn-close" @onclick="OnCancel"></button>
+                </div>
+
+                <div class="modal-body">
+                    @if (!string.IsNullOrWhiteSpace(ModalViewModel.Form.ErrorMessage))
+                    {
+                        <div class="alert alert-danger small">@ModalViewModel.Form.ErrorMessage</div>
+                    }
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Сотрудник</label>
+                        <input type="text" class="form-control form-control-sm" value="@ModalState.EmployeeFullName" disabled />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Название надбавки</label>
+                        <input type="text" class="form-control form-control-sm" @bind="ModalViewModel.Form.Title" />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Сумма надбавки</label>
+                        <input type="number" class="form-control form-control-sm" @bind="ModalViewModel.Form.Value" min="0" step="0.01" />
+                    </div>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Действует с</label> disabled 
+                            <input type="date" class="form-control form-control-sm" @bind="ModalViewModel.Form.ValidFrom" disabled />
+                        </div>
+                        <div class="col-6">
+                            <label class="form-label small fw-bold">Действует по</label>
+                            <input type="date" class="form-control form-control-sm" @bind="ModalViewModel.Form.ValidTo" disabled />
+                        </div>
+                    </div>
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
+                    <button type="button" class="btn btn-success btn-sm" @onclick="HandleSave" disabled="@ModalViewModel.Form.IsSaving">
+                        @(ModalViewModel.Form.IsSaving ? "Сохранение..." : "Сохранить")
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+else
+{
+    <div style="display: none;"></div>
+}
+
+@code {
+    [CascadingParameter(Name = "ModalState")] public ExtraPartModalState ModalState { get; set; } = new();
+
+    [Parameter] public EventCallback<ExtraPartSaveResult> OnSaved { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    protected override void OnParametersSet()
+    {
+        ModalViewModel.Initialize(ModalState.CurrentExtraPart, ModalState.Filter);
+    }
+
+
+    private async Task HandleSave()
+    {
+        var saveResult = await ModalViewModel.SaveAsync(ModalState.EmployeeCode, ModalState.PositionCode, ModalState.CurrentExtraPart);
+
+        if (saveResult != null)
+        {
+            await OnSaved.InvokeAsync(saveResult);
+        }
+    }
+
+    public void Dispose()
+    {
+    }
+}

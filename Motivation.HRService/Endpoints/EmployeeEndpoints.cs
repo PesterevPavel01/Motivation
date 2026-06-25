@@ -32,7 +32,7 @@ namespace Motivation.HRService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
 
-            group.MapPut("{employeeCode}/update", async ([FromServices] IMediator mediator, string employeeCode, [FromBody] EmployeeCreateDto employee, HttpContext context)
+            group.MapPut("{employeeCode}/update", async ([FromServices] IMediator mediator, string employeeCode, [FromBody] EmployeeUpdateDto employee, HttpContext context)
                 =>
             {
                 var result = await mediator.Send(new PutEmployee.Request(employeeCode, employee), context.RequestAborted);
@@ -45,10 +45,10 @@ namespace Motivation.HRService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
 
-            group.MapDelete("{employeeCode}", async ([FromServices] IMediator mediator, string employeeCode, HttpContext context)
+            group.MapDelete("{code}", async ([FromServices] IMediator mediator, string code, HttpContext context)
                 =>
             {
-                var result = await mediator.Send(new DeleteEmployee.Request(employeeCode), context.RequestAborted);
+                var result = await mediator.Send(new DeleteEmployee.Request(code), context.RequestAborted);
                 if (!result.Ok)
                     return Results.BadRequest(result.Error);
                 return Results.Ok(result.Result);
@@ -58,7 +58,7 @@ namespace Motivation.HRService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
 
-            group.MapPut("{employeeCode}/set-extra-part", async ([FromServices] IMediator mediator, string employeeCode, [FromBody] ExtraPartDto extraPart, HttpContext context)
+            group.MapPut("{employeeCode}/set-extra-part", async ([FromServices] IMediator mediator, string employeeCode, [FromBody] CreateExtraPartDto extraPart, HttpContext context)
                 =>
             {
                 var result = await mediator.Send(new SetExtraPart.Request(employeeCode, extraPart), context.RequestAborted);
@@ -84,7 +84,7 @@ namespace Motivation.HRService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
 
-            group.MapPut("{employeeCode}/set-deduction", async ([FromServices] IMediator mediator, string employeeCode, [FromBody] DeductionDto deduction, HttpContext context)
+            group.MapPut("{employeeCode}/set-deduction", async ([FromServices] IMediator mediator, string employeeCode, [FromBody] SetDeductionDto deduction, HttpContext context)
                 =>
             {
                 var result = await mediator.Send(new SetDeduction.Request(employeeCode, deduction), context.RequestAborted);

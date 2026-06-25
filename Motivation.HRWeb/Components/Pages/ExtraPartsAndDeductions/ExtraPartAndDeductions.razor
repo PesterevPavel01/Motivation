@@ -1,0 +1,149 @@
+﻿@page "/extra-part-and-deduction"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.Modals
+@using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.Models
+@using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.ViewModels
+@using Motivation.Contracts
+@inject ExtraPartAndDeductionViewModel ViewModel
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>Премии и штрафы</PageTitle>
+
+<div class="d-flex justify-content-between align-items-start mb-3">
+    <h1 class="fs-4 m-0">Премии и штрафы</h1>
+    <div class="d-flex align-items-center gap-1 flex-wrap">
+        <span class="p-2 pb-1">Фильтр</span>
+        <div class="input-group input-group-sm">
+            <span class="input-group-text">Месяц</span>
+            <select class="form-select" @bind="ViewModel.Filter.Month">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+        </div>
+        <div class="input-group input-group-sm">
+            <span class="input-group-text">Год</span>
+            <input type="number" class="form-control" @bind="ViewModel.Filter.Year" min="2020" max="2100" />
+        </div>
+        <button class="btn btn-primary btn-sm" @onclick="() => LoadDataAsync()">
+            <i class="bi bi-arrow-clockwise"></i> Применить
+        </button>
+    </div>
+</div>
+
+@if (ViewModel.IsLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(ViewModel.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Ошибка:</strong> @ViewModel.ErrorMessage
+    </div>
+}
+else
+{
+    @if (!ViewModel.FilteredData.Any())
+    {
+        <div class="alert alert-info">Данные по сотрудникам не найдены. Добавьте сотрудников.</div>
+    }
+    else
+    {
+        <div class="table-responsive shadow-sm rounded bg-white p-2">
+            <table class="table table-sm table-hover table-bordered align-middle small mb-0">
+                <thead class="table-light">
+                    <tr>
+                        <th class="py-1">Сотрудник</th>
+                        <th class="py-1">Должность</th>
+                        <th class="py-1 text-center" style="width: 140px;">Сумма штрафа</th>
+                        <th class="py-1 text-center" style="width: 100px;">Штраф</th>
+                        <th class="py-1 text-center" style="width: 140px;">Надбавка</th>
+                        <th class="py-1 text-center" style="width: 100px;">Надбавка</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var row in ViewModel.FilteredData)
+                    {
+                        var isDeductionEditing = row.IsDeductionEditing;
+                        <tr>
+                            <td class="py-1"><strong>@row.EmployeeFullName</strong></td>
+                            <td class="py-1">@row.PositionTitle</td>
+
+                            <td class="py-1 text-center">
+                                @if (isDeductionEditing)
+                                {
+                                    <input type="number" class="form-control form-control-sm d-inline-block employee-hours-input"
+                                           @bind="row.DeductionEditingValue"
+                                           min="0" step="0.01" />
+                                }
+                                else
+                                {
+                                    <span>@(row.DeductionValue.HasValue ? row.DeductionValue.Value.ToString("F2") : "—")</span>
+                                }
+                            </td>
+
+                            <td class="py-1 text-center">
+                                @if (isDeductionEditing)
+                                {
+                                    <button class="btn btn-outline-success btn-sm me-1" @onclick="() => ViewModel.SaveDeductionAsync(row)" disabled="@row.IsDeductionSaving" title="Сохранить штраф">
+                                        <i class="bi bi-floppy-fill action-icon-sm"></i>
+                                    </button>
+                                    <button class="btn btn-outline-secondary btn-sm" @onclick="() => ViewModel.CancelDeductionEditing(row)" title="Отменить">
+                                        <i class="bi bi-x-lg action-icon-sm"></i>
+                                    </button>
+                                }
+                                else
+                                {
+                                    <button class="btn btn-outline-secondary btn-sm" @onclick="() => ViewModel.StartDeductionEditing(row)" title="Ред. штраф">
+                                        <i class="bi bi-pencil-fill action-icon-sm"></i>
+                                    </button>
+                                }
+                            </td>
+
+                            <td class="py-1 text-center">
+                                <span>@(row.ExtraPartValue.HasValue ? row.ExtraPartValue.Value.ToString("F2") : "—")</span>
+                            </td>
+
+                            <td class="py-1 text-center">
+                                <button class="btn btn-outline-secondary btn-sm" @onclick="() => ViewModel.OpenExtraPartModal(row)" title="Редактировать надбавку">
+                                    <i class="bi bi-pencil-fill action-icon-sm"></i>
+                                </button>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+}
+
+<CascadingValue Value="ViewModel.ModalState" Name="ModalState">
+    <EditExtraPartModal OnSaved="@OnExtraPartSaved"
+                        OnCancel="@(() => ViewModel.CloseExtraPartModal())" />
+</CascadingValue>
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadDataAsync();
+    }
+
+    private async Task LoadDataAsync()
+    {
+        var LoadingResult = await ViewModel.LoadAsync();
+        if (!LoadingResult.Ok && LoadingResult.Error == ErrorMessages.Unauthorized)
+        {
+            NavigationManager.NavigateTo("/authentication/login", forceLoad: true);
+        }
+    }
+
+    private async Task OnExtraPartSaved(ExtraPartSaveResult saveResult)
+    {
+        await ViewModel.CloseExtraPartModalAndReload(saveResult);
+    }
+}
