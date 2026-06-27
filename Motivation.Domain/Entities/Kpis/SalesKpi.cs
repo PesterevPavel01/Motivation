@@ -41,10 +41,17 @@ public sealed class SalesKpi : Kpi
         return kpi;
     }
 
+    public object Include(Func<object, object> value)
+    {
+        throw new NotImplementedException();
+    }
+
     public Operation<SalesKpi, string> Update(
         TitleValue title,
         CodeValue code,
+        CalculationType calculationType,
         AbbreviationValue abbreviation,
+        MeasurementUnit measurementUnit,
         List<KpiFilter> filters) 
     {
         if (title is null)
@@ -57,6 +64,13 @@ public sealed class SalesKpi : Kpi
         Title = title;
         Code = code;
         Abbreviation = abbreviation;
+
+        var setCalculationType = SetCalculationType(calculationType);
+        if (!setCalculationType.Ok)
+            return Operation.Error(setCalculationType.Error);
+        var setMeasurementUnit = SetMeasurementUnit(measurementUnit);
+        if (!setMeasurementUnit.Ok)
+            return Operation.Error(setMeasurementUnit.Error);
 
         var setFilters = SetFilters(filters);
         if (!setFilters.Ok)

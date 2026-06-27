@@ -1,0 +1,130 @@
+﻿@page "/kpis"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Motivation.HRWeb.Components.Pages.KpiPage.ViewModels
+@using Motivation.HRWeb.Components.Pages.KpiPage.Modals
+@using Motivation.HRWeb.Components.Pages.KpiPage.Models
+@using Motivation.Contracts
+@inject KpiViewModel ViewModel
+@inject NavigationManager NavigationManager
+@attribute [Authorize]
+
+<PageTitle>KPI</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fs-4 m-0">Показатели KPI</h1>
+    <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">
+        <i class="bi bi-plus-lg"></i> Добавить показатель
+    </button>
+</div>
+
+@if (ViewModel.IsLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+}
+else if (!string.IsNullOrWhiteSpace(ViewModel.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Ошибка:</strong> @ViewModel.ErrorMessage
+    </div>
+}
+else if (!ViewModel.Kpis.Any())
+{
+    <div class="alert alert-info">Показатели не найдены.</div>
+}
+else
+{
+    <div class="table-responsive shadow-sm rounded bg-white p-2">
+        <table class="table table-sm table-hover table-bordered align-middle small mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="py-1 align-middle" rowspan="2">Наименование</th>
+                    <th class="py-1 align-middle" rowspan="2">Краткое наимен.</th>
+                    <th class="py-1 align-middle" rowspan="2">Порядок расчета</th>
+                    <th class="py-1 align-middle" rowspan="2">Ед. измерения</th>
+                    <th class="py-1 align-middle" rowspan="2">Тип</th>
+                    <th class="py-1 text-center align-middle" colspan="3">Фильтры</th>
+                    <th class="py-1 text-center align-middle" rowspan="2" style="width: 80px;">Действия</th>
+                </tr>
+                <tr>
+                    <th class="py-1 text-center align-middle">Клиенты</th>
+                    <th class="py-1 text-center align-middle">Продукты</th>
+                    <th class="py-1 text-center align-middle">Организации</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var row in ViewModel.Kpis)
+                {
+                    <tr>
+                        <td class="py-1">@row.Title</td>
+                        <td class="py-1">@row.Abbreviation</td>
+                        <td class="py-1">@row.CalculationType</td>
+                        <td class="py-1">@row.MeasurementUnit.Title</td>
+                        <td class="py-1">@row.KpiType</td>
+                        <td class="py-1 text-center">
+                            <span class="badge @(row.HasCustomerFilter ? "bg-success" : "bg-secondary")">
+                                @(row.HasCustomerFilter ? "установлен" : "не установлен")
+                            </span>
+                        </td>
+                        <td class="py-1 text-center">
+                            <span class="badge @(row.HasProductFilter ? "bg-success" : "bg-secondary")">
+                                @(row.HasProductFilter ? "установлен" : "не установлен")
+                            </span>
+                        </td>
+                        <td class="py-1 text-center">
+                            <span class="badge @(row.HasCompanyFilter ? "bg-success" : "bg-secondary")">
+                                @(row.HasCompanyFilter ? "установлен" : "не установлен")
+                            </span>
+                        </td>
+                        <td class="py-1 text-center">
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="() => ViewModel.OpenModal(row)" title="Редактировать">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm" @onclick="() => ViewModel.OpenDeleteModal(row)" title="Удалить">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+}
+
+@if (ViewModel.IsModalOpen && ViewModel.SelectedKpi != null)
+{
+    <EditKpiModal Kpi="@ViewModel.SelectedKpi"
+                  IsNew="false"
+                  OnSaved="@(() => ViewModel.CloseModalAndReload())"
+                  OnCancel="@(() => ViewModel.CloseModal())" />
+}
+
+@if (ViewModel.IsCreateModalOpen)
+{
+    <EditKpiModal Kpi="null"
+                  IsNew="true"
+                  OnSaved="@(() => ViewModel.CloseCreateModalAndReload())"
+                  OnCancel="@(() => ViewModel.CloseCreateModal())" />
+}
+
+@if (ViewModel.IsDeleteModalOpen && ViewModel.SelectedKpi != null)
+{
+    <DeleteKpiModal Kpi="@ViewModel.SelectedKpi"
+                    OnDeleted="@(() => ViewModel.CloseDeleteModalAndReload())"
+                    OnCancel="@(() => ViewModel.CloseDeleteModal())" />
+}
+
+@code {
+    protected override async Task OnInitializedAsync()
+    {
+        var LoadingResult = await ViewModel.LoadAsync();
+        if (!LoadingResult.Ok && LoadingResult.Error == ErrorMessages.Unauthorized)
+        {
+            NavigationManager.NavigateTo("/authentication/login", forceLoad: true);
+        }
+    }
+
+    private void OpenCreateModal() => ViewModel.OpenCreateModal();
+}

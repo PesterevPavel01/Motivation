@@ -15,4 +15,8 @@
     <ProjectReference Include="..\Motivation.IdentityServer\Motivation.IdentityServer.Domain\Motivation.IdentityServer.Domain.csproj" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Mappers\" />
+  </ItemGroup>
+
 </Project>

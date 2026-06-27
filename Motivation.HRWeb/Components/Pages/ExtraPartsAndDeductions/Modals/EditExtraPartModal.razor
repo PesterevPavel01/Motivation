@@ -33,7 +33,7 @@
                     </div>
                     <div class="row g-2">
                         <div class="col-6">
-                            <label class="form-label small fw-bold">Действует с</label> disabled 
+                            <label class="form-label small fw-bold">Действует с</label> 
                             <input type="date" class="form-control form-control-sm" @bind="ModalViewModel.Form.ValidFrom" disabled />
                         </div>
                         <div class="col-6">
@@ -74,7 +74,7 @@ else
     {
         var saveResult = await ModalViewModel.SaveAsync(ModalState.EmployeeCode, ModalState.PositionCode, ModalState.CurrentExtraPart);
 
-        if (saveResult != null)
+        if (saveResult is not null)
         {
             await OnSaved.InvokeAsync(saveResult);
         }

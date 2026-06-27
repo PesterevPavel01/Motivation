@@ -31,6 +31,7 @@ namespace Motivation.KpiService.Definitions.Common
                     typeof(KpiCreatedDomainEvent).Name,
                     typeof(KpiUpdatedDomainEvent).Name,
                     typeof(AssignKpiToPositionDomainEvent).Name,
+                    typeof(KpiDeletedDomainEvent).Name,
                 ];
             });
             builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();

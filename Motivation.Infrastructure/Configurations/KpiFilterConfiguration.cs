@@ -17,6 +17,8 @@ internal class KpiFilterConfiguration : IEntityTypeConfiguration<KpiFilter>
         builder.Property(x => x.Id)
             .ValueGeneratedNever();
 
+        builder.Property(x => x.Include);
+
         builder
             .Property(x => x.Title)
             .IsRequired()

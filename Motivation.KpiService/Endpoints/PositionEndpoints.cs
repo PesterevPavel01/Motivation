@@ -3,7 +3,7 @@ using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Motivation.Contracts.Dto;
 using Motivation.IdentityServer.Domain.Base;
-using Motivation.KpiService.Application.Messaging.Kpis.Queries;
+using Motivation.KpiService.Application.Messaging.Kpis;
 
 namespace Motivation.KpiService.Endpoints
 {

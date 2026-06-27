@@ -1,4 +1,6 @@
 ﻿using Calabonga.OperationResults;
+using Motivation.Domain.DomainEvents.EmployeeDomainEvents;
+using Motivation.Domain.DomainEvents.KpiDomainEvents;
 using Motivation.Domain.Entities.Base;
 using Motivation.Domain.Enum;
 using Motivation.Domain.ValueObjects;
@@ -33,6 +35,11 @@ public abstract class Kpi : AggregateRoot
         MeasurementUnit = measurementUnit;
         return true;
     }
+    public Operation<bool, string> SetCalculationType(CalculationType calculationType)
+    {
+        CalculationType = calculationType;
+        return true;
+    }
     protected Operation<bool, string> SetFilters(List<KpiFilter> filters)
     {
         if(filters is null)
@@ -46,6 +53,13 @@ public abstract class Kpi : AggregateRoot
     protected Operation<bool, string> ClearFilters()
     {
         _filters.Clear();
+        return true;
+    }
+
+    public Operation<bool, string> Delete()
+    {
+        RaiseDomainEvent(new KpiDeletedDomainEvent(Id));
+
         return true;
     }
 }

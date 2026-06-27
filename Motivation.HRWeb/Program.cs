@@ -9,6 +9,7 @@ using Motivation.HRWeb.Application.Clients;
 using Motivation.HRWeb.Application.Clients.Base;
 using Motivation.HRWeb.Components;
 using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.ViewModels;
+using Motivation.HRWeb.Components.Pages.KpiPage.ViewModels;
 using Motivation.HRWeb.Components.Pages.TimeSheet.ViewModels;
 using Motivation.HRWeb.Exceptions;
 using Motivation.HRWeb.Extensions;
@@ -113,13 +114,23 @@ builder.Services.AddAuthentication(AppData.OidcSchemeName)
 
 builder.Services.ConfigureCookieOidcRefresh(CookieAuthenticationDefaults.AuthenticationScheme, AppData.OidcSchemeName);
 
+builder.Services.AddRazorComponents()
+    .AddInteractiveServerComponents(options =>
+    {
+        options.DetailedErrors = true;
+    });
+
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<EmployeeApiClient>();
 builder.Services.AddScoped<PositionApiClient>();
 builder.Services.AddScoped<StandardHoursApiClient>();
+builder.Services.AddScoped<KpiApiClient>();
 builder.Services.AddScoped<TimeSheetViewModel>();
 builder.Services.AddScoped<ExtraPartAndDeductionViewModel>();
 builder.Services.AddScoped<EditExtraPartModalViewModel>();
+builder.Services.AddScoped<KpiViewModel>();
+builder.Services.AddScoped<EditKpiViewModel>();
+builder.Services.AddScoped<MeasurementUnitApiClient>();
 builder.Services.AddMediator(options =>
 {
     options.ServiceLifetime = ServiceLifetime.Scoped;

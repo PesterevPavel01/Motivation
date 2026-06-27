@@ -13,6 +13,7 @@ namespace Motivation.Domain.Interfaces;
 [JsonDerivedType(typeof(PositionUpdatedDomainEvent), typeDiscriminator: "position-updated")]
 [JsonDerivedType(typeof(PositionDeletedDomainEvent), typeDiscriminator: "position-deleted")]
 [JsonDerivedType(typeof(KpiCreatedDomainEvent), typeDiscriminator: "kpi-created")]
+[JsonDerivedType(typeof(KpiDeletedDomainEvent), typeDiscriminator: "kpi-deleted")]
 [JsonDerivedType(typeof(KpiUpdatedDomainEvent), typeDiscriminator: "kpi-updated")]
 [JsonDerivedType(typeof(EmployeeCreatedDomainEvent), typeDiscriminator: "employee-created")]
 [JsonDerivedType(typeof(EmployeeDeletedDomainEvent), typeDiscriminator: "employee-deleted")]

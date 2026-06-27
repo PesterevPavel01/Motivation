@@ -1,4 +1,5 @@
 ﻿using Calabonga.OperationResults;
+using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.ValueObjects;
 
@@ -7,9 +8,9 @@ namespace Motivation.Application.Mappings;
 public static class KpiFilterMapper
 {
     public static Operation<List<KpiFilter>, string> FromString(
-        IEnumerable<string> customerFilter,
-        IEnumerable<string> productFilter,
-        IEnumerable<string> companyFilter)
+        IEnumerable<KpiFilterDto> customerFilter,
+        IEnumerable<KpiFilterDto> productFilter,
+        IEnumerable<KpiFilterDto> companyFilter)
     {
         List<KpiFilter> kpiFilters = [];
 
@@ -17,12 +18,12 @@ public static class KpiFilterMapper
         {
             foreach (var item in customerFilter)
             {
-                var filterTitle = TitleValue.Create(item);
+                var filterTitle = TitleValue.Create(item.Title);
                 if (!filterTitle.Ok)
                 {
                     return Operation.Error(filterTitle.Error);
                 }
-                var filterItem = KpiFilterCustomer.Create(filterTitle.Result);
+                var filterItem = KpiFilterCustomer.Create(filterTitle.Result, item.Include);
                 if (!filterItem.Ok)
                 {
                     return Operation.Error(filterItem.Error);
@@ -34,12 +35,12 @@ public static class KpiFilterMapper
         {
             foreach (var item in productFilter)
             {
-                var filterTitle = TitleValue.Create(item);
+                var filterTitle = TitleValue.Create(item.Title);
                 if (!filterTitle.Ok)
                 {
                     return Operation.Error(filterTitle.Error);
                 }
-                var filterItem = KpiFilterProduct.Create(filterTitle.Result);
+                var filterItem = KpiFilterProduct.Create(filterTitle.Result, item.Include);
                 if (!filterItem.Ok)
                 {
                     return Operation.Error(filterItem.Error);
@@ -51,12 +52,12 @@ public static class KpiFilterMapper
         {
             foreach (var item in companyFilter)
             {
-                var filterTitle = TitleValue.Create(item);
+                var filterTitle = TitleValue.Create(item.Title);
                 if (!filterTitle.Ok)
                 {
                     return Operation.Error(filterTitle.Error);
                 }
-                var filterItem = KpiFilterCompany.Create(filterTitle.Result);
+                var filterItem = KpiFilterCompany.Create(filterTitle.Result, item.Include);
                 if (!filterItem.Ok)
                 {
                     return Operation.Error(filterItem.Error);

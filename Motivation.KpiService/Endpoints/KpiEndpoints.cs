@@ -3,8 +3,7 @@ using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Motivation.Contracts.Dto;
 using Motivation.IdentityServer.Domain.Base;
-using Motivation.KpiService.Application.Messaging.KpiMessages.Queries;
-using Motivation.KpiService.Application.Messaging.Kpis.Queries;
+using Motivation.KpiService.Application.Messaging.Kpis;
 
 namespace Motivation.KpiService.Endpoints
 {
@@ -20,6 +19,19 @@ namespace Motivation.KpiService.Endpoints
         {
             var group = routes.MapGroup("/api/kpi").WithTags("Kpis");
 
+            group.MapPost("create", async ([FromServices] IMediator mediator, [FromBody] KpiCreateDto kpi, HttpContext context)
+                =>
+            {
+                var result = await mediator.Send(new PostKpi.Request(kpi), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
+            .RequireAuthorization(AppData.SystemAdministratorRoleName)
+            .Produces(200)
+            .ProducesProblem(401)
+            .WithOpenApi();
+
             group.MapPost("sales/create", async ([FromServices] IMediator mediator, [FromBody] KpiCreateDto kpi, HttpContext context)
                 =>
             {
@@ -33,7 +45,7 @@ namespace Motivation.KpiService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
 
-            group.MapPut("sales/update/{code}", async ([FromServices] IMediator mediator, string code, [FromBody] KpiCreateDto model, HttpContext context)
+            /*group.MapPut("sales/update/{code}", async ([FromServices] IMediator mediator, string code, [FromBody] KpiCreateDto model, HttpContext context)
                 =>
             {
                 var result = await mediator.Send(new PutSalesKpi.Request(code, model), context.RequestAborted);
@@ -44,7 +56,7 @@ namespace Motivation.KpiService.Endpoints
             .RequireAuthorization(AppData.SystemAdministratorRoleName)
             .Produces(200)
             .ProducesProblem(401)
-            .WithOpenApi();
+            .WithOpenApi();*/
 
             group.MapPost("unit/create", async ([FromServices] IMediator mediator, [FromBody] UnitCreateDto kpi, HttpContext context)
                 =>
@@ -59,10 +71,76 @@ namespace Motivation.KpiService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
 
+
+            group.MapGet("unit/all", async ([FromServices] IMediator mediator, HttpContext context)
+                =>
+            {
+                var result = await mediator.Send(new GetUnits.Request(), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
+            .RequireAuthorization(AppData.SystemAdministratorRoleName)
+            .Produces(200)
+            .ProducesProblem(401)
+            .WithOpenApi();
+
+            group.MapGet("calculationType/all", async ([FromServices] IMediator mediator, HttpContext context)
+                =>
+            {
+                var result = await mediator.Send(new GetCalculationTypes.Request(), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
+            .RequireAuthorization(AppData.SystemAdministratorRoleName)
+            .Produces(200)
+            .ProducesProblem(401)
+            .WithOpenApi();
+
             group.MapGet("all", async ([FromServices] IMediator mediator, HttpContext context)
                 =>
             {
                 var result = await mediator.Send(new GetKpis.Request(), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
+            .RequireAuthorization(AppData.SystemAdministratorRoleName)
+            .Produces(200)
+            .ProducesProblem(401)
+            .WithOpenApi();
+
+            group.MapDelete("{code}", async ([FromServices] IMediator mediator, string code, HttpContext context)
+                =>
+            {
+                var result = await mediator.Send(new DeleteKpi.Request(code), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
+            .RequireAuthorization(AppData.SystemAdministratorRoleName)
+            .Produces(200)
+            .ProducesProblem(401)
+            .WithOpenApi();
+
+            group.MapPut("{code}/update", async ([FromServices] IMediator mediator, string code, [FromBody] KpiUpdateDto model, HttpContext context)
+                =>
+            {
+                var result = await mediator.Send(new PutKpi.Request(model), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
+            .RequireAuthorization(AppData.SystemAdministratorRoleName)
+            .Produces(200)
+            .ProducesProblem(401)
+            .WithOpenApi();
+
+            group.MapGet("types", async ([FromServices] IMediator mediator, HttpContext context)
+                =>
+            {
+                var result = await mediator.Send(new GetKpiTypes.Request(), context.RequestAborted);
                 if (!result.Ok)
                     return Results.BadRequest(result.Error);
                 return Results.Ok(result.Result);
