@@ -1,14 +1,14 @@
 ﻿using Motivation.Contracts.Dto;
 using Motivation.Domain.Enum;
-using Motivation.HRWeb.Components.Pages.PositionsPage.ViewModels;
+using Motivation.HRWeb.Components.Pages.PositionsPage.Models;
 
 namespace Motivation.HRWeb.Application.Mappings;
 
 public static class PositionMapper
 {
-    public static EditPositionViewModel ToUpdateViewModel(this PositionDto dto)
+    public static EditPositionModel ToUpdateViewModel(this PositionDto dto)
     {
-        return new EditPositionViewModel
+        return new EditPositionModel
         {
             Title = dto.Title,
             Code = dto.Code,
@@ -18,7 +18,7 @@ public static class PositionMapper
             WorkWeekType = dto.WorkWeekType
         };
     }
-    public static PositionCreateDto ToCreateDto(this CreatePositionViewModel model)
+    public static PositionCreateDto ToCreateDto(this CreatePositionModel model)
     {
         return new PositionCreateDto(
             Title: model.Title,
@@ -30,9 +30,9 @@ public static class PositionMapper
         );
     }
 
-    public static CreatePositionViewModel ToViewModel(this PositionCreateDto dto)
+    public static CreatePositionModel ToViewModel(this PositionCreateDto dto)
     {
-        return new CreatePositionViewModel
+        return new CreatePositionModel
         {
             Title = dto.Title,
             Code = dto.Code,
@@ -43,7 +43,7 @@ public static class PositionMapper
         };
     }
 
-    public static PositionUpdateDto ToUpdateDto(this EditPositionViewModel model)
+    public static PositionUpdateDto ToUpdateDto(this EditPositionModel model)
     {
         return new PositionUpdateDto(
             Title: model.Title,
@@ -55,9 +55,9 @@ public static class PositionMapper
         );
     }
 
-    public static EditPositionViewModel ToViewModel(this PositionUpdateDto dto)
+    public static EditPositionModel ToViewModel(this PositionUpdateDto dto)
     {
-        return new EditPositionViewModel
+        return new EditPositionModel
         {
             Title = dto.Title,
             Code = dto.Code,

@@ -22,6 +22,10 @@ public class EditKpiViewModel
     public MeasurementUnitModel MeasurementUnit { get; set; } = null!;
     public string KpiType { get; set; } = string.Empty;
 
+    public bool CustomerResponsibleFilter { get; set; }
+    public bool SalesResponsibleFilter { get; set; }
+    public bool ProductResponsibleFilter { get; set; }
+
     public List<KpiFilterItemModel> CustomerFilter { get; set; } = [];
     public List<KpiFilterItemModel> ProductFilter { get; set; } = [];
     public List<KpiFilterItemModel> CompanyFilter { get; set; } = [];
@@ -50,6 +54,9 @@ public class EditKpiViewModel
             viewModel.CustomerFilter = kpi.CustomerFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
             viewModel.ProductFilter = kpi.ProductFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
             viewModel.CompanyFilter = kpi.CompanyFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
+            viewModel.CustomerResponsibleFilter = kpi.CustomerResponsibleFilter;
+            viewModel.SalesResponsibleFilter = kpi.SalesResponsibleFilter;
+            viewModel.ProductResponsibleFilter = kpi.ProductResponsibleFilter;
         }
         else
         {
@@ -61,6 +68,9 @@ public class EditKpiViewModel
             viewModel.CustomerFilter.Clear();
             viewModel.ProductFilter.Clear();
             viewModel.CompanyFilter.Clear();
+            viewModel.CustomerResponsibleFilter = false;
+            viewModel.SalesResponsibleFilter = false;
+            viewModel.ProductResponsibleFilter = false;
         }
         return viewModel;
     }

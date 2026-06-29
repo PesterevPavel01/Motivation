@@ -1,14 +1,13 @@
-﻿using Mediator;
+﻿using Calabonga.OperationResults;
+using Mediator;
+using Motivation.Application.Mappings;
+using Motivation.Contracts;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Enum;
 using Motivation.HRWeb.Application.Messages.EmployeeMessages;
 using Motivation.HRWeb.Application.Messages.TimeSheetMessages;
 using Motivation.HRWeb.Application.Messages.TimeStandardHours;
-using Motivation.Application.Mappings;
 using Motivation.HRWeb.Components.Pages.TimeSheet.Modes;
-using Calabonga.OperationResults;
-using Motivation.Contracts;
-using System.Net.NetworkInformation;
 
 namespace Motivation.HRWeb.Components.Pages.TimeSheet.ViewModels;
 

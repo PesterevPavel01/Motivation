@@ -160,6 +160,7 @@ namespace Motivation.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
+                    Include = table.Column<bool>(type: "boolean", nullable: false),
                     Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
                     KpiFilterType = table.Column<int>(type: "integer", nullable: false),
                     KpiId = table.Column<Guid>(type: "uuid", nullable: true),

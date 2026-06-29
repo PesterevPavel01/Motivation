@@ -1,6 +1,6 @@
-﻿namespace Motivation.HRWeb.Components.Pages.PositionsPage.ViewModels;
+﻿namespace Motivation.HRWeb.Components.Pages.PositionsPage.Models;
 
-public class CreatePositionViewModel
+public class EditPositionModel
 {
     public string Title { get; set; } = string.Empty;
     public string? Code { get; set; }

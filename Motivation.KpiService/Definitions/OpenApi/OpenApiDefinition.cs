@@ -12,6 +12,7 @@ namespace Motivation.KpiService.Definitions.OpenApi
         public const string AppVersion = "1.0";
 
         private const string _openApiConfig = "/openapi/v1.json";
+        private const string _prodactionOpenApiConfig = "/kpi/openapi/v1.json";
 
         public override void ConfigureServices(WebApplicationBuilder builder)
         {
@@ -25,11 +26,10 @@ namespace Motivation.KpiService.Definitions.OpenApi
 
         public override void ConfigureApplication(WebApplication app)
         {
-            if (!app.Environment.IsDevelopment())
-            {
-                return;
-            }
-
+            //if (!app.Environment.IsDevelopment())
+            //{
+            //    return;
+            //}
             var url = app.Services.GetRequiredService<IConfiguration>().GetValue<string>("AuthServer:Url");
 
             app.MapOpenApi();
@@ -43,7 +43,14 @@ namespace Motivation.KpiService.Definitions.OpenApi
 
             app.UseSwaggerUI(settings =>
             {
-                settings.SwaggerEndpoint(_openApiConfig, $"Kpi service v.{AppVersion}");
+                if (app.Environment.IsProduction())
+                {
+                    settings.SwaggerEndpoint(_prodactionOpenApiConfig, $"Kpi service v.{AppVersion}");
+                }
+                else
+                {
+                    settings.SwaggerEndpoint(_openApiConfig, $"Kpi service v.{AppVersion}");
+                }
 
                 settings.DocumentTitle = "Kpi service";
                 settings.DefaultModelExpandDepth(0);

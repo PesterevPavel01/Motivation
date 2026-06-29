@@ -11,12 +11,12 @@ namespace Motivation.HRService.Application.Messaging.PositionMessages.Queries
 {
     public class PostPosition
     {
-        public record Request(PositionCreateDto Model) : IRequest<Operation<bool, string>>;
+        public record Request(PositionCreateDto Model) : IRequest<Operation<PositionDto, string>>;
 
         public class Handler(IUnitOfWork unitOfWork, ILogger<Handler> logger)
-            : IRequestHandler<Request, Operation<bool, string>>
+            : IRequestHandler<Request, Operation<PositionDto, string>>
         {
-            public async ValueTask<Operation<bool, string>> Handle(Request positionRequest, CancellationToken cancellationToken)
+            public async ValueTask<Operation<PositionDto, string>> Handle(Request positionRequest, CancellationToken cancellationToken)
             {
                 var codeResult = CodeValue.Create(positionRequest.Model.Code ?? Guid.CreateVersion7().ToString());
                 if (!codeResult.Ok)
@@ -67,7 +67,7 @@ namespace Motivation.HRService.Application.Messaging.PositionMessages.Queries
                     return Operation.Error(unitOfWork.Result.Exception.Message);
                 }
 
-                return true;
+                return positionResult.Result.MapToDto();
             }
         }
     }

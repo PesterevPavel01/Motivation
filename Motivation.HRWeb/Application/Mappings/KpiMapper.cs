@@ -17,7 +17,10 @@ public static class KpiMapper
             MeasurementUnitCode = model.MeasurementUnit.Code,
             CustomerFilter = model.CustomerFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
             ProductFilter = model.ProductFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList()
+            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
+            CustomerResponsibleFilter = model.CustomerResponsibleFilter ? [new KpiFilterDto("default", default) ]: [],
+            ProductResponsibleFilter = model.ProductResponsibleFilter ? [new KpiFilterDto("default", default)] : [],
+            SalesResponsibleFilter = model.SalesResponsibleFilter ? [new KpiFilterDto("default", default)] : []
         };
     }
 
@@ -32,7 +35,10 @@ public static class KpiMapper
             MeasurementUnitCode = model.MeasurementUnit.Code,
             CustomerFilter = model.CustomerFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
             ProductFilter = model.ProductFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList()
+            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
+            CustomerResponsibleFilter = model.CustomerResponsibleFilter ? [new KpiFilterDto("default", default)] : [],
+            ProductResponsibleFilter = model.ProductResponsibleFilter ? [new KpiFilterDto("default", default)] : [],
+            SalesResponsibleFilter = model.SalesResponsibleFilter ? [new KpiFilterDto("default", default)] : []
         };
     }
 }

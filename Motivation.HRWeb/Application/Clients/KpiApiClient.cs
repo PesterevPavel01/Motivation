@@ -63,4 +63,12 @@ public class KpiApiClient : BaseApiClient
             return Operation.Error(result.Error);
         return result;
     }
+
+    internal async Task<Operation<bool, string>> CreatePositionKpiAsync(String positionCode, IEnumerable<AssignKpiToPositionDto> models, CancellationToken cancellationToken)
+    {
+        var result = await SendAsync<bool>(HttpMethod.Put, $"/api/positions/{positionCode}/assign-kpis", models, cancellationToken);
+        if (!result.Ok)
+            return Operation.Error(result.Error);
+        return result;
+    }
 }

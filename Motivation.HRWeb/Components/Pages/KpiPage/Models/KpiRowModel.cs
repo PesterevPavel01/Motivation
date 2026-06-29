@@ -11,6 +11,10 @@ public class KpiRowModel
     public MeasurementUnitModel MeasurementUnit { get; set; } = null!;
     public string KpiType { get; set; } = null!;
 
+    public bool CustomerResponsibleFilter { get; set; }
+    public bool SalesResponsibleFilter { get; set; }
+    public bool ProductResponsibleFilter { get; set; }
+
     public bool HasCustomerFilter => CustomerFilter.Any();
     public bool HasProductFilter => ProductFilter.Any();
     public bool HasCompanyFilter => CompanyFilter.Any();

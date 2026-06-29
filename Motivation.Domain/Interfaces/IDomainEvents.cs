@@ -21,6 +21,7 @@ namespace Motivation.Domain.Interfaces;
 [JsonDerivedType(typeof(AssignEmployeeToPositionDomainEvent), typeDiscriminator: "assign-to-position")]
 [JsonDerivedType(typeof(DismissFromPositionDomainEvent), typeDiscriminator: "dismiss-from-position")]
 [JsonDerivedType(typeof(AssignKpiToPositionDomainEvent), typeDiscriminator: "assign-kpi")]
+[JsonDerivedType(typeof(KpiRemovedFromPositionDomainEvent), typeDiscriminator: "remove-kpi-from-position")]
 [JsonDerivedType(typeof(SetActualHoursDomainEvent), typeDiscriminator: "set-actual-hours")]
 [JsonDerivedType(typeof(RemoveActualHoursDomainEvent), typeDiscriminator: "delete-actual-hours")]
 [JsonDerivedType(typeof(SetDeductionDomainEvent), typeDiscriminator: "set-deduction")]

@@ -63,7 +63,10 @@ namespace Motivation.KpiService.Application.Messaging.Kpis
                 var kpiFilters = KpiFilterMapper.FromString(
                     customerFilter: kpiRequest.Model.CustomerFilter,
                     productFilter: kpiRequest.Model.ProductFilter,
-                    companyFilter: kpiRequest.Model.CompanyFilter);
+                    companyFilter: kpiRequest.Model.CompanyFilter,
+                    customerResponsibleFilter: kpiRequest.Model.CustomerResponsibleFilter,
+                    productResponsibleFilter: kpiRequest.Model.ProductResponsibleFilter,
+                    salesResponsibleFilter: kpiRequest.Model.SalesResponsibleFilter);
 
                 if (!kpiFilters.Ok)
                 {

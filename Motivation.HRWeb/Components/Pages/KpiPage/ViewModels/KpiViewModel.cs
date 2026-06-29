@@ -149,6 +149,9 @@ public class KpiViewModel
             CustomerFilter = x.CustomerFilter.ToList(),
             ProductFilter = x.ProductFilter.ToList(),
             CompanyFilter = x.CompanyFilter.ToList(),
+            CustomerResponsibleFilter = x.CustomerResponsibleFilter.Any(filter => filter.Title == "default"),
+            ProductResponsibleFilter = x.ProductResponsibleFilter.Any(filter => filter.Title == "default"),
+            SalesResponsibleFilter = x.SalesResponsibleFilter.Any(filter => filter.Title == "default")
         }).ToList();
 
         return true;

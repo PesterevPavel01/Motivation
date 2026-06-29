@@ -23,6 +23,8 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages.Queries
                         include: query => query
                             .Include(x => x.EmployeePositions)
                                 .ThenInclude(x => x.Position)
+                                    .ThenInclude(x => x.PositionKpiHistory)
+                                        .ThenInclude(x => x.Kpi)
                             .Include(x => x.EmployeePositions)
                                 .ThenInclude(x => x.ActualHoursHistory)
                             .Include(x => x.EmployeePositions)

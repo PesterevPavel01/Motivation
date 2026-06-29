@@ -45,19 +45,6 @@ namespace Motivation.KpiService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
 
-            /*group.MapPut("sales/update/{code}", async ([FromServices] IMediator mediator, string code, [FromBody] KpiCreateDto model, HttpContext context)
-                =>
-            {
-                var result = await mediator.Send(new PutSalesKpi.Request(code, model), context.RequestAborted);
-                if (!result.Ok)
-                    return Results.BadRequest(result.Error);
-                return Results.Ok(result.Result);
-            })
-            .RequireAuthorization(AppData.SystemAdministratorRoleName)
-            .Produces(200)
-            .ProducesProblem(401)
-            .WithOpenApi();*/
-
             group.MapPost("unit/create", async ([FromServices] IMediator mediator, [FromBody] UnitCreateDto kpi, HttpContext context)
                 =>
             {

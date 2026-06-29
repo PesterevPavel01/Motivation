@@ -35,6 +35,9 @@ public static class KpiMapper
             CustomerFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Customer).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
             CompanyFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Company).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
             ProductFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Product).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
+            CustomerResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.CustomerResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
+            ProductResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.ProductResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
+            SalesResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.SalesResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include))
         };
     }
 }

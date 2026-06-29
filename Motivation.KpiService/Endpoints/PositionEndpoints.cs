@@ -19,10 +19,23 @@ namespace Motivation.KpiService.Endpoints
         {
             var group = routes.MapGroup("/api/positions").WithTags("Positions");
 
-            group.MapPost("/add-kpi", async ([FromBody] AssignKpiToPositionDto assignModel, [FromServices] IMediator mediator, HttpContext context)
+            group.MapPut("/{positionCode}/assign-kpis", async (string positionCode, [FromBody] IEnumerable<AssignKpiToPositionDto> assignModels, [FromServices] IMediator mediator, HttpContext context)
                 =>
             {
-                var result = await mediator.Send(new AssignKpi.Request(assignModel), context.RequestAborted);
+                var result = await mediator.Send(new AssignKpi.Request(positionCode, assignModels), context.RequestAborted);
+                if (!result.Ok)
+                    return Results.BadRequest(result.Error);
+                return Results.Ok(result.Result);
+            })
+            .RequireAuthorization(AppData.SystemAdministratorRoleName)
+            .Produces(200)
+            .ProducesProblem(401)
+            .WithOpenApi();
+
+            group.MapDelete("/{positionCode}/remove-kpi/{kpiCode}", async (string positionCode, string kpiCode, [FromServices] IMediator mediator, HttpContext context)
+                =>
+            {
+                var result = await mediator.Send(new RemoveKpiFromPositionMessage.Request(positionCode, kpiCode), context.RequestAborted);
                 if (!result.Ok)
                     return Results.BadRequest(result.Error);
                 return Results.Ok(result.Result);
@@ -32,5 +45,6 @@ namespace Motivation.KpiService.Endpoints
             .ProducesProblem(401)
             .WithOpenApi();
         }
+
     }
 }

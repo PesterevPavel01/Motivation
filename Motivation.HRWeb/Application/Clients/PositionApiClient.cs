@@ -24,9 +24,9 @@ public class PositionApiClient : BaseApiClient
     }
 
 
-    public async Task<Operation<bool, string>> CreateAsync(PositionCreateDto dto, CancellationToken cancellationToken)
+    public async Task<Operation<PositionDto, string>> CreateAsync(PositionCreateDto dto, CancellationToken cancellationToken)
     {
-        var result = await SendAsync<bool>(HttpMethod.Post, "/api/positions/create", dto, cancellationToken);
+        var result = await SendAsync<PositionDto>(HttpMethod.Post, "/api/positions/create", dto, cancellationToken);
         if (!result.Ok)
             return Operation.Error(result.Error);
         return result;

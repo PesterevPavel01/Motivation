@@ -18,7 +18,15 @@ public static class PositionMapper
             BaseSalary: source.BaseSalary.Value,
             MotivationPart: source.MotivationPart.MotivationPartValue.Value,
             RecalculateToHours: source.MotivationPart.RecalculateToHours,
-            WorkWeekType: source.WorkWeekType.ToRussianString()
+            WorkWeekType: source.WorkWeekType.ToRussianString(),
+            Kpis: source.PositionKpiHistory
+                .Select(x => new PositionKpiDto(
+                    KpiCode: x.Kpi.Code.Value,
+                    KpiTitle: x.Kpi.Title.Value,
+                    OrderNumber: x.OrderNumber,
+                    Weight: x.Weight.Value,
+                    ValidFrom: x.ValidFrom,
+                    ValidTo: x.ValidTo))
         );
     }
 }

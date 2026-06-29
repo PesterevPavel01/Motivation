@@ -1,0 +1,74 @@
+﻿@using Motivation.HRWeb.Components.Pages.PositionsPage.Components
+
+<div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog @(ViewModel.IsEditMode ? "modal-xl" : "modal-lg") modal-dialog-scrollable">
+        <div class="modal-content" style="max-height: 90vh;">
+            <div class="modal-header">
+                <h5 class="modal-title fs-6">
+                    @(ViewModel.IsEditMode ? "Редактирование" : "Добавление") должности
+                </h5>
+                <button type="button" class="btn-close" @onclick="OnCancel"></button>
+            </div>
+
+            <EditForm Model="ViewModel" OnValidSubmit="HandleSave">
+                <div class="modal-body" style="max-height: calc(90vh - 150px); overflow-y: auto;">
+                    @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+                    {
+                        <div class="alert alert-danger small mb-3">@ViewModel.ErrorMessage</div>
+                    }
+
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Код</label>
+                        <input type="text" class="form-control form-control-sm"
+                               value="@(string.IsNullOrEmpty(ViewModel.Code) ? "Будет сгенерирован автоматически" : ViewModel.Code)"
+                               disabled="disabled"
+                               style="background-color: #e9ecef;" />
+                    </div>
+
+                    <div class="row g-2">
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Название *</label>
+                            <InputText class="form-control form-control-sm" @bind-Value="ViewModel.Title" />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Оклад</label>
+                            <InputNumber class="form-control form-control-sm" @bind-Value="ViewModel.BaseSalary" />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Мотивационная часть</label>
+                            <InputNumber class="form-control form-control-sm" @bind-Value="ViewModel.MotivationPart" />
+                        </div>
+                        <div class="col-12 col-md-6">
+                            <label class="form-label small fw-bold">Тип рабочей недели</label>
+                            <InputSelect class="form-select form-select-sm" @bind-Value="ViewModel.WorkWeekType">
+                                <option value="">-- Выберите --</option>
+                                @foreach (var type in ViewModel.WeekTypeOptions)
+                                {
+                                    <option value="@type.Value.ToString()">
+                                        @type.DisplayName
+                                    </option>
+                                }
+                            </InputSelect>
+                        </div>
+                        <div class="col-12">
+                            <label class="form-label small fw-bold">Пересчитывать на часы</label>
+                            <InputCheckbox class="form-check-input ms-2" @bind-Value="ViewModel.RecalculateToHours" />
+                        </div>
+                    </div>
+
+                    <KpiListComponent Items="ViewModel.Kpis"
+                                      OnKpisChanged="ViewModel.OnKpisChanged"
+                                      AvailableKpis="ViewModel.AvailableKpis" />
+                </div>
+
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
+                    <button type="submit" class="btn @(ViewModel.IsEditMode ? "btn-success" : "btn-primary") btn-sm"
+                            disabled="@ViewModel.IsSaving">
+                        @(ViewModel.IsSaving ? "Сохранение..." : (ViewModel.IsEditMode ? "Сохранить" : "Добавить"))
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>

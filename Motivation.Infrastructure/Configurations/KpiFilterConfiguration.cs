@@ -1,6 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
-using Motivation.Domain.Entities;
+using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.Enum;
 using Motivation.Domain.ValueObjects;
 
@@ -42,6 +42,9 @@ internal class KpiFilterConfiguration : IEntityTypeConfiguration<KpiFilter>
         builder.HasDiscriminator(x => x.KpiFilterType)
             .HasValue<KpiFilterCompany>(KpiFilterType.Company)
             .HasValue<KpiFilterProduct>(KpiFilterType.Product)
-            .HasValue<KpiFilterCustomer>(KpiFilterType.Customer);
+            .HasValue<KpiFilterCustomer>(KpiFilterType.Customer)
+            .HasValue<KpiFilterCustomerResponsible>(KpiFilterType.CustomerResponsible)
+            .HasValue<KpiFilterSalesResponsible>(KpiFilterType.SalesResponsible)
+            .HasValue<KpiFilterProductResponsible>(KpiFilterType.ProductResponsible);
     }
 }

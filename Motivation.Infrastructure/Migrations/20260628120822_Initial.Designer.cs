@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Motivation.Infrastructure.Migrations
 {
     [DbContext(typeof(MotivationDbContext))]
-    [Migration("20260623121730_Initial")]
+    [Migration("20260628120822_Initial")]
     partial class Initial
     {
         /// <inheritdoc />
@@ -197,41 +197,6 @@ namespace Motivation.Infrastructure.Migrations
                     b.ToTable("extra_parts", (string)null);
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.KpiFilter", b =>
-                {
-                    b.Property<Guid>("Id")
-                        .HasColumnType("uuid");
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.Property<int>("KpiFilterType")
-                        .HasColumnType("integer");
-
-                    b.Property<Guid?>("KpiId")
-                        .HasColumnType("uuid");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasMaxLength(256)
-                        .HasColumnType("character varying(256)");
-
-                    b.Property<DateTime>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("KpiId");
-
-                    b.HasIndex("Title");
-
-                    b.ToTable("kpi_filters", (string)null);
-
-                    b.HasDiscriminator<int>("KpiFilterType");
-
-                    b.UseTphMappingStrategy();
-                });
-
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.Kpi", b =>
                 {
                     b.Property<Guid>("Id")
@@ -287,6 +252,44 @@ namespace Motivation.Infrastructure.Migrations
                     b.ToTable("kpis", (string)null);
 
                     b.HasDiscriminator<int>("KpiType");
+
+                    b.UseTphMappingStrategy();
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilter", b =>
+                {
+                    b.Property<Guid>("Id")
+                        .HasColumnType("uuid");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.Property<bool>("Include")
+                        .HasColumnType("boolean");
+
+                    b.Property<int>("KpiFilterType")
+                        .HasColumnType("integer");
+
+                    b.Property<Guid?>("KpiId")
+                        .HasColumnType("uuid");
+
+                    b.Property<string>("Title")
+                        .IsRequired()
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<DateTime>("UpdatedAt")
+                        .HasColumnType("timestamp with time zone");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("KpiId");
+
+                    b.HasIndex("Title");
+
+                    b.ToTable("kpi_filters", (string)null);
+
+                    b.HasDiscriminator<int>("KpiFilterType");
 
                     b.UseTphMappingStrategy();
                 });
@@ -499,27 +502,6 @@ namespace Motivation.Infrastructure.Migrations
                     b.ToTable("standard_hours", (string)null);
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.KpiFilterCompany", b =>
-                {
-                    b.HasBaseType("Motivation.Domain.Entities.KpiFilter");
-
-                    b.HasDiscriminator().HasValue(2);
-                });
-
-            modelBuilder.Entity("Motivation.Domain.Entities.KpiFilterCustomer", b =>
-                {
-                    b.HasBaseType("Motivation.Domain.Entities.KpiFilter");
-
-                    b.HasDiscriminator().HasValue(0);
-                });
-
-            modelBuilder.Entity("Motivation.Domain.Entities.KpiFilterProduct", b =>
-                {
-                    b.HasBaseType("Motivation.Domain.Entities.KpiFilter");
-
-                    b.HasDiscriminator().HasValue(1);
-                });
-
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.ComplexityKpi", b =>
                 {
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.Kpi");
@@ -532,6 +514,48 @@ namespace Motivation.Infrastructure.Migrations
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.Kpi");
 
                     b.HasDiscriminator().HasValue(0);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterCompany", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
+                    b.HasDiscriminator().HasValue(3);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterCustomer", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
+                    b.HasDiscriminator().HasValue(0);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterCustomerResponsible", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
+                    b.HasDiscriminator().HasValue(4);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterProduct", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
+                    b.HasDiscriminator().HasValue(1);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterProductResponsible", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
+                    b.HasDiscriminator().HasValue(6);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterSalesResponsible", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
+                    b.HasDiscriminator().HasValue(5);
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Deduction", b =>
@@ -616,13 +640,6 @@ namespace Motivation.Infrastructure.Migrations
                     b.Navigation("EmployeePosition");
                 });
 
-            modelBuilder.Entity("Motivation.Domain.Entities.KpiFilter", b =>
-                {
-                    b.HasOne("Motivation.Domain.Entities.Kpis.Kpi", null)
-                        .WithMany("Filters")
-                        .HasForeignKey("KpiId");
-                });
-
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.Kpi", b =>
                 {
                     b.HasOne("Motivation.Domain.Entities.MeasurementUnit", "MeasurementUnit")
@@ -630,6 +647,13 @@ namespace Motivation.Infrastructure.Migrations
                         .HasForeignKey("MeasurementUnitId");
 
                     b.Navigation("MeasurementUnit");
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilter", b =>
+                {
+                    b.HasOne("Motivation.Domain.Entities.Kpis.Kpi", null)
+                        .WithMany("Filters")
+                        .HasForeignKey("KpiId");
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiTarget", b =>

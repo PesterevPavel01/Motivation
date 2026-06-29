@@ -2,7 +2,7 @@
 using Motivation.Domain.Enum;
 using Motivation.Domain.ValueObjects;
 
-namespace Motivation.Domain.Entities;
+namespace Motivation.Domain.Entities.Kpis;
 
 public sealed class KpiFilterCompany : KpiFilter
 {

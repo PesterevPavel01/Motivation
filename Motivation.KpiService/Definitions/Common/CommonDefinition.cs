@@ -31,6 +31,7 @@ namespace Motivation.KpiService.Definitions.Common
                     typeof(KpiCreatedDomainEvent).Name,
                     typeof(KpiUpdatedDomainEvent).Name,
                     typeof(AssignKpiToPositionDomainEvent).Name,
+                    typeof(KpiRemovedFromPositionDomainEvent).Name,
                     typeof(KpiDeletedDomainEvent).Name,
                 ];
             });

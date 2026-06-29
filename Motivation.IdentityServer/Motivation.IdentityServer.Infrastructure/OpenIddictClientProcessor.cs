@@ -23,8 +23,8 @@ public sealed class OpenIddictClientProcessor : IIdentityClientProcessor
             var descriptor = configuration.GetDescriptor();
             var existingClient = await _manager.FindByClientIdAsync(descriptor.ClientId, cancellationToken);
                 
-            //await _manager.DeleteAsync(existingClient, cancellationToken);
-            //await _manager.CreateAsync(descriptor, cancellationToken);
+            await _manager.DeleteAsync(existingClient, cancellationToken);
+            await _manager.CreateAsync(descriptor, cancellationToken);
 
             if (existingClient is null)
             {

@@ -73,6 +73,25 @@ public class Position : AggregateRoot
         return true;
     }
 
+    public Operation<bool, string> RemoveKpi(PositionKpi positionKpi)
+    {
+        if (positionKpi is null)
+            return Operation.Error("PositionKpi is null!");
+        _positionKpiHistory.Remove(positionKpi);
+
+        RaiseDomainEvent(new KpiRemovedFromPositionDomainEvent(Id, positionKpi.Id));
+
+        return true;
+    }
+    public Operation<bool, string> ClearKpiHistory()
+    {
+        if (!_positionKpiHistory.Any())
+            return true;
+        _positionKpiHistory.Clear();
+
+        return true;
+    }
+
     public Operation<Position, string> Update(
         TitleValue title, 
         CodeValue code, 

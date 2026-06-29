@@ -7,16 +7,16 @@ namespace Motivation.HRWeb.Application.Messages.PositionMessages;
 
 public class CreatePosition
 {
-    public record Request(PositionCreateDto Model) : IRequest<Operation<bool, string>>;
+    public record Request(PositionCreateDto Model) : IRequest<Operation<PositionDto, string>>;
 
-    public class Handler(PositionApiClient client) : IRequestHandler<Request, Operation<bool, string>>
+    public class Handler(PositionApiClient client) : IRequestHandler<Request, Operation<PositionDto, string>>
     {
-        public async ValueTask<Operation<bool, string>> Handle(Request request, CancellationToken cancellationToken)
+        public async ValueTask<Operation<PositionDto, string>> Handle(Request request, CancellationToken cancellationToken)
         {
             var result = await client.CreateAsync(request.Model, cancellationToken);
             if (!result.Ok)
                 return Operation.Error(result.Error);
-            return true;
+            return result.Result;
         }
     }
 }

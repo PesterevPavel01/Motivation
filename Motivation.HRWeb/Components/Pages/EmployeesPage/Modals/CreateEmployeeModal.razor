@@ -21,8 +21,11 @@
                         </div>
                     }
                     <div class="mb-2">
-                        <label class="form-label small fw-bold">Код (необязательно)</label>
-                        <InputText class="form-control form-control-sm" @bind-Value="createModel.Code" />
+                        <label class="form-label small fw-bold">Код</label>
+                        <input type="text" class="form-control form-control-sm"
+                               value="@(string.IsNullOrEmpty(createModel.Code) ? "Будет сгенерирован автоматически" : createModel.Code)"
+                               disabled="disabled"
+                               style="background-color: #e9ecef;" />
                     </div>
                     <div class="mb-2">
                         <label class="form-label small fw-bold">Фамилия *</label>
