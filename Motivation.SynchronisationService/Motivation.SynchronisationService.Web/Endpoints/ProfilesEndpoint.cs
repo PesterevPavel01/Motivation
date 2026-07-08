@@ -2,7 +2,7 @@
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Motivation.IdentityServer.Domain.Base;
-using Motivation.SynchronisationService.Web.Application.Messaging.ProfileMessages.Queries;
+using Motivation.IdentityServer.Web.Application.Messaging.ProfileMessages.Queries;
 
 namespace Motivation.SynchronisationService.Web.Endpoints;
 

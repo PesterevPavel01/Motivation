@@ -39,6 +39,7 @@
 	  <ProjectReference Include="..\..\Motivation.Domain\Motivation.Domain.csproj" />
 	  <ProjectReference Include="..\..\Motivation.IdentityServer\Motivation.IdentityServer.Domain\Motivation.IdentityServer.Domain.csproj" />
 	  <ProjectReference Include="..\..\Motivation.IdentityServer\Motivation.IdentityServer.Infrastructure\Motivation.IdentityServer.Infrastructure.csproj" />
+	  <ProjectReference Include="..\..\Motivation.IdentityServer\Motivation.IdentityServer.Web\Motivation.IdentityServer.Web.csproj" />
 	  <ProjectReference Include="..\..\Motivation.Infrastructure\Motivation.Infrastructure.csproj" />
 	</ItemGroup>
 

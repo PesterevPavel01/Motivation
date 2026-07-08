@@ -33,15 +33,18 @@ namespace Motivation.HRService.Definitions.Common
                     typeof(PositionCreatedDomainEvent).Name,
                     typeof(PositionUpdatedDomainEvent).Name,
                     typeof(PositionDeletedDomainEvent).Name,
-                    typeof(EmployeeCreatedDomainEvent).Name,
-                    typeof(EmployeeUpdatedDomainEvent).Name,
+
                     typeof(AssignEmployeeToPositionDomainEvent).Name,
-                    typeof(SetActualHoursDomainEvent).Name,
+                    typeof(DismissFromPositionDomainEvent).Name,
+                    typeof(EmployeeCreatedDomainEvent).Name,
+                    typeof(EmployeeDeletedDomainEvent).Name,
+                    typeof(EmployeeUpdatedDomainEvent).Name,
                     typeof(RemoveActualHoursDomainEvent).Name,
-                    typeof(SetDeductionDomainEvent).Name,
                     typeof(RemoveDeductionDomainEvent).Name,
-                    typeof(SetExtraPartDomainEvent).Name,
                     typeof(RemoveExtraPartDomainEvent).Name,
+                    typeof(SetActualHoursDomainEvent).Name,
+                    typeof(SetDeductionDomainEvent).Name,
+                    typeof(SetExtraPartDomainEvent).Name,
                 ];
             });
             builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();

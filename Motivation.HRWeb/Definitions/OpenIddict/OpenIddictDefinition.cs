@@ -30,7 +30,8 @@ public class OpenIddictDefinition : AppDefinition
                 options.ResponseType = OpenIdConnectResponseType.Code;
                 options.ResponseMode = OpenIdConnectResponseMode.Query;
                 options.RequireHttpsMetadata = false;
-                options.SaveTokens = true;
+                //options.SaveTokens = true;
+                options.SaveTokens = false;
                 options.GetClaimsFromUserInfoEndpoint = true;
                 options.MapInboundClaims = false;
                 options.Scope.Add("offline_access");
@@ -94,7 +95,8 @@ public class OpenIddictDefinition : AppDefinition
                 options.Cookie.SecurePolicy = CookieSecurePolicy.Always;
                 options.Cookie.SameSite = SameSiteMode.Lax;
                 options.SlidingExpiration = true;
-                options.ExpireTimeSpan = TimeSpan.FromHours(8);
+                options.ExpireTimeSpan = TimeSpan.FromHours(12);
+                options.Cookie.MaxAge = TimeSpan.FromDays(1);
                 options.LoginPath = "/authentication/login";
                 options.LogoutPath = "/authentication/logout";
             });

@@ -26,7 +26,8 @@ public static class PositionMapper
                     OrderNumber: x.OrderNumber,
                     Weight: x.Weight.Value,
                     ValidFrom: x.ValidFrom,
-                    ValidTo: x.ValidTo))
+                    ValidTo: x.ValidTo,
+                    Kpi: x.Kpi?.MapToDto()))
         );
     }
 }

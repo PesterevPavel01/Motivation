@@ -1,0 +1,27 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net9.0</TargetFramework>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <Nullable>enable</Nullable>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Calabonga.UnitOfWork" Version="6.2.0" />
+    <PackageReference Include="EFCore.BulkExtensions" Version="9.0.2" />
+    <PackageReference Include="EFCore.BulkExtensions.PostgreSql" Version="9.0.2" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore" Version="9.0.16" />
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="9.0.16">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
+    <PackageReference Include="Microsoft.EntityFrameworkCore.Relational" Version="9.0.16" />
+    <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\Motivation.AnalyticsCore.Domain\Motivation.AnalyticsCore.Domain.csproj" />
+    <ProjectReference Include="..\Motivation.AnalyticsCore.Mappers\Motivation.AnalyticsCore.Mappers.csproj" />
+  </ItemGroup>
+
+</Project>

@@ -2,6 +2,7 @@
 using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Motivation.Contracts.Dto;
+using Motivation.HRService.Application.Messaging.EmployeeMessages;
 using Motivation.HRService.Application.Messaging.EmployeeMessages.Queries;
 using Motivation.IdentityServer.Domain.Base;
 

@@ -38,11 +38,18 @@
 
 	<ItemGroup>
 	  <ProjectReference Include="..\Motivation.Application\Motivation.Application.csproj" />
+	  <ProjectReference Include="..\Motivation.ComplexityKpiCalculator\Motivation.BasketComplexityKpiCalculator.csproj" />
 	  <ProjectReference Include="..\Motivation.Contracts\Motivation.Contracts.csproj" />
 	  <ProjectReference Include="..\Motivation.Domain\Motivation.Domain.csproj" />
 	  <ProjectReference Include="..\Motivation.IdentityServer\Motivation.IdentityServer.Infrastructure\Motivation.IdentityServer.Infrastructure.csproj" />
 	  <ProjectReference Include="..\Motivation.Infrastructure\Motivation.Infrastructure.csproj" />
+	  <ProjectReference Include="..\Motivation.Kpi.Sales\Motivation.KpiSalesCalculator.csproj" />
 	</ItemGroup>
 
-
+	<ItemGroup>
+		<None Include="..\Motivation.ComplexityKpiCalculator\PythonScripts\**\*">
+			<Link>PythonScripts\%(RecursiveDir)%(Filename)%(Extension)</Link>
+			<CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+		</None>
+	</ItemGroup>
 </Project>

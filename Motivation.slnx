@@ -1,11 +1,24 @@
 <Solution>
+  <Folder Name="/AnalyticsCore/">
+    <Project Path="Motivation.AnalyticsCore.Application/Motivation.AnalyticsCore.Application.csproj" Id="c7a5cbe7-5503-4ce5-ac87-2b6f86b362c6" />
+    <Project Path="Motivation.AnalyticsCore.Contracts/Motivation.AnalyticsCore.Contracts.csproj" Id="baca58c6-5d17-4682-bbe4-7f2fdd1bd6d6" />
+    <Project Path="Motivation.AnalyticsCore.Domain/Motivation.AnalyticsCore.Domain.csproj" Id="655aba70-6148-4493-a8f5-a2e0588b19a8" />
+    <Project Path="Motivation.AnalyticsCore.Infrastructure/Motivation.AnalyticsCore.Infrastructure.csproj" Id="88ced616-692f-46d9-b6c3-9d2ef4feb342" />
+    <Project Path="Motivation.AnalyticsCore.Mappers/Motivation.AnalyticsCore.Mappers.csproj" Id="bd6b87ad-f9fe-4872-a586-ff0f2d86a59d" />
+    <Project Path="Motivation.KpiCalculationService/Motivation.KpiCalculationService.csproj" Id="f90080b4-bf62-4de5-9221-8a95ef2c6160" />
+  </Folder>
   <Folder Name="/IdentityServer/">
     <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Domain/Motivation.IdentityServer.Domain.csproj" Id="a147d3e4-1ee5-49e9-b223-fdf4dd165ec9" />
     <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Infrastructure/Motivation.IdentityServer.Infrastructure.csproj" Id="820cca7e-4012-4ff5-935b-641955843cf9" />
     <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Web/Motivation.IdentityServer.Web.csproj" Id="1ba1b92c-8a9b-4e58-97c7-d98502434a72" />
   </Folder>
+  <Folder Name="/plugins/">
+    <Project Path="Motivation.ComplexityKpiCalculator/Motivation.BasketComplexityKpiCalculator.csproj" Id="9f562936-72d5-4e91-ac2e-858c552b36e8" />
+    <Project Path="Motivation.Kpi.Sales/Motivation.KpiSalesCalculator.csproj" Id="0222e3eb-18b4-47a9-907f-f4f8452b00d0" />
+  </Folder>
   <Folder Name="/Элементы решения/">
     <File Path="README.md" />
+    <File Path="source/sync_data_20260704_200817.json" />
   </Folder>
   <Project Path="Motivation.Application/Motivation.Application.csproj" Id="a7088c41-4fcb-4f50-94b6-533cd2b6ddd6" />
   <Project Path="Motivation.Contracts/Motivation.Contracts.csproj" Id="25173914-b40b-4527-ab4b-ccb857d61060" />
@@ -14,5 +27,4 @@
   <Project Path="Motivation.HRWeb/Motivation.HRWeb.csproj" Id="835ff941-6b20-4bcd-a167-fc1125d45c7c" />
   <Project Path="Motivation.Infrastructure/Motivation.Infrastructure.csproj" Id="6d242890-b953-408d-a433-69e8f4535eca" />
   <Project Path="Motivation.KpiService/Motivation.KpiService.csproj" Id="10965496-f784-4a25-8ec6-db26d58e008f" />
-  <Project Path="Motivation.SynchronisationService/Motivation.SynchronisationService.Web/Motivation.SynchronisationService.Web.csproj" Id="a258166f-0e3d-4ab7-92be-e7e575b235d3" />
 </Solution>
