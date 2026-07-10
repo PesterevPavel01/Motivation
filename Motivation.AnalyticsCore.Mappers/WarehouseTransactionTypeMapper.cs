@@ -52,18 +52,12 @@ public static class WarehouseTransactionTypeMapper
     {
         if (string.IsNullOrWhiteSpace(russianName))
             throw new ArgumentException("Русское название не может быть пустым");
-
-        var result = RussianNames.FirstOrDefault(x =>
+        
+        var found = RussianNames.FirstOrDefault(x =>
             string.Equals(x.Value, russianName, StringComparison.OrdinalIgnoreCase));
 
-        if (result.Key == WarehouseTransactionType.Return && !result.Value.Equals(russianName, StringComparison.OrdinalIgnoreCase))
-        {
-            var found = RussianNames.FirstOrDefault(x =>
-                string.Equals(x.Value, russianName, StringComparison.OrdinalIgnoreCase));
-
-            if (!found.Equals(default(KeyValuePair<WarehouseTransactionType, string>)))
-                return found.Key;
-        }
+        if (!found.Equals(default(KeyValuePair<CustomerTransactionType, string>)))
+            return found.Key;
 
         throw new ArgumentException($"Неизвестное русское название типа операции: '{russianName}'");
     }

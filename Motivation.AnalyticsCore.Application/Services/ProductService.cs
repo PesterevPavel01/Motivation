@@ -9,7 +9,7 @@ using Motivation.AnalyticsCore.Domain.ValueObjects;
 
 namespace Motivation.AnalyticsCore.Application.Services;
 
-public class ProductService : IEntityServices<Product, ProductDto>
+public class ProductService : IEntityServices<ProductDto>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ProductService> _logger;
@@ -18,15 +18,9 @@ public class ProductService : IEntityServices<Product, ProductDto>
         _unitOfWork = unitOfWork;
         _logger = logger;
     }
-    public async Task<Operation<List<Product>, string>> CreateOrEditAsync(List<ProductDto> models)
+    public async Task<Operation<bool, string>> CreateOrEditAsync(Dictionary<string, ProductDto> models, DateTime dateStart, DateTime dateEnd, CancellationToken cancellationToken)
     {
-        var modelsByCode = models.ToDictionary(
-            x => x.Code,
-            x => x,
-            StringComparer.OrdinalIgnoreCase
-        );
-
-        var productCodes = modelsByCode.Values
+        var productCodes = models.Values
             .Select(x => CodeValue.Create(x.Code));
         if (productCodes.Any(x => !x.Ok))
             return Operation.Error(productCodes.FirstOrDefault(x => !x.Ok).Error);
@@ -63,7 +57,7 @@ public class ProductService : IEntityServices<Product, ProductDto>
         var existingCodes = existingProducts
             .Keys.ToHashSet();
 
-        var newProducts = modelsByCode.Values
+        var newProducts = models.Values
             .Where(x => !existingCodes.Contains(x.Code))
             .ToDictionary(
                 x => x.Code,
@@ -80,7 +74,7 @@ public class ProductService : IEntityServices<Product, ProductDto>
             products.Add(product.Result);
         }
 
-        var editResult = Edit(modelsByCode, existingProducts, warehouses, productGroups);
+        var editResult = Edit(models, existingProducts, warehouses, productGroups);
         if (!editResult)
             return Operation.Error(editResult.Error);
 
@@ -95,7 +89,7 @@ public class ProductService : IEntityServices<Product, ProductDto>
         }
 
         products.AddRange(existingProducts.Values.ToList());
-        return products;
+        return true;
     }
 
     public Task<Operation<bool, string>> DeleteAsync(DateTime dateStart, DateTime dateEnd)

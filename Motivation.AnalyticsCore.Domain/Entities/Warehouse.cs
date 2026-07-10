@@ -26,6 +26,15 @@ public class Warehouse : SimpleEntity
 
         return new Warehouse(Guid.CreateVersion7(), code, title);
     }
+    public Operation<bool, string> Edit(TitleValue title)
+    {
+        if (title is null)
+            return Operation.Error("Title is null!");
+
+        Title = title;
+
+        return true;
+    }
     public Operation<bool, string> AddTransaction(WarehouseTransaction warehouseTransactions)
     {
         if (warehouseTransactions is null)

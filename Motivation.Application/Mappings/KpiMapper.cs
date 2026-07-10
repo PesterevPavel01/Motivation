@@ -31,7 +31,7 @@ public static class KpiMapper
             Abbreviation = source.Abbreviation.Value,
             CalculationType = source.CalculationType.ToRussianString(),
             KpiType = source.KpiType.ToRussianString(),
-            MeasurementUnit = source.MeasurementUnit.MapToDto(),
+            MeasurementUnit = source.MeasurementUnit.MapToDto()!,
             CustomerFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Customer).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
             CompanyFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Company).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
             ProductFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Product).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),

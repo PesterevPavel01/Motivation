@@ -25,7 +25,14 @@ public class WarehouseTransaction : Entity
     public Product Product { get; protected set; } = null!;
     public Warehouse Warehouse { get; protected set; } = null!;
 
-    public static Operation<WarehouseTransaction, string> Create(CodeValue code, WarehouseTransactionType type, QuantityValue? quantity, AmountValue? amount, DateTime asOfDate, Product product)
+    public static Operation<WarehouseTransaction, string> Create(
+        CodeValue code, 
+        WarehouseTransactionType type, 
+        QuantityValue? quantity, 
+        AmountValue? amount, 
+        DateTime asOfDate, 
+        Product product,
+        Warehouse warehouse)
     {
         if (code is null)
             return Operation.Error("Code is null!");
@@ -35,8 +42,35 @@ public class WarehouseTransaction : Entity
         var setProduct = warehouseTransaction.SetProduct(product);
         if (!setProduct.Ok)
             return Operation.Error(setProduct.Error);
+        var setWarehouse = warehouseTransaction.SetWarehouse(warehouse);
+        if (!setWarehouse.Ok)
+            return Operation.Error(setWarehouse.Error);
 
         return warehouseTransaction;
+    }
+
+    public Operation<bool, string> Edit(
+        WarehouseTransactionType type, 
+        QuantityValue? quantity, 
+        AmountValue? amount, 
+        DateTime asOfDate, 
+        Product product,
+        Warehouse warehouse)
+    {
+        Type = type;
+        Quantity = quantity;
+        Amount = amount;
+        AsOfDate = asOfDate;
+
+        var setProduct = SetProduct(product);
+        if (!setProduct.Ok)
+            return Operation.Error(setProduct.Error);
+
+        var setWarehouse = SetWarehouse(warehouse);
+        if (!setWarehouse.Ok)
+            return Operation.Error(setWarehouse.Error);
+
+        return true;
     }
 
     protected Operation<bool, string> SetProduct(Product product)
@@ -44,6 +78,15 @@ public class WarehouseTransaction : Entity
         if (product is null)
             return Operation.Error("Product is null!");
         Product = product;
+
+        return true;
+    }
+
+    protected Operation<bool, string> SetWarehouse(Warehouse warehouse)
+    {
+        if (warehouse is null)
+            return Operation.Error("Warehouse is null!");
+        Warehouse = warehouse;
 
         return true;
     }

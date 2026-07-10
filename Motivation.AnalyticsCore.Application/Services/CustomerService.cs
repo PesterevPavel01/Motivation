@@ -8,7 +8,7 @@ using Motivation.AnalyticsCore.Domain.ValueObjects;
 
 namespace Motivation.AnalyticsCore.Application.Services;
 
-public class CustomerService : IEntityServices<Customer, CustomerDto>
+public class CustomerService : IEntityServices<CustomerDto>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -16,15 +16,10 @@ public class CustomerService : IEntityServices<Customer, CustomerDto>
     {
         _unitOfWork = unitOfWork;
     }
-    public async Task<Operation<List<Customer>, string>> CreateOrEditAsync(List<CustomerDto> models)
+    public async Task<Operation<bool, string>> CreateOrEditAsync(Dictionary<string, CustomerDto> models, DateTime dateStart, DateTime dateEnd , CancellationToken cancellationToken)
     {
-        var modelsByCode = models.ToDictionary(
-            x => x.Code,
-            x => x,
-            StringComparer.OrdinalIgnoreCase
-        );
         var customerCodes = 
-            modelsByCode.Values
+            models.Values
             .Select(x => CodeValue.Create(x.Code));
 
         if (customerCodes.Any(x => !x.Ok))
@@ -42,9 +37,10 @@ public class CustomerService : IEntityServices<Customer, CustomerDto>
             );
 
         var existingCodes = existingCustomers
-            .Keys.ToHashSet();
+            .Keys
+            .ToHashSet();
 
-        var newCustomers = models
+        var newCustomers = models.Values
             .Where(x => !existingCodes.Contains(x.Code))
             .ToDictionary(
                 x => x.Code,
@@ -70,7 +66,7 @@ public class CustomerService : IEntityServices<Customer, CustomerDto>
             customers.Add(customer.Result);
         }
 
-        var editResult = Edit(modelsByCode, existingCustomers, customerGroups);
+        var editResult = Edit(models, existingCustomers, customerGroups);
         if (!editResult)
             return Operation.Error(editResult.Error);
 
@@ -92,9 +88,7 @@ public class CustomerService : IEntityServices<Customer, CustomerDto>
             _unitOfWork.GetRepository<Customer>().Update(existingCustomers.Values);
         }
 
-        customers.AddRange(existingCustomers.Values);
-
-        return customers;
+        return true;
     }
 
     public Task<Operation<bool, string>> DeleteAsync(DateTime dateStart, DateTime dateEnd)
@@ -116,10 +110,10 @@ public class CustomerService : IEntityServices<Customer, CustomerDto>
         return true;
     }
 
-    private async Task<Operation<bool, string>> SetMasterCustomers(List<CustomerDto> models, List<Customer> entities)
+    private async Task<Operation<bool, string>> SetMasterCustomers(Dictionary<string,CustomerDto> models, List<Customer> entities)
     {
-        var customerCodes = models
-            .Where(x => x.MasterCustomer != null && !string.IsNullOrWhiteSpace(x.MasterCustomer.Code))
+        var customerCodes = models.Values
+            .Where(x => x.MasterCustomer is not null && !string.IsNullOrWhiteSpace(x.MasterCustomer.Code))
             .Select(x => CodeValue.Create(x.MasterCustomer.Code));
 
         if (customerCodes.Any(x => !x.Ok))
@@ -138,7 +132,8 @@ public class CustomerService : IEntityServices<Customer, CustomerDto>
 
         foreach (var entity in entities)
         {
-            var model = models.FirstOrDefault(x => x.Code == entity.Code.Value);
+            if (!models.TryGetValue(entity.Code.Value, out var model))
+                return Operation.Error("Company not found!");
             if(model is null)
                 return Operation.Error($"Model {typeof(CustomerDto).Name} not found!");
 

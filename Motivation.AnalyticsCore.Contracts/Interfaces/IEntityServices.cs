@@ -1,12 +1,9 @@
 ﻿using Calabonga.OperationResults;
-using Motivation.AnalyticsCore.Contracts.Models;
 
 namespace Motivation.AnalyticsCore.Contracts.Interfaces;
 
-public interface IEntityServices<TEntity, TDto>
-    where TEntity : class 
-    where TDto : class
+public interface IEntityServices<TDto>
 {
-    Task<Operation<List<TEntity>, string>> CreateOrEditAsync(List<TDto> models);
+    Task<Operation<bool, string>> CreateOrEditAsync(Dictionary<string, TDto> models, DateTime dateStart, DateTime dateEnd, CancellationToken cancellationToken);
     Task<Operation<bool, string>> DeleteAsync(DateTime dateStart, DateTime dateEnd);
 }

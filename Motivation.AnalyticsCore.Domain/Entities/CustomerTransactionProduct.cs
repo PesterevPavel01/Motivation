@@ -5,8 +5,9 @@ namespace Motivation.AnalyticsCore.Domain.Entities;
 
 public class CustomerTransactionProduct
 {
-    protected CustomerTransactionProduct(QuantityValue quantity, AmountValue amount)
+    protected CustomerTransactionProduct(Guid id, QuantityValue quantity, AmountValue amount)
     {
+        Id = id;
         Quantity = quantity;
         Amount = amount;
     }
@@ -18,13 +19,13 @@ public class CustomerTransactionProduct
     public Product Product {  get; private set; } = null!;
 
     public static Operation<CustomerTransactionProduct, string> Create(Product product, QuantityValue quantity, AmountValue amount)
-    {
+    { 
         if (quantity is null)
             return Operation.Error("Quantity is null!");
         if (amount is null)
             return Operation.Error("Amount is null!");
 
-        var customerTransactionProduct = new CustomerTransactionProduct(quantity, amount);
+        var customerTransactionProduct = new CustomerTransactionProduct(Guid.CreateVersion7(), quantity, amount);
 
         var setProduct = customerTransactionProduct.SetProduct(product);
         if (!setProduct.Ok)

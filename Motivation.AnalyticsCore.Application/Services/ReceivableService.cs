@@ -8,7 +8,7 @@ using Motivation.AnalyticsCore.Domain.ValueObjects;
 
 namespace Motivation.AnalyticsCore.Application.Services;
 
-public class ReceivableService : IEntityServices<Receivable, ReceivableDto>
+public class ReceivableService : IEntityServices<ReceivableDto>
 {
     private readonly IUnitOfWork _unitOfWork;
 
@@ -16,15 +16,15 @@ public class ReceivableService : IEntityServices<Receivable, ReceivableDto>
     {
         _unitOfWork = unitOfWork;
     }
-    public async Task<Operation<List<Receivable>, string>> CreateOrEditAsync(List<ReceivableDto> models)
+    public async Task<Operation<bool, string>> CreateOrEditAsync(Dictionary<string, ReceivableDto> models, DateTime dateStart, DateTime dateEnd, CancellationToken cancellationToken)
     {
-        var customerCodes = models
+        var customerCodes = models.Values
             .GroupBy(x => x.Customer.Code)
             .Select(x => CodeValue.Create(x.Key));
         if (customerCodes.Any(x => !x.Ok))
             return Operation.Error(customerCodes.FirstOrDefault(x => !x.Ok).Error);
 
-        var companyCodes = models
+        var companyCodes = models.Values
             .GroupBy(x => x.Company.Code)
             .Select(x => CodeValue.Create(x.Key))
             .ToArray();
@@ -36,26 +36,36 @@ public class ReceivableService : IEntityServices<Receivable, ReceivableDto>
             .GetAllAsync(
                 predicate: x => customerCodes.Select(x => x.Result).Contains(x.Code),
                 trackingType: TrackingType.Tracking))
-            .ToList();
+            .ToDictionary(
+                x => x.Code.Value.Trim(),
+                x => x,
+                StringComparer.OrdinalIgnoreCase
+            );
 
         var companies = (await _unitOfWork
             .GetRepository<Company>()
             .GetAllAsync(
                 predicate: x => companyCodes.Select(x => x.Result).Contains(x.Code),
                 trackingType: TrackingType.Tracking))
-            .ToList();
+            .ToDictionary(
+                x => x.Code.Value,
+                x => x,
+                StringComparer.OrdinalIgnoreCase
+            );
 
         List<Receivable> receivables = [];
 
-        foreach (var model in models)
+        foreach (var model in models.Values)
         {
-            var company = companies.FirstOrDefault(x => x.Code.Value == model.Company.Code);
-            if (company is null)
+            if (!companies.TryGetValue(model.Company.Code, out var company))
                 return Operation.Error("Company not found!");
+            if (company is null)
+                return Operation.Error("Company is null!");
 
-            var customer = customers.FirstOrDefault(x => x.Code.Value == model.Customer.Code);
-            if (customer is null)
+            if (!customers.TryGetValue(model.Customer.Code, out var customer))
                 return Operation.Error("Customer not found!");
+            if (customer is null)
+                return Operation.Error("Customer is null!");
 
             var receivable = ReceivableMapper.ToEntity(model, company, customer);
             if (!receivable.Ok)
@@ -65,7 +75,7 @@ public class ReceivableService : IEntityServices<Receivable, ReceivableDto>
 
         _unitOfWork.GetRepository<Receivable>()
             .Insert(receivables);
-        return receivables;
+        return true;
     }
 
     public async Task<Operation<bool, string>> DeleteAsync(List<ReceivableDto> models)

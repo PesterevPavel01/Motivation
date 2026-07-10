@@ -8,5 +8,4 @@ public sealed class ProductDto
     public string? Status { get; set; }
     public WarehouseDto? Warehouse { get; set; }
     public ProductGroupDto? ProductGroup { get; set; }
-    public List<InventoryBalanceDto> InventoryBalances { get; set; } = [];
 }

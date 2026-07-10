@@ -7,26 +7,22 @@ namespace Motivation.AnalyticsCore.Application.Mappers;
 
 public static class WarehouseTransactionMapper
 {
-    public static Operation<WarehouseTransaction, string> ToEntity(WarehouseTransactionDto dto)
+    public static Operation<WarehouseTransaction, string> ToEntity(WarehouseTransactionDto model, Product product, Warehouse warehouse)
     {
-        if (dto is null)
+        if (model is null)
             return Operation.Error("WarehouseTransaction DTO is null.");
 
-        var productResult = ProductMapper.ToEntity(dto.Product, [], []);
-        if (!productResult.Ok)
-            return Operation.Error(productResult.Error!);
+        var typeResult = WarehouseTransactionTypeMapper.FromRussian(model.Type);
 
-        var typeResult = WarehouseTransactionTypeMapper.FromRussian(dto.Type);
-
-        var quantityResult = QuantityValue.Create(dto.Quantity);
+        var quantityResult = QuantityValue.Create(model.Quantity);
         if (!quantityResult.Ok)
             return Operation.Error(quantityResult.Error);
 
-        var amountResult = AmountValue.Create(dto.Amount);
+        var amountResult = AmountValue.Create(model.Amount);
         if (!amountResult.Ok)
             return Operation.Error(amountResult.Error);
 
-        var code = CodeValue.Create(Guid.CreateVersion7().ToString());
+        var code = CodeValue.Create(model.Code);
         if (!code.Ok)
             return Operation.Error(code.Error);
 
@@ -35,13 +31,47 @@ public static class WarehouseTransactionMapper
             typeResult,
             quantityResult.Result,
             amountResult.Result,
-            dto.AsOfDate,
-            productResult.Result
+            model.AsOfDate,
+            product,
+            warehouse
         );
 
         if (!transactionResult.Ok)
             return Operation.Error(transactionResult.Error);
 
         return transactionResult.Result!;
+    }
+
+    public static Operation<bool, string> EditEntity(
+        this WarehouseTransaction transaction,
+        WarehouseTransactionDto model,
+        Warehouse warehouse,
+        Product product)
+    {
+        if (model is null)
+            return Operation.Error("WarehouseTransaction DTO is null.");
+
+        var typeResult = WarehouseTransactionTypeMapper.FromRussian(model.Type);
+
+        var quantityResult = QuantityValue.Create(model.Quantity);
+        if (!quantityResult.Ok)
+            return Operation.Error(quantityResult.Error);
+
+        var amountResult = AmountValue.Create(model.Amount);
+        if (!amountResult.Ok)
+            return Operation.Error(amountResult.Error);
+
+        var transactionResult = transaction.Edit(
+            typeResult,
+            quantityResult.Result,
+            amountResult.Result,
+            model.AsOfDate,
+            product,
+            warehouse);
+
+        if (!transactionResult.Ok)
+            return Operation.Error(transactionResult.Error);
+
+        return true;
     }
 }

@@ -22,4 +22,17 @@ public static class WarehouseMapper
 
         return Warehouse.Create(titleResult.Result, codeResult.Result);
     }
+    public static Operation<bool, string> EditEntity(this Warehouse warehouse, WarehouseDto model)
+    {
+        if (model is null)
+            return Operation.Error("Warehouse DTO is null.");
+
+        var titleResult = TitleValue.Create(model.Title);
+        if (!titleResult.Ok)
+            return Operation.Error(titleResult.Error!);
+
+        return warehouse.Edit(
+            titleResult.Result
+        );
+    }
 }
