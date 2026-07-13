@@ -2,6 +2,7 @@
 
 public sealed class ProductDto
 {
+    public string? Supplier { get; set; }
     public string? Purchaser { get; set; }
     public required string Code { get; set; }
     public required string Title { get; set; }

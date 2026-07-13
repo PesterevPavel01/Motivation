@@ -329,6 +329,10 @@ namespace Motivation.AnalyticsCore.Infrastructure.Migrations
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 
+                    b.Property<string>("Supplier")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
                     b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(256)

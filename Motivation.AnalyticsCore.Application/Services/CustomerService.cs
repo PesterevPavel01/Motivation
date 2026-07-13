@@ -18,8 +18,7 @@ public class CustomerService : IEntityServices<CustomerDto>
     }
     public async Task<Operation<bool, string>> CreateOrEditAsync(Dictionary<string, CustomerDto> models, DateTime dateStart, DateTime dateEnd , CancellationToken cancellationToken)
     {
-        var customerCodes = 
-            models.Values
+        var customerCodes = models.Values
             .Select(x => CodeValue.Create(x.Code));
 
         if (customerCodes.Any(x => !x.Ok))
@@ -40,7 +39,7 @@ public class CustomerService : IEntityServices<CustomerDto>
             .Keys
             .ToHashSet();
 
-        var newCustomers = models.Values
+        var newCustomerModels = models.Values
             .Where(x => !existingCodes.Contains(x.Code))
             .ToDictionary(
                 x => x.Code,
@@ -57,30 +56,38 @@ public class CustomerService : IEntityServices<CustomerDto>
                 StringComparer.OrdinalIgnoreCase
             );
 
-        List<Customer> customers = [];
-        foreach (var model in newCustomers.Values)
+        Dictionary<string, Customer> newCustomers = [];
+        foreach (var model in newCustomerModels.Values)
         {
             var customer = CustomerMapper.ToEntity(model, customerGroups);
             if (!customer)
                 return Operation.Error(customer.Error);
-            customers.Add(customer.Result);
+            newCustomers[customer.Result.Code.Value] = customer.Result;
         }
 
         var editResult = Edit(models, existingCustomers, customerGroups);
         if (!editResult)
             return Operation.Error(editResult.Error);
 
-        var allCustomers = new List<Customer>();
-        allCustomers.AddRange(customers);
-        allCustomers.AddRange(existingCustomers.Values);
+        var customers = newCustomers.Values
+            .ToDictionary(
+                x => x.Code.Value,
+                x => x,
+                StringComparer.OrdinalIgnoreCase
+            );
 
-        var setMasterCustomers = await SetMasterCustomers(models, allCustomers);
+        foreach (var customer in existingCustomers) 
+        {
+            customers[customer.Key] = customer.Value;
+        }
+
+        var setMasterCustomers = await SetMasterCustomers(models, customers);
         if (!setMasterCustomers)
             return Operation.Error(setMasterCustomers.Error);
         
-        if (customers.Any())
+        if (newCustomers.Any())
         {
-            await _unitOfWork.GetRepository<Customer>().InsertAsync(customers);
+            await _unitOfWork.GetRepository<Customer>().InsertAsync(newCustomers.Values);
         }
 
         if (existingCustomers.Any())
@@ -110,35 +117,57 @@ public class CustomerService : IEntityServices<CustomerDto>
         return true;
     }
 
-    private async Task<Operation<bool, string>> SetMasterCustomers(Dictionary<string,CustomerDto> models, List<Customer> entities)
+    private async Task<Operation<bool, string>> SetMasterCustomers(Dictionary<string,CustomerDto> models, Dictionary<string, Customer> customers)
     {
-        var customerCodes = models.Values
+        var masterCustomerCodes = models.Values
             .Where(x => x.MasterCustomer is not null && !string.IsNullOrWhiteSpace(x.MasterCustomer.Code))
-            .Select(x => CodeValue.Create(x.MasterCustomer.Code));
+            .Select(x => x.MasterCustomer!.Code)
+            .Distinct()
+            .Select(CodeValue.Create);
 
-        if (customerCodes.Any(x => !x.Ok))
-            return Operation.Error(customerCodes.FirstOrDefault(x => !x.Ok).Error);
+        if (masterCustomerCodes.Any(x => !x.Ok))
+            return Operation.Error(masterCustomerCodes.FirstOrDefault(x => !x.Ok).Error);
 
-        var existingCustomers = (await _unitOfWork
+        var masters = (await _unitOfWork
             .GetRepository<Customer>()
             .GetAllAsync(
-                predicate: x => customerCodes.Select(x => x.Result).Contains(x.Code),
+                predicate: x => masterCustomerCodes.Select(x => x.Result).Contains(x.Code),
                 trackingType: TrackingType.Tracking))
-            .ToList();
+            .ToDictionary(
+                x => x.Code.Value,
+                x => x,
+                StringComparer.OrdinalIgnoreCase
+            );
 
-        var newEntities = entities.Where(x => !existingCustomers.Select(x=>x.Code).Contains(x.Code));
+        var newParrents = customers.Values
+            .Where(x =>
+                masterCustomerCodes.Select(x => x.Result).Contains(x.Code)
+                && !masters.Values.Select(x => x.Code).Contains(x.Code))
+            .DistinctBy(x => x.Code);
 
-        existingCustomers.AddRange(newEntities);
-
-        foreach (var entity in entities)
+        foreach (var parent in newParrents)
         {
-            if (!models.TryGetValue(entity.Code.Value, out var model))
-                return Operation.Error("Company not found!");
-            if(model is null)
+            masters[parent.Code.Value] = parent;
+        }
+
+        foreach (var customer in customers.Values)
+        {
+            if (!models.TryGetValue(customer.Code.Value, out var model))
+                return Operation.Error("Model not found!");
+
+            if (model is null)
                 return Operation.Error($"Model {typeof(CustomerDto).Name} not found!");
 
-            entity.SetMaster(
-                existingCustomers.FirstOrDefault(x => x.Code.Value == model.MasterCustomer?.Code));
+            if (model.MasterCustomer is null || string.IsNullOrWhiteSpace(model.MasterCustomer.Code))
+            {
+                customer.SetMaster(null);
+            }
+            else
+            {
+                if (!masters.TryGetValue(model.MasterCustomer.Code, out var master))
+                    return Operation.Error($"Master customer '{model.MasterCustomer!.Code}' not found for group '{customer.Code.Value}'!");
+                customer.SetMaster(master);
+            }
         }
         return true;
     }

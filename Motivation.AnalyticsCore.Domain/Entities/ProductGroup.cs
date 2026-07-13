@@ -32,8 +32,20 @@ public class ProductGroup : SimpleEntity
         return productGroup;
     }
 
+    public Operation<bool, string> Edit(TitleValue title, ProductGroup? parentGroup)
+    {
+        if (title is null)
+            return Operation.Error("Title is null!");
 
-    public void SetParent(ProductGroup parentGroup)
+        Title = title;
+
+        if (parentGroup is not null)
+            SetParent(parentGroup);
+
+        return true;
+    }
+
+    public void SetParent(ProductGroup? parentGroup)
     {
         ParentGroup = parentGroup;
     }

@@ -31,4 +31,18 @@ public static class CustomerGroupMapper
 
         return CustomerGroup.Create(title.Result, code.Result, parentGroup);
     }
+    public static Operation<bool, string> EditEntity(this CustomerGroup customerGroup, CustomerGroupDto model)
+    {
+        if (model is null)
+            return Operation.Error("Customer group DTO is null.");
+
+        var titleResult = TitleValue.Create(model.Title);
+        if (!titleResult.Ok)
+            return Operation.Error(titleResult.Error!);
+
+        return customerGroup.Edit(
+            titleResult.Result,
+            null
+        );
+    }
 }

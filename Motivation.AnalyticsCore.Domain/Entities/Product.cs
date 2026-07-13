@@ -10,14 +10,16 @@ public class Product : Entity
     private readonly List<CustomerTransactionProduct> _customerTransactionProducts = [];
     private readonly List<InventoryBalance> _inventoryBalances = [];
 
-    protected Product(Guid id, CodeValue code, TitleValue title, PurchaserValue? purchaser, StatusValue? status) : base(id, code)
+    protected Product(Guid id, CodeValue code, TitleValue title, SupplierValue? supplier, PurchaserValue? purchaser, StatusValue? status) : base(id, code)
     {
         Title = title;
+        Supplier = supplier;
         Purchaser = purchaser;
         Status = status;
     }
 
     public TitleValue Title { get; set; } = null!;
+    public SupplierValue? Supplier { get; set; }
     public PurchaserValue? Purchaser { get; set; }
     public StatusValue? Status { get; set; }
     public Warehouse? Warehouse { get; set; }
@@ -30,7 +32,8 @@ public class Product : Entity
     public static Operation<Product, string> Create(
         TitleValue title, 
         CodeValue code, 
-        Warehouse? warehouse, 
+        Warehouse? warehouse,
+        SupplierValue? supplier,
         PurchaserValue? purchaser, 
         ProductGroup? productGroup,
         StatusValue? status)
@@ -40,7 +43,7 @@ public class Product : Entity
         if (code is null)
             return Operation.Error("Code is null!");
         
-        var product = new Product(Guid.CreateVersion7(), code, title, purchaser, status);
+        var product = new Product(Guid.CreateVersion7(), code, title, supplier, purchaser, status);
         product.SetWarehouse(warehouse);
         product.SetProductGroup(productGroup);
         
@@ -59,6 +62,7 @@ public class Product : Entity
     public Operation<Product, string> Edit(
         TitleValue title,
         Warehouse? warehouse,
+        SupplierValue? supplier,
         PurchaserValue? purchaser,
         ProductGroup? productGroup,
         StatusValue? status)
@@ -67,6 +71,7 @@ public class Product : Entity
             return Operation.Error("Title is null!");
 
         Title = title;
+        Supplier = supplier;
         Purchaser = purchaser;
         Status = status;
         SetWarehouse(warehouse);

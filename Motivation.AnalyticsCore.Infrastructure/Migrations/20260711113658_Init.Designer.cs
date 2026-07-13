@@ -12,7 +12,7 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace Motivation.AnalyticsCore.Infrastructure.Migrations
 {
     [DbContext(typeof(AnalyticsCoreDbContext))]
-    [Migration("20260706141327_Init")]
+    [Migration("20260711113658_Init")]
     partial class Init
     {
         /// <inheritdoc />
@@ -329,6 +329,10 @@ namespace Motivation.AnalyticsCore.Infrastructure.Migrations
                         .HasColumnType("character varying(256)");
 
                     b.Property<string>("Status")
+                        .HasMaxLength(256)
+                        .HasColumnType("character varying(256)");
+
+                    b.Property<string>("Supplier")
                         .HasMaxLength(256)
                         .HasColumnType("character varying(256)");
 

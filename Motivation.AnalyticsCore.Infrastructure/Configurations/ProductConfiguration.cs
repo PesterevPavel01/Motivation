@@ -24,6 +24,14 @@ public class ProductConfiguration : EntityConfiguration<Product>
                 x => x != null ? PurchaserValue.Create(x).Result : null);
 
         builder
+            .Property(x => x.Supplier)
+            .IsRequired(false)
+            .HasMaxLength(SupplierValue.MaxTitleLength)
+            .HasConversion(
+                x => x != null ? x.Value : null,
+                x => x != null ? SupplierValue.Create(x).Result : null);
+
+        builder
             .Property(x => x.Status)
             .IsRequired(false)
             .HasMaxLength(StatusValue.MaxTitleLength)

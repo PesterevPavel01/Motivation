@@ -145,6 +145,7 @@ namespace Motivation.AnalyticsCore.Infrastructure.Migrations
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
                     Title = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: false),
+                    Supplier = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Purchaser = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     Status = table.Column<string>(type: "character varying(256)", maxLength: 256, nullable: true),
                     WarehouseId = table.Column<Guid>(type: "uuid", nullable: true),

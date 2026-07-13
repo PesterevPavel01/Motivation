@@ -17,7 +17,7 @@ public class SyncWarehousesTransactions : ISyncStep
         _unitOfWork = unitOfWork;
     }
 
-    public int OrderIndex => 8;
+    public int OrderIndex => 10;
 
     public async Task<Operation<bool, string>> ExecuteAsync(SyncDto model, DateTime dateStart, DateTime dateEnd, CancellationToken cancellationToken)
     {

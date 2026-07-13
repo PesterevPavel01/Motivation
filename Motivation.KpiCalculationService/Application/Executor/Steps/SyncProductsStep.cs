@@ -17,7 +17,7 @@ public class SyncProductsStep : ISyncStep
         _unitOfWork = unitOfWork;
     }
 
-    public int OrderIndex => 3;
+    public int OrderIndex => 5;
 
     public async Task<Operation<bool, string>> ExecuteAsync(
         SyncDto model,

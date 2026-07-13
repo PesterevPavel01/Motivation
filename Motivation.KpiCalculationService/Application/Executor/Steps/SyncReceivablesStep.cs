@@ -17,7 +17,7 @@ public class SyncReceivablesStep : ISyncStep
         _unitOfWork = unitOfWork;
     }
 
-    public int OrderIndex => 5;
+    public int OrderIndex => 7;
 
     public async Task<Operation<bool, string>> ExecuteAsync(SyncDto model, DateTime dateStart, DateTime dateEnd, CancellationToken cancellationToken)
     {      

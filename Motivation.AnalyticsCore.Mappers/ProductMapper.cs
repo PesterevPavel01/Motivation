@@ -7,83 +7,102 @@ namespace Motivation.AnalyticsCore.Application.Mappers;
 
 public static class ProductMapper
 {
-    public static Operation<Product, string> EditEntity(this Product product, ProductDto dto, Dictionary<string, Warehouse> existingWarehouses, Dictionary<string, ProductGroup> existingProductGroups)
+    public static Operation<Product, string> EditEntity(this Product product, ProductDto model, Dictionary<string, Warehouse> existingWarehouses, Dictionary<string, ProductGroup> existingProductGroups)
     {
-        if (dto is null)
+        if (model is null)
             return Operation.Error("Product DTO is null.");
 
-        var titleResult = TitleValue.Create(dto.Title);
+        var titleResult = TitleValue.Create(model.Title);
         if (!titleResult.Ok)
             return Operation.Error(titleResult.Error!);
 
-        var codeResult = CodeValue.Create(dto.Code);
+        var codeResult = CodeValue.Create(model.Code);
         if (!codeResult.Ok)
             return Operation.Error(codeResult.Error);
 
-        PurchaserValue? purchaser = null;
-        if (!string.IsNullOrWhiteSpace(dto.Purchaser))
+        SupplierValue? supplier = null;
+        if (!string.IsNullOrWhiteSpace(model.Supplier))
         {
-            var purchaserResult = PurchaserValue.Create(dto.Purchaser);
+            var supplierResult = SupplierValue.Create(model.Supplier);
+            if (!supplierResult.Ok)
+                return Operation.Error(supplierResult.Error);
+            supplier = supplierResult.Result;
+        }
+
+        PurchaserValue? purchaser = null;
+        if (!string.IsNullOrWhiteSpace(model.Purchaser))
+        {
+            var purchaserResult = PurchaserValue.Create(model.Purchaser);
             if (!purchaserResult.Ok)
                 return Operation.Error(purchaserResult.Error);
             purchaser = purchaserResult.Result;
         }
 
         StatusValue? status = null;
-        if (!string.IsNullOrWhiteSpace(dto.Status))
+        if (!string.IsNullOrWhiteSpace(model.Status))
         {
-            var statusResult = StatusValue.Create(dto.Status);
+            var statusResult = StatusValue.Create(model.Status);
             if (!statusResult.Ok)
                 return Operation.Error(statusResult.Error);
             status = statusResult.Result;
         }
 
         Warehouse? warehouse = null;
-        if (dto.Warehouse is not null && !string.IsNullOrWhiteSpace(dto.Warehouse.Code))
+        if (model.Warehouse is not null && !string.IsNullOrWhiteSpace(model.Warehouse.Code))
         {
-            var getWarehouse = GetWarehouse(dto.Warehouse, existingWarehouses);
+            var getWarehouse = GetWarehouse(model.Warehouse, existingWarehouses);
             if (!getWarehouse)
                 return Operation.Error(getWarehouse.Error);
             warehouse = getWarehouse.Result;
         }
 
-        var productGroup = GetProductGroup(dto.ProductGroup, existingProductGroups);
+        var productGroup = GetProductGroup(model.ProductGroup, existingProductGroups);
 
         return product.Edit(
             titleResult.Result,
             warehouse,
+            supplier,
             purchaser,
             productGroup.Result,
             status
         );
     }
 
-    public static Operation<Product, string> ToEntity(ProductDto dto, Dictionary<string, Warehouse> existingWarehouses, Dictionary<string, ProductGroup> existingProductGroups)
+    public static Operation<Product, string> ToEntity(ProductDto model, Dictionary<string, Warehouse> existingWarehouses, Dictionary<string, ProductGroup> existingProductGroups)
     {
-        if (dto is null)
+        if (model is null)
             return Operation.Error("Product DTO is null.");
 
-        var titleResult = TitleValue.Create(dto.Title);
+        var titleResult = TitleValue.Create(model.Title);
         if (!titleResult.Ok)
             return Operation.Error(titleResult.Error!);
 
-        var codeResult = CodeValue.Create(dto.Code);
+        var codeResult = CodeValue.Create(model.Code);
         if (!codeResult.Ok)
             return Operation.Error(codeResult.Error);
 
-        PurchaserValue? purchaser = null;
-        if (!string.IsNullOrWhiteSpace(dto.Purchaser))
+        SupplierValue? supplier = null;
+        if (!string.IsNullOrWhiteSpace(model.Supplier))
         {
-            var purchaserResult = PurchaserValue.Create(dto.Purchaser);
+            var supplierResult = SupplierValue.Create(model.Supplier);
+            if (!supplierResult.Ok)
+                return Operation.Error(supplierResult.Error);
+            supplier = supplierResult.Result;
+        }
+
+        PurchaserValue? purchaser = null;
+        if (!string.IsNullOrWhiteSpace(model.Purchaser))
+        {
+            var purchaserResult = PurchaserValue.Create(model.Purchaser);
             if (!purchaserResult.Ok)
                 return Operation.Error(purchaserResult.Error);
             purchaser = purchaserResult.Result;
         }
 
         StatusValue? status = null;
-        if (!string.IsNullOrWhiteSpace(dto.Status))
+        if (!string.IsNullOrWhiteSpace(model.Status))
         {
-            var statusResult = StatusValue.Create(dto.Status);
+            var statusResult = StatusValue.Create(model.Status);
             if (!statusResult.Ok)
                 return Operation.Error(statusResult.Error);
             status = statusResult.Result;
@@ -91,20 +110,21 @@ public static class ProductMapper
 
         Warehouse? warehouse = null;
 
-        if (dto.Warehouse is not null && !string.IsNullOrWhiteSpace(dto.Warehouse.Code))
+        if (model.Warehouse is not null && !string.IsNullOrWhiteSpace(model.Warehouse.Code))
         {
-            var getWarehouse = GetWarehouse(dto.Warehouse, existingWarehouses);
+            var getWarehouse = GetWarehouse(model.Warehouse, existingWarehouses);
             if (!getWarehouse)
                 return Operation.Error(getWarehouse.Error);
             warehouse = getWarehouse.Result;
         }
 
-        var productGroup = GetProductGroup(dto.ProductGroup, existingProductGroups);
+        var productGroup = GetProductGroup(model.ProductGroup, existingProductGroups);
 
         return Product.Create(
             titleResult.Result,
             codeResult.Result,
             warehouse,
+            supplier,
             purchaser,
             productGroup.Result,
             status

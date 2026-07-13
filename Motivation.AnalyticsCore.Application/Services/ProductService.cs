@@ -1,11 +1,13 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
+using EFCore.BulkExtensions;
 using Microsoft.Extensions.Logging;
 using Motivation.AnalyticsCore.Application.Mappers;
 using Motivation.AnalyticsCore.Contracts.Interfaces;
 using Motivation.AnalyticsCore.Contracts.Models;
 using Motivation.AnalyticsCore.Domain.Entities;
 using Motivation.AnalyticsCore.Domain.ValueObjects;
+using Motivation.AnalyticsCore.Infrastructure;
 
 namespace Motivation.AnalyticsCore.Application.Services;
 
@@ -13,10 +15,12 @@ public class ProductService : IEntityServices<ProductDto>
 {
     private readonly IUnitOfWork _unitOfWork;
     private readonly ILogger<ProductService> _logger;
-    public ProductService(IUnitOfWork unitOfWork, ILogger<ProductService> logger)
+    private readonly AnalyticsCoreDbContext _dbContext;
+    public ProductService(IUnitOfWork unitOfWork, ILogger<ProductService> logger, AnalyticsCoreDbContext dbContext)
     {
         _unitOfWork = unitOfWork;
         _logger = logger;
+        _dbContext = dbContext;
     }
     public async Task<Operation<bool, string>> CreateOrEditAsync(Dictionary<string, ProductDto> models, DateTime dateStart, DateTime dateEnd, CancellationToken cancellationToken)
     {
@@ -88,7 +92,7 @@ public class ProductService : IEntityServices<ProductDto>
             _unitOfWork.GetRepository<Product>().Update(existingProducts.Values);
         }
 
-        products.AddRange(existingProducts.Values.ToList());
+        products.AddRange(existingProducts.Values);
         return true;
     }
 
