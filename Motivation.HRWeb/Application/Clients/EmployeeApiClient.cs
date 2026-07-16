@@ -1,5 +1,4 @@
 ﻿using Calabonga.OperationResults;
-using Microsoft.AspNetCore.Components;
 using Motivation.Contracts.Dto;
 using Motivation.HRWeb.Application.Clients.Base;
 
@@ -11,9 +10,7 @@ public class EmployeeApiClient : BaseApiClient
         IHttpClientFactory httpClientFactory,
         IHttpContextAccessor httpContextAccessor,
         IConfiguration configuration)
-        : base(httpClientFactory, httpContextAccessor, configuration, "HRService")
-    {
-    }
+        : base(httpClientFactory, httpContextAccessor, configuration, "HRService"){}
 
     public async Task<Operation<IEnumerable<EmployeeDto>?, string>> GetAllAsync(CancellationToken cancellationToken)
     {
@@ -22,7 +19,6 @@ public class EmployeeApiClient : BaseApiClient
             return Operation.Error(employees.Error);
         return employees;
     }
-
 
     public async Task<Operation<bool, string>> CreateAsync(EmployeeCreateDto dto, CancellationToken cancellationToken)
     {

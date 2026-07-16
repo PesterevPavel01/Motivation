@@ -1,6 +1,7 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Motivation.Application.Settings;
 using Motivation.Contracts.Events;
+using Motivation.Contracts.QueueEvents;
 using Rebus.Config;
 using Rebus.Serialization.Json;
 using Serilog;
@@ -30,6 +31,8 @@ public class RebusDefinition : AppDefinition
         , onCreated: async bus =>
         {
             await bus.Subscribe<PositionUpdatedQueueEvent>();
+            await bus.Subscribe<SourceDataSyncedQueueEvent>();
+            await bus.Subscribe<KpiValueCalculatedQueueEvent>();
         }
         );
 

@@ -58,7 +58,6 @@ internal static class KpiEndpointsDefinitionExtensions
         .ProducesProblem(401)
         .WithOpenApi();
 
-
         group.MapGet("unit/all", async ([FromServices] IMediator mediator, HttpContext context)
             =>
         {

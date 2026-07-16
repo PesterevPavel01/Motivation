@@ -22,6 +22,23 @@ namespace Motivation.Infrastructure.Configurations
                 .IsRequired()
                 .HasConversion(x => x.Value, x => TargetValue.Create(x).Result);
 
+            builder
+                .HasOne(x => x.Employee)
+                .WithMany(x => x.TargetHistory)
+                .HasPrincipalKey(x => x.Id);
+
+            builder.Property(x => x.ValidFrom).IsRequired().HasConversion
+            (
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc)
+            );
+
+            builder.Property(x => x.ValidTo).IsRequired().HasConversion
+            (
+                src => src.Kind == DateTimeKind.Utc ? src : DateTime.SpecifyKind(src, DateTimeKind.Utc),
+                dst => dst.Kind == DateTimeKind.Utc ? dst : DateTime.SpecifyKind(dst, DateTimeKind.Utc)
+            );
+
             builder.OwnsOne(x => x.KpiFact, kpiFactBuilder =>
             {
                 kpiFactBuilder.ToJson();

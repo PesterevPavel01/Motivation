@@ -4,6 +4,7 @@ using Motivation.HRWeb.Application.Validators;
 using Motivation.HRWeb.Components;
 using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.ViewModels;
 using Motivation.HRWeb.Components.Pages.KpiPage.ViewModels;
+using Motivation.HRWeb.Components.Pages.TargetPage.ViewModels;
 using Motivation.HRWeb.Components.Pages.TimeSheet.ViewModels;
 using Motivation.HRWeb.Extensions;
 
@@ -56,6 +57,7 @@ public class CommonDefinition : AppDefinition
         builder.Services.AddScoped<EditExtraPartModalViewModel>();
         builder.Services.AddScoped<KpiViewModel>();
         builder.Services.AddScoped<EditKpiViewModel>();
+        builder.Services.AddScoped<TargetsViewModel>();
         builder.Services.AddScoped<MeasurementUnitApiClient>();
         builder.Services.AddScoped<IKpiValidator,KpiValidator>();
         builder.Services.AddMediator(options =>

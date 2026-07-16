@@ -13,12 +13,19 @@ public class KpiApiClient : BaseApiClient
         IHttpContextAccessor httpContextAccessor,
         IConfiguration configuration)
         : base(httpClientFactory, httpContextAccessor, configuration, "KpiService")
-    {
-    }
+    {}
 
     public async Task<Operation<IEnumerable<KpiDto>?, string>> GetAllAsync(CancellationToken cancellationToken)
     {
         var result = await SendAsync<IEnumerable<KpiDto>>(HttpMethod.Get, "/api/kpi/all", null, cancellationToken);
+        if (!result.Ok)
+            return Operation.Error(result.Error);
+        return result;
+    }
+
+    public async Task<Operation<EmployeeDto?, string>> GetEmployeeAsync(string employeeCode, CancellationToken cancellationToken)
+    {
+        var result = await SendAsync<EmployeeDto>(HttpMethod.Get, $"/api/employee/{employeeCode}/kpis", null, cancellationToken);
         if (!result.Ok)
             return Operation.Error(result.Error);
         return result;
@@ -51,6 +58,14 @@ public class KpiApiClient : BaseApiClient
     internal async Task<Operation<bool, string>> UpdateAsync(KpiUpdateDto model, CancellationToken cancellationToken)
     {
         var result = await SendAsync<bool>(HttpMethod.Put, $"/api/kpi/{model.Code}/update", model, cancellationToken);
+        if (!result.Ok)
+            return Operation.Error(result.Error);
+        return result;
+    }
+
+    public async Task<Operation<bool, string>> SetKpiTargetAsync(SetEmployeeKpiTarget model, CancellationToken cancellationToken)
+    {
+        var result = await SendAsync<bool>(HttpMethod.Put, $"/api/employee/kpi/set-target", model, cancellationToken);
         if (!result.Ok)
             return Operation.Error(result.Error);
         return result;

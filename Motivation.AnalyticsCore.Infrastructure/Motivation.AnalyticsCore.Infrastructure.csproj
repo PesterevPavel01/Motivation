@@ -20,7 +20,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Motivation.AnalyticsCore.Domain\Motivation.AnalyticsCore.Domain.csproj" />
     <ProjectReference Include="..\Motivation.AnalyticsCore.Mappers\Motivation.AnalyticsCore.Mappers.csproj" />
   </ItemGroup>
 

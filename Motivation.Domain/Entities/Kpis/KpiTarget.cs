@@ -19,8 +19,10 @@ public sealed class KpiTarget
 
     public KpiFact? KpiFact { get; private set; }
     public PositionKpi PositionKpi { get; private set; } = null!;
+    public Employee Employee { get; private set; } = null!;
 
     public static Operation<KpiTarget, string> Create(
+        Employee employee,
         TargetValue target,
         DateTime validFrom,
         DateTime validTo)
@@ -32,7 +34,29 @@ public sealed class KpiTarget
         if (validTo == default)
             return Operation.Error("ValidTo is default!");
 
-        return new KpiTarget(Guid.CreateVersion7(), target, validFrom, validTo);
+        var entity = new KpiTarget(Guid.CreateVersion7(), target, validFrom, validTo);
+
+        var setEmployee = entity.SetEmployee(employee);
+        if (!setEmployee.Ok)
+            return Operation.Error(setEmployee.Error);
+
+        return entity;
+    }
+
+    public Operation<bool, string> Edit(TargetValue target)
+    {
+        if (target is null)
+            return Operation.Error("Target is null!");
+        Target = target;
+        return true;
+    }
+
+    public Operation<bool, string> SetEmployee(Employee employee)
+    {
+        if (employee is null)
+            return Operation.Error("Employee is null!");
+        Employee = employee;
+        return true;
     }
 
     public Operation<bool, string> SetFact(KpiFact fact)

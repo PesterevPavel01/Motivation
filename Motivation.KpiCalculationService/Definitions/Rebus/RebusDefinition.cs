@@ -13,25 +13,25 @@ namespace Motivation.KpiCalculationService.Definitions.Rebus
         {
             var rabbitSettings = builder.Configuration.GetSection("RabbitMq").Get<RabbitSettings>();
 
-            builder.Services.AddRebus(configure: config =>
-            {
-                config
-                .Logging(x => x.Serilog(Log.Logger))
-                .Serialization(x => x.UseSystemTextJson())
-                .Transport(x => x.UseRabbitMq(rabbitSettings.RabbitUrl, "IKpiCalculationServiceQueueEvent"))
-                .Options(x =>
+            builder.Services.AddRebus(configure: 
+                config =>
                 {
-                    x.SetNumberOfWorkers(5);
-                    x.SetBusName("KpiCalculationService");
-                });
+                    config
+                    .Logging(x => x.Serilog(Log.Logger))
+                    .Serialization(x => x.UseSystemTextJson())
+                    .Transport(x => x.UseRabbitMq(rabbitSettings.RabbitUrl, "IKpiCalculationServiceQueueEvent"))
+                    .Options(x =>
+                    {
+                        x.SetNumberOfWorkers(5);
+                        x.SetBusName("KpiCalculationService");
+                    });
 
-                return config;
-            }
-            , onCreated: async bus =>
-            {
-                await bus.Subscribe<SourceDataSyncedEvent>();
-            }
-            );
+                    return config;
+                }, 
+                onCreated: async bus =>
+                {
+                    await bus.Subscribe<RecalculateKpisQueueCommand>();
+                });
 
             builder.Services.AutoRegisterHandlersFromAssemblyOf<KpiCalculationServiceAssemblyReference>();
         }

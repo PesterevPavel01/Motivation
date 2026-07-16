@@ -4,7 +4,6 @@ using Microsoft.EntityFrameworkCore;
 using Motivation.Contracts.Dto.CalculateDto;
 using Motivation.Contracts.Events;
 using Motivation.Domain.Entities;
-using Motivation.KpiService.Application.Commands;
 using Rebus.Handlers;
 
 namespace Motivation.KpiService.Application.QueueHandlers;
@@ -44,9 +43,9 @@ public class PositionUpdatedEventHandler : IHandleMessages<PositionUpdatedQueueE
                             PositionCode: ep.Position.Code.Value,
                             KpiCode: kpi.Kpi.Code.Value))));
 
-        foreach (var model in models)
+        /*foreach (var model in models)
         {
-            await _publisher.Publish(new RecalculateKpisCommand(model), default);
-        }
+            await _publisher.Publish(new RecalculateKpiCommand(model), default);
+        }*/
     }
 }

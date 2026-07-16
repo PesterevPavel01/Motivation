@@ -1,10 +1,8 @@
 ﻿using Calabonga.OperationResults;
 using Mediator;
-using Motivation.Domain.Enum;
 using Motivation.HRWeb.Application.Mappings;
 using Motivation.HRWeb.Application.Messages.KpiMessages;
 using Motivation.HRWeb.Components.Pages.KpiPage.Models;
-using Motivation.IdentityServer.Domain.Base;
 
 namespace Motivation.HRWeb.Components.Pages.KpiPage.ViewModels;
 

@@ -1,3 +1,13 @@
 ﻿namespace Motivation.Contracts.Dto;
 
-public record PositionKpiDto(string KpiCode, string KpiTitle, int OrderNumber, decimal Weight, DateTime ValidFrom, DateTime ValidTo, KpiDto? Kpi);
+public sealed class PositionKpiDto()
+{
+    public required string KpiCode { get; set; }
+    public string? KpiTitle { get; set; }
+    public int OrderNumber { get; set; }
+    public decimal Weight { get; set; }
+    public DateTime ValidFrom { get; set; }
+    public DateTime ValidTo { get; set; }
+    public IEnumerable<KpiTargetDto> Targets { get; set; } = [];
+    public KpiDto? Kpi { get; set; }
+}

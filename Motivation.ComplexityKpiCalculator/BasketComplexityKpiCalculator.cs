@@ -1,6 +1,5 @@
 ﻿using Calabonga.OperationResults;
 using Microsoft.Extensions.Logging;
-using Motivation.Contracts.Dto;
 using Motivation.Contracts.Dto.CalculateDto;
 using Motivation.Contracts.Interfaces;
 using Motivation.Domain.Enum;
@@ -23,31 +22,36 @@ public sealed class BasketComplexityKpiCalculator : ICalculator
         InitializePython();
     }
 
-    public async Task<Operation<decimal, string>> CalculateKpiAsync(CalculateEmployeeKpiDto model)
+    public async Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(KpiCalculationTask model)
     {
         if (!_isInitialized)
         {
             return Operation.Error("Python engine is not initialized. Check Python installation and scripts.");
         }
 
-        var kpi = model.Employee.Positions
-            .FirstOrDefault(x => x.Position?.Code == model.PositionCode)?
-            .Position?.Kpis?.FirstOrDefault(x => x.KpiCode == model.KpiCode);
-
-        if (kpi is null || kpi.Kpi is null)
+        if (model is null)
         {
             return Operation.Error("Kpi not found!");
         }
 
         var result = ExecutePythonCalculation(
-                model.Employee.Code,
-                model.PositionCode,
-                model.KpiCode,
+                model.PositionKpiId.ToString(),
+                model.PositionKpiId.ToString(),
+                model.PositionKpiId.ToString(),
                 model.PeriodFrom,
-                model.PeriodTo,
-                kpi);
+                model.PeriodTo);
 
-        return result;
+        var days = (model.PeriodTo - model.PeriodFrom).Days + 1;
+
+        return new KpiCalculationTaskResult
+        {
+            PositionKpiId = model.PositionKpiId,
+            PeriodFrom = model.PeriodFrom,
+            PeriodTo = model.PeriodTo,
+            Target = model.Target,
+            Value = result.Result,
+            Achievement = result.Result / model.Target
+        };
     }
 
     private Operation<decimal, string> ExecutePythonCalculation(
@@ -55,8 +59,7 @@ public sealed class BasketComplexityKpiCalculator : ICalculator
     string positionCode,
     string kpiCode,
     DateTime periodFrom,
-    DateTime periodTo,
-    PositionKpiDto kpi)
+    DateTime periodTo)
     {
         try
         {

@@ -30,4 +30,15 @@ public sealed class KpiFact
 
         return new KpiFact(fact, achievement, bonusAmount);
     }
+
+    public Operation<bool, string> Edit(
+        FactValue fact,
+        AchievementValue achievement,
+        BonusAmountValue bonusAmount)
+    {
+        Fact = fact;
+        Achievement = achievement;
+        BonusAmount = bonusAmount;
+        return true;
+    }
 }

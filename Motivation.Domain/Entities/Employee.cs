@@ -1,6 +1,7 @@
 ﻿using Calabonga.OperationResults;
 using Motivation.Domain.DomainEvents.EmployeeDomainEvents;
 using Motivation.Domain.Entities.Base;
+using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.Events.EmployeeDomainEvents;
 using Motivation.Domain.ValueObjects;
 
@@ -9,6 +10,7 @@ namespace Motivation.Domain.Entities;
 public class Employee : AggregateRoot
 {
     private readonly List<EmployeePosition> _employeePositions = [];
+    private readonly List<KpiTarget> _targetHistory = [];
 
     private Employee(Guid id, CodeValue code, FirstNameValue firstName, LastNameValue lastName, SecondNameValue? secondName, FullNameValue fullName) : base(id, code) 
     {
@@ -24,6 +26,7 @@ public class Employee : AggregateRoot
     public FullNameValue FullName { get; private set; }
 
     public IReadOnlyCollection<EmployeePosition> EmployeePositions => _employeePositions.AsReadOnly();
+    public IReadOnlyCollection<KpiTarget> TargetHistory => _targetHistory.AsReadOnly();
 
     public static Operation<Employee, string> Create(CodeValue code, FirstNameValue firstName, LastNameValue lastName, SecondNameValue? secondName, FullNameValue fullName)
     {

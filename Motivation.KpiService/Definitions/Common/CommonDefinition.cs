@@ -4,8 +4,6 @@ using Motivation.Domain.DomainEvents.KpiDomainEvents;
 using Motivation.Domain.Events.KpiDomainEvents;
 using Motivation.Infrastructure.Options;
 using Motivation.Infrastructure.Processors;
-using Motivation.KpiSalesCalculator.Extensions;
-using Motivation.KpiComplexityCalculator.Extensions;
 
 namespace Motivation.KpiService.Definitions.Common
 {
@@ -38,8 +36,6 @@ namespace Motivation.KpiService.Definitions.Common
                 ];
             });
 
-            builder.Services.AddSalesKpiCalculator();
-            builder.Services.AddComplexityKpiCalculator();
             builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();
             builder.Services.AddScoped<IOutboxCleanerProcessor, OutboxCleanerProcessor>();
 

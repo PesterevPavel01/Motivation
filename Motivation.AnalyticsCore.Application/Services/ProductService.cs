@@ -1,6 +1,5 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
-using EFCore.BulkExtensions;
 using Microsoft.Extensions.Logging;
 using Motivation.AnalyticsCore.Application.Mappers;
 using Motivation.AnalyticsCore.Contracts.Interfaces;

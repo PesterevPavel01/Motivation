@@ -7,5 +7,5 @@ namespace Motivation.Contracts.Interfaces;
 public interface ICalculator
 {
     KpiType KpiType { get; }
-    Task<Operation<decimal, string>> CalculateKpiAsync(CalculateEmployeeKpiDto model);
+    Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(KpiCalculationTask task);
 }

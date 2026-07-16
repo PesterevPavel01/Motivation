@@ -2,10 +2,10 @@
   <Folder Name="/AnalyticsCore/">
     <Project Path="Motivation.AnalyticsCore.Application/Motivation.AnalyticsCore.Application.csproj" Id="c7a5cbe7-5503-4ce5-ac87-2b6f86b362c6" />
     <Project Path="Motivation.AnalyticsCore.Contracts/Motivation.AnalyticsCore.Contracts.csproj" Id="baca58c6-5d17-4682-bbe4-7f2fdd1bd6d6" />
-    <Project Path="Motivation.AnalyticsCore.Domain/Motivation.AnalyticsCore.Domain.csproj" Id="655aba70-6148-4493-a8f5-a2e0588b19a8" />
+    <Project Path="Motivation.AnalyticsCore.Domain/Motivation.AnalyticsCore.Domain.csproj" />
     <Project Path="Motivation.AnalyticsCore.Infrastructure/Motivation.AnalyticsCore.Infrastructure.csproj" Id="88ced616-692f-46d9-b6c3-9d2ef4feb342" />
     <Project Path="Motivation.AnalyticsCore.Mappers/Motivation.AnalyticsCore.Mappers.csproj" Id="bd6b87ad-f9fe-4872-a586-ff0f2d86a59d" />
-    <Project Path="Motivation.KpiCalculationService/Motivation.KpiCalculationService.csproj" Id="f90080b4-bf62-4de5-9221-8a95ef2c6160" />
+    <Project Path="Motivation.AnalyticsCore.SyncService/Motivation.AnalyticsCore.SyncService.csproj" />
   </Folder>
   <Folder Name="/IdentityServer/">
     <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Domain/Motivation.IdentityServer.Domain.csproj" Id="a147d3e4-1ee5-49e9-b223-fdf4dd165ec9" />
@@ -26,5 +26,6 @@
   <Project Path="Motivation.HRService/Motivation.HRService.csproj" Id="c0abdbbc-3910-45cb-b992-08622b1abf7f" />
   <Project Path="Motivation.HRWeb/Motivation.HRWeb.csproj" Id="835ff941-6b20-4bcd-a167-fc1125d45c7c" />
   <Project Path="Motivation.Infrastructure/Motivation.Infrastructure.csproj" Id="6d242890-b953-408d-a433-69e8f4535eca" />
+  <Project Path="Motivation.KpiCalculationService/Motivation.KpiCalculationService.csproj" />
   <Project Path="Motivation.KpiService/Motivation.KpiService.csproj" Id="10965496-f784-4a25-8ec6-db26d58e008f" />
 </Solution>

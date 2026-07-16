@@ -42,6 +42,11 @@ internal sealed class EmployeeConfiguration : EntityConfiguration<Employee>
             .HasPrincipalKey(x => x.Id);
 
         builder
+            .HasMany(x => x.TargetHistory)
+            .WithOne(x => x.Employee)
+            .HasPrincipalKey(x => x.Id);
+
+        builder
             .HasIndex(x => x.FullName);
 
         builder

@@ -9,18 +9,23 @@ public sealed class SalesKpiCalculator : ICalculator
 {
     public KpiType KpiType => KpiType.Sales;
 
-    public async Task<Operation<decimal, string>> CalculateKpiAsync(CalculateEmployeeKpiDto model) 
+    public async Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(KpiCalculationTask model) 
     {
-        var kpi = model.Employee.Positions
-            .FirstOrDefault(x => x.Position?.Code == model.PositionCode)?
-            .Position?.Kpis?.FirstOrDefault(x => x.KpiCode == model.KpiCode);
-
-        if (kpi is null || kpi.Kpi is null)
+        if (model is null)
         {
-            return Operation.Error("Kpi not found!");
+            return Operation.Error("KpiCalculationTask not found!");
         }
 
         var days = (model.PeriodTo - model.PeriodFrom).Days + 1;
-        return kpi.Kpi.CustomerResponsibleFilter.Any() ? 2000 * days : 23000 * days;
+
+        return new KpiCalculationTaskResult 
+        {
+            PositionKpiId = model.PositionKpiId,
+            PeriodFrom = model.PeriodFrom,
+            PeriodTo = model.PeriodTo,
+            Target = model.Target,
+            Value = 2000 * days,
+            Achievement = 2000 * days / model.Target
+        };
     }
 }

@@ -1,5 +1,4 @@
 ﻿using Calabonga.OperationResults;
-using Motivation.Domain.DomainEvents.EmployeeDomainEvents;
 using Motivation.Domain.DomainEvents.KpiDomainEvents;
 using Motivation.Domain.DomainEvents.PositionDomainEvents;
 using Motivation.Domain.Entities.Base;

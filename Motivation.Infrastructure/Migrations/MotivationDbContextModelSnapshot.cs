@@ -296,6 +296,9 @@ namespace Motivation.Infrastructure.Migrations
                     b.Property<Guid>("Id")
                         .HasColumnType("uuid");
 
+                    b.Property<Guid>("EmployeeId")
+                        .HasColumnType("uuid");
+
                     b.Property<Guid>("PositionKpiId")
                         .HasColumnType("uuid");
 
@@ -309,6 +312,8 @@ namespace Motivation.Infrastructure.Migrations
                         .HasColumnType("timestamp with time zone");
 
                     b.HasKey("Id");
+
+                    b.HasIndex("EmployeeId");
 
                     b.HasIndex("PositionKpiId");
 
@@ -655,6 +660,12 @@ namespace Motivation.Infrastructure.Migrations
 
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiTarget", b =>
                 {
+                    b.HasOne("Motivation.Domain.Entities.Employee", "Employee")
+                        .WithMany("TargetHistory")
+                        .HasForeignKey("EmployeeId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.HasOne("Motivation.Domain.Entities.Kpis.PositionKpi", "PositionKpi")
                         .WithMany("TargetHistory")
                         .HasForeignKey("PositionKpiId")
@@ -686,6 +697,8 @@ namespace Motivation.Infrastructure.Migrations
                             b1.WithOwner()
                                 .HasForeignKey("KpiTargetId");
                         });
+
+                    b.Navigation("Employee");
 
                     b.Navigation("KpiFact");
 
@@ -743,6 +756,8 @@ namespace Motivation.Infrastructure.Migrations
             modelBuilder.Entity("Motivation.Domain.Entities.Employee", b =>
                 {
                     b.Navigation("EmployeePositions");
+
+                    b.Navigation("TargetHistory");
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.EmployeePosition", b =>
