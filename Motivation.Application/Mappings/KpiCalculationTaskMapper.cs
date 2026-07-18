@@ -45,7 +45,7 @@ public static class KpiCalculationTaskMapper
                 kpi.MeasurementUnit.Title.Value
             ),
 
-            KpiType = kpi.Type.ToString(),
+            KpiType = kpi.KpiType.ToString(),
 
             CustomerFilter = filters
                 .Where(f => f.KpiFilterType == KpiFilterType.Customer)

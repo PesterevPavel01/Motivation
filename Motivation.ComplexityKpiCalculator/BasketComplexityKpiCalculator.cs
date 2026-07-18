@@ -17,29 +17,29 @@ public sealed class BasketComplexityKpiCalculator : ICalculator
 
     public BasketComplexityKpiCalculator(ILogger<BasketComplexityKpiCalculator> logger)
     {
-        _pythonScriptPath = @"D:\Work\Dizag\Back\Motivation\source\Motivation.ComplexityKpiCalculator\PytonSctripts";
+        _pythonScriptPath = @"D:\Work\Dizag\Back\Motivation\source\Motivation.ComplexityKpiCalculator\PytonScripts\";
         _logger = logger;
-        InitializePython();
+        //InitializePython();
     }
 
     public async Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(KpiCalculationTask model)
     {
-        if (!_isInitialized)
+        /*if (!_isInitialized)
         {
             return Operation.Error("Python engine is not initialized. Check Python installation and scripts.");
-        }
+        }*/
 
         if (model is null)
         {
             return Operation.Error("Kpi not found!");
         }
 
-        var result = ExecutePythonCalculation(
+        /*var result = ExecutePythonCalculation(
                 model.PositionKpiId.ToString(),
                 model.PositionKpiId.ToString(),
                 model.PositionKpiId.ToString(),
                 model.PeriodFrom,
-                model.PeriodTo);
+                model.PeriodTo);*/
 
         var days = (model.PeriodTo - model.PeriodFrom).Days + 1;
 
@@ -49,8 +49,8 @@ public sealed class BasketComplexityKpiCalculator : ICalculator
             PeriodFrom = model.PeriodFrom,
             PeriodTo = model.PeriodTo,
             Target = model.Target,
-            Value = result.Result,
-            Achievement = result.Result / model.Target
+            Value = 12,
+            Achievement = 12 / model.Target
         };
     }
 

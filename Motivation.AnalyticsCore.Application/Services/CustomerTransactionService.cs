@@ -23,6 +23,8 @@ public class CustomerTransactionService : IEntityServices<CustomerTransactionDto
             .GroupBy(x => x.Code)
             .Select(x => CodeValue.Create(x.Key));
 
+        var customer = models.Values.Where(x => x.Customer.Code == "С00000116").ToArray();
+
         if (customerTransactionCodes.Any(x => !x.Ok))
         {
             return Operation.Error(customerTransactionCodes.FirstOrDefault(x => !x.Ok).Error);
@@ -196,20 +198,20 @@ public class CustomerTransactionService : IEntityServices<CustomerTransactionDto
 
         foreach (var entity in editCustomerTransaction.Values)
         {
-            if (!companies.TryGetValue(entity.Company.Code.Value, out var company))
-                return Operation.Error("Company not found!");
-            if (company is null)
-                return Operation.Error("Company is null!");
-
-            if (!customers.TryGetValue(entity.Customer.Code.Value, out var customer))
-                return Operation.Error("Customer not found!");
-            if (customer is null)
-                return Operation.Error("Customer is null!");
-
             if (!models.TryGetValue(entity.Code.Value, out var model))
                 return Operation.Error("Model not found!");
             if (model is null)
                 return Operation.Error("Model is null!");
+
+            if (!companies.TryGetValue(model.Company.Code, out var company))
+                return Operation.Error("Company not found!");
+            if (company is null)
+                return Operation.Error("Company is null!");
+
+            if (!customers.TryGetValue(model.Customer.Code, out var customer))
+                return Operation.Error("Customer not found!");
+            if (customer is null)
+                return Operation.Error("Customer is null!");
 
             var editResult = entity.EditEntity(model, company, customer, products);
             if (!editResult.Ok)

@@ -1,6 +1,7 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
 using Mediator;
+using Microsoft.CodeAnalysis.Emit;
 using Microsoft.EntityFrameworkCore;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
@@ -81,7 +82,7 @@ public class PutTarget
                 return Operation.Error(targetValue.Error);
             }
 
-            var existingTarget = employee.TargetHistory
+            var existingTarget = positionKpi.TargetHistory
                 .FirstOrDefault(t => 
                 t.Employee.Code == employeeCode.Result
                 && (request.model.ValidFrom == t.ValidFrom
@@ -100,11 +101,15 @@ public class PutTarget
                     return Operation.Error(newTarget.Error);
                 }
 
-                positionKpi.AddTarget(newTarget.Result);
+                var addResult = employee.AddTarget(positionKpi, newTarget.Result);
+                if (!addResult.Ok)
+                {
+                    return Operation.Error(addResult.Error);
+                }
             }
             else 
             {
-                var editResult = existingTarget.Edit(targetValue.Result);
+                var editResult = employee.EditTarget(existingTarget, targetValue.Result);
                 if (!editResult.Ok)
                 {
                     return Operation.Error(editResult.Error);

@@ -28,5 +28,6 @@ namespace Motivation.Domain.Interfaces;
 [JsonDerivedType(typeof(RemoveDeductionDomainEvent), typeDiscriminator: "remove-deduction")]
 [JsonDerivedType(typeof(SetExtraPartDomainEvent), typeDiscriminator: "set-extra-part")]
 [JsonDerivedType(typeof(RemoveExtraPartDomainEvent), typeDiscriminator: "remove-extra-part")]
+[JsonDerivedType(typeof(KpiTargetAddedOrChangedDomainEvent), typeDiscriminator: "kpi-target-added-or-changed")]
 
 public interface IDomainEvent : INotification { }

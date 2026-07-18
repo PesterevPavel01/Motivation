@@ -1,0 +1,58 @@
+﻿@using Motivation.HRWeb.Components.Pages.EmployeesPage.ViewModels
+@using Motivation.HRWeb.Components.Pages.EmployeesPage.Models
+
+<div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title fs-6 text-danger">Увольнение с должности</h5>
+                <button type="button" class="btn-close" @onclick="OnCancel"></button>
+            </div>
+            <EditForm Model="ViewModel.Model" OnValidSubmit="HandleSubmit">
+                <div class="modal-body">
+                    @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+                    {
+                        <div class="alert alert-danger small mb-3">@ViewModel.ErrorMessage</div>
+                    }
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Сотрудник</label>
+                        <input type="text" class="form-control form-control-sm" value="@Employee?.FullName" disabled />
+                    </div>
+                    <div class="mb-2">
+                        <label class="form-label small fw-bold">Должность для увольнения *</label>
+                        <InputSelect class="form-select form-select-sm" @bind-Value="ViewModel.Model.SelectedPositionCode">
+                            <option value="">-- Выберите должность --</option>
+                            @foreach (var pos in ViewModel.Model.AvailablePositions)
+                            {
+                                <option value="@pos.PositionCode">@pos.PositionTitle</option>
+                            }
+                        </InputSelect>
+                    </div>
+                    <div class="alert alert-warning small mt-2">
+                        <i class="bi bi-exclamation-triangle-fill me-1"></i>
+                        Сотрудник будет уволен с выбранной должности.
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
+                    <button type="submit" class="btn btn-danger btn-sm" disabled="@(ViewModel.IsLoading || string.IsNullOrEmpty(ViewModel.Model.SelectedPositionCode))">
+                        @(ViewModel.IsLoading ? "Увольнение..." : "Уволить")
+                    </button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
+
+@code {
+    [Parameter] public EmployeeItemModel Employee { get; set; } = null!;
+    [Parameter] public DismissEmployeeModalViewModel ViewModel { get; set; } = null!;
+    [Parameter] public EventCallback OnDismissed { get; set; }
+    [Parameter] public EventCallback OnCancel { get; set; }
+
+    private async Task HandleSubmit()
+    {
+        if (await ViewModel.DismissAsync())
+            await OnDismissed.InvokeAsync();
+    }
+}

@@ -6,7 +6,6 @@ using Motivation.HRWeb.Application.Messages.KpiTarget;
 using Motivation.HRWeb.Components.Pages.TargetPage.Helpers;
 using Motivation.HRWeb.Components.Pages.TargetPage.Models;
 using Motivation.HRWeb.Exceptions;
-using NetTopologySuite.Index.HPRtree;
 
 namespace Motivation.HRWeb.Components.Pages.TargetPage.ViewModels;
 
@@ -22,7 +21,7 @@ public class TargetsViewModel : IDisposable
     }
 
     public TargetsFilterModel Filter { get; set; } = new();
-    public List<KpiTargetItemModel> Items { get; set; } = new();
+    public List<KpiTargetItemModel> Items { get; set; } = [];
     public bool IsLoading { get; set; }
     public string? ErrorMessage { get; set; }
 

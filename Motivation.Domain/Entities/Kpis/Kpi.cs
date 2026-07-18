@@ -18,7 +18,6 @@ public abstract class Kpi : AggregateRoot
         Title = title;
     }
 
-    public KpiType Type { get; private set; }
     public AbbreviationValue Abbreviation { get; protected set; } = null!;
     public CalculationType CalculationType { get; private set; }
     public MeasurementUnit MeasurementUnit { get; private set; } = null!;

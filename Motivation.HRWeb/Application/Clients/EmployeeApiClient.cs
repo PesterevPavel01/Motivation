@@ -51,6 +51,13 @@ public class EmployeeApiClient : BaseApiClient
             return Operation.Error(result.Error);
         return result;
     }
+    public async Task<Operation<bool, string>> DismissEmployeeFromPositionAsync(string employeeCode, string positionCode, CancellationToken cancellationToken)
+    {
+        var result = await SendAsync<bool>(HttpMethod.Delete, $"/api/employees/{employeeCode}/dismiss/{positionCode}", null, cancellationToken);
+        if (!result.Ok)
+            return Operation.Error(result.Error);
+        return result;
+    }
 
     public async Task<Operation<bool, string>> SetActualHoursAsync(string employeeCode, SetActualHoursDto model, CancellationToken cancellationToken)
     {

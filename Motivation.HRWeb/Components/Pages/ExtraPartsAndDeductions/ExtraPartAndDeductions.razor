@@ -5,6 +5,7 @@
 @using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.Models
 @using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.ViewModels
 @using Motivation.Contracts
+@using Motivation.HRWeb.Application;
 @inject ExtraPartAndDeductionViewModel ViewModel
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
@@ -83,7 +84,7 @@ else
                                 }
                                 else
                                 {
-                                    <span>@(row.DeductionValue.HasValue ? row.DeductionValue.Value.ToString("F2") : "—")</span>
+                                    <span>@(row.DeductionValue.HasValue ? ValueFormatter.FormatValue(row.DeductionValue.Value) : "—")</span>
                                 }
                             </td>
 
@@ -106,7 +107,7 @@ else
                             </td>
 
                             <td class="py-1 text-center">
-                                <span>@(row.ExtraPartValue.HasValue ? row.ExtraPartValue.Value.ToString("F2") : "—")</span>
+                                <span>@(row.ExtraPartValue.HasValue ? ValueFormatter.FormatValue(row.ExtraPartValue.Value) : "—")</span>
                             </td>
 
                             <td class="py-1 text-center">

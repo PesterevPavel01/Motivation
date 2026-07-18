@@ -1,11 +1,11 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
 using Mediator;
-using Motivation.Domain.Entities;
-using Motivation.Domain.ValueObjects;
 using Microsoft.EntityFrameworkCore;
 using Motivation.Application.Mappings;
 using Motivation.Contracts.Dto;
+using Motivation.Domain.Entities;
+using Motivation.Domain.ValueObjects;
 
 namespace Motivation.KpiService.Application.Messaging.Employees;
 

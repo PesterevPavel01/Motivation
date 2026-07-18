@@ -18,6 +18,7 @@ public class RecalculateKpisCommandHandler : IHandleMessages<RecalculateKpisQueu
 
     public async Task Handle(RecalculateKpisQueueCommand message)
     {
+        _logger.LogInformation("Message  {@RecalculateKpisQueueCommand} received!", typeof(RecalculateKpisQueueCommand).Name.ToString());
         foreach (var task in message.Models)
         {
             var result = await _mediator.Send(new CalculateKpi.Request(task));

@@ -25,7 +25,7 @@ public sealed class SalesKpiCalculator : ICalculator
             PeriodTo = model.PeriodTo,
             Target = model.Target,
             Value = 2000 * days,
-            Achievement = 2000 * days / model.Target
+            Achievement = 2000 * days / model.Target * 100
         };
     }
 }

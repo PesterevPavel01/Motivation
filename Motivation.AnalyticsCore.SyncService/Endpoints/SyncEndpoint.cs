@@ -3,6 +3,7 @@ using Mediator;
 using Microsoft.AspNetCore.Mvc;
 using Motivation.AnaliticsCore.SyncService.Application.Messaging;
 using Motivation.AnalyticsCore.Contracts.Models;
+using Motivation.Contracts.QueueEvents;
 
 namespace Motivation.AnalyticsCore.KpiCalculationService.Endpoints
 {
@@ -17,7 +18,7 @@ namespace Motivation.AnalyticsCore.KpiCalculationService.Endpoints
         public static void MapSyncEndpoints(this IEndpointRouteBuilder routes)
         {
             var group = routes.MapGroup("/api/sync").WithTags("Sync");
-            group.MapPost("source", async ([FromServices] IMediator mediator, [FromBody] SyncDto syncModel, HttpContext context)
+            group.MapPost("source", async ([FromServices] IMediator mediator, ILogger<SyncEndpointsDefinition> logger,  [FromBody] SyncDto syncModel, HttpContext context)
                 =>
             {
                 var result = await mediator.Send(new SyncSourceData.Request(syncModel), context.RequestAborted);

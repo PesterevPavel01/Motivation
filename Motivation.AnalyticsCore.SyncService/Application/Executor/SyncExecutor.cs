@@ -3,6 +3,7 @@ using Motivation.AnaliticsCore.SyncService.Application.Interfaces;
 using Motivation.AnalyticsCore.Contracts.Models;
 using Motivation.Contracts.QueueEvents;
 using Rebus.Bus;
+using System.Data;
 
 namespace Motivation.AnaliticsCore.SyncService.Application.Executor
 {
@@ -10,11 +11,13 @@ namespace Motivation.AnaliticsCore.SyncService.Application.Executor
     {
         private readonly IEnumerable<ISyncStep> _syncSteps = [];
         private readonly IBus _bus;
+        private readonly ILogger<SyncExecutor> _logger;
 
-        public SyncExecutor(IEnumerable<ISyncStep> steps, IBus bus)
+        public SyncExecutor(IEnumerable<ISyncStep> steps, IBus bus, ILogger<SyncExecutor> logger)
         {
             _syncSteps = steps.OrderBy(x => x.OrderIndex);
             _bus = bus;
+            _logger = logger;
         }
 
         public async Task<Operation<bool, string>> ExecuteAsync(SyncDto model, CancellationToken cancellationToken)
@@ -29,6 +32,7 @@ namespace Motivation.AnaliticsCore.SyncService.Application.Executor
                 }
             }
             await _bus.Publish(new SourceDataSyncedQueueEvent(model.DateStart, model.DateEnd));
+            _logger.LogInformation("Message  {@SourceDataSyncedQueueEvent} sent!", typeof(SourceDataSyncedQueueEvent).Name.ToString());
             return true;
         }
     }

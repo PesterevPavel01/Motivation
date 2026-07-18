@@ -61,7 +61,8 @@ public class GetKpiCalculationPlanQuery
                     x.Position))
                 .Where(x => x is not null)
                 .Select(x => x!))
-                .SelectMany(x => x);
+                .SelectMany(x => x)
+                .ToArray();
 
             if (tasks is null)
             {

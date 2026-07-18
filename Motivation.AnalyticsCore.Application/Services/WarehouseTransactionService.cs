@@ -154,20 +154,20 @@ namespace Motivation.AnalyticsCore.Application.Services
 
             foreach (var entity in editWarehouseTransaction.Values)
             {
-                if (!products.TryGetValue(entity.Product.Code.Value, out var product))
-                    return Operation.Error("Product not found!");
-                if (product is null)
-                    return Operation.Error("Product is null!");
-
-                if (!warehouses.TryGetValue(entity.Warehouse.Code.Value, out var warehouse))
-                    return Operation.Error("Warehouse not found!");
-                if (warehouse is null)
-                    return Operation.Error("Warehouse is null!");
-
                 if (!models.TryGetValue(entity.Code.Value, out var model))
                     return Operation.Error("Model not found!");
                 if (model is null)
                     return Operation.Error("Model is null!");
+
+                if (!products.TryGetValue(model.ProductCode, out var product))
+                    return Operation.Error("Product not found!");
+                if (product is null)
+                    return Operation.Error("Product is null!");
+
+                if (!warehouses.TryGetValue(model.WarehouseCode, out var warehouse))
+                    return Operation.Error("Warehouse not found!");
+                if (warehouse is null)
+                    return Operation.Error("Warehouse is null!");
 
                 var editResult = entity.EditEntity(model, warehouse, product);
                 if (!editResult.Ok)

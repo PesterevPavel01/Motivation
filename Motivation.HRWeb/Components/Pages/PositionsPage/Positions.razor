@@ -2,6 +2,7 @@
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
 @using Motivation.HRWeb.Components.Pages.PositionsPage.Modals
+@using Motivation.HRWeb.Application
 @attribute [Authorize]
 
 <PageTitle>Должности</PageTitle>
@@ -48,8 +49,8 @@ else
                 {
                     <tr>
                         <td class="py-1"><strong>@pos.Title</strong></td>
-                        <td class="py-1">@pos.BaseSalary</td>
-                        <td class="py-1">@pos.MotivationPart</td>
+                        <td class="py-1">@ValueFormatter.FormatValue(pos.BaseSalary)</td>
+                        <td class="py-1">@ValueFormatter.FormatValue(pos.MotivationPart)</td>
                         <td class="py-1">@pos.WorkWeekType</td>
                         <td class="py-1 text-center">
                             @(pos.RecalculateToHours ? "Да" : "Нет")

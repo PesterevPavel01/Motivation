@@ -14,7 +14,7 @@ public class CalculateKpi
 
     public class Handler(
         IUnitOfWork unitOfWork, 
-        ILogger<Handler> logger, 
+        ILogger<CalculateKpi> logger, 
         IEnumerable<ICalculator> calculators,
         IBus bus)
         : IRequestHandler<Request, Operation<KpiCalculationTaskResult, string>>
@@ -23,14 +23,21 @@ public class CalculateKpi
         {
             var calculator = calculators.FirstOrDefault(x => x.KpiType.ToString() == request.Model.KpiType);
             if (calculator is null)
-                return Operation.Error($"Calculator for not found!");
+            {
+                logger.LogError($"Calculator for {request.Model.KpiType} not found!");
+                return Operation.Error($"Calculator for {request.Model.KpiType} not found!");
+            }
 
             var calculate = await calculator.CalculateKpiAsync(request.Model);
 
             if (!calculate.Ok)
+            {
+                logger.LogError(calculate.Error);
                 return Operation.Error(calculate.Error);
+            }
 
             await bus.Publish(new KpiValueCalculatedQueueEvent(calculate.Result));
+            logger.LogInformation("Message  {@KpiValueCalculatedQueueEvent} sent!", typeof(KpiValueCalculatedQueueEvent).Name.ToString());
 
             return calculate.Result;
         }

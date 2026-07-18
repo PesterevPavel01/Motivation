@@ -1,38 +1,33 @@
 ﻿@page "/employees"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
-@using Motivation.Contracts.Dto
+@using Motivation.HRWeb.Components.Pages.EmployeesPage.ViewModels
 @using Motivation.HRWeb.Components.Pages.EmployeesPage.Modals
-@using Mediator
-@using Motivation.HRWeb.Application.Messages.EmployeeMessages
-@using Motivation.HRWeb.Exceptions
-@using Calabonga.OperationResults
-@inject IMediator Mediator
-@inject NavigationManager NavigationManager
+@inject EmployeesViewModel ViewModel
 @attribute [Authorize]
 
 <PageTitle>Сотрудники</PageTitle>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
     <h1 class="fs-4 m-0">Сотрудники</h1>
-    <button class="btn btn-primary btn-sm" @onclick="OpenCreateModal">
+    <button class="btn btn-primary btn-sm" @onclick="() => ViewModel.OpenCreateModal()">
         <i class="bi bi-plus-lg"></i> Добавить сотрудника
     </button>
 </div>
 
-@if (isLoading)
+@if (ViewModel.IsLoading)
 {
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Загрузка...</span>
     </div>
 }
-else if (!string.IsNullOrEmpty(errorMessage))
+else if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
 {
     <div class="alert alert-danger" role="alert">
-        <strong>Ошибка:</strong> @errorMessage
+        <strong>Ошибка:</strong> @ViewModel.ErrorMessage
     </div>
 }
-else if (employees == null || !employees.Any())
+else if (!ViewModel.Employees.Any())
 {
     <div class="alert alert-info">Сотрудники не найдены.</div>
 }
@@ -47,11 +42,11 @@ else
                     <th class="py-1">Отчество</th>
                     <th class="py-1">Полное имя</th>
                     <th class="py-1">Должности</th>
-                    <th class="py-1 text-center" style="width: 160px;">Действия</th>
+                    <th class="py-1 text-center" style="min-width: 220px;">Действия</th>
                 </tr>
             </thead>
             <tbody>
-                @foreach (var emp in employees)
+                @foreach (var emp in ViewModel.Employees)
                 {
                     <tr>
                         <td class="py-1">@emp.LastName</td>
@@ -59,12 +54,12 @@ else
                         <td class="py-1">@(emp.SecondName ?? "—")</td>
                         <td class="py-1"><strong>@emp.FullName</strong></td>
                         <td class="py-1">
-                            @if (emp.Positions != null && emp.Positions.Any())
+                            @if (emp.Positions.Any())
                             {
                                 <ul class="list-unstyled mb-0">
                                     @foreach (var pos in emp.Positions)
                                     {
-                                        <li class="small">@(pos.Position?.Title ?? "без должности")</li>
+                                        <li class="small">@pos.PositionTitle</li>
                                     }
                                 </ul>
                             }
@@ -73,14 +68,28 @@ else
                                 <span class="text-muted">нет</span>
                             }
                         </td>
-                        <td class="py-1 text-center">
-                            <button class="btn btn-outline-primary btn-sm me-1" @onclick="() => OpenAssignModal(emp)" title="Назначить на должность">
+                        <td class="py-1 text-center text-nowrap">
+                            <button class="btn btn-outline-primary btn-sm me-1"
+                                    @onclick="() => ViewModel.OpenAssignModalAsync(emp)"
+                                    title="Назначить на должность">
                                 <i class="bi bi-person-plus-fill"></i>
                             </button>
-                            <button class="btn btn-outline-secondary btn-sm me-1" @onclick="() => OpenEditModal(emp)" title="Редактировать">
+                            @if (ViewModel.HasPositions(emp))
+                            {
+                                <button class="btn btn-outline-danger btn-sm me-1"
+                                        @onclick="() => ViewModel.OpenDismissModalAsync(emp)"
+                                        title="Уволить с должности">
+                                    <i class="bi bi-person-dash-fill"></i>
+                                </button>
+                            }
+                            <button class="btn btn-outline-secondary btn-sm me-1"
+                                    @onclick="() => ViewModel.OpenEditModal(emp)"
+                                    title="Редактировать">
                                 <i class="bi bi-pencil-fill"></i>
                             </button>
-                            <button class="btn btn-outline-secondary btn-sm" @onclick="() => OpenDeleteModal(emp)" title="Удалить">
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    @onclick="() => ViewModel.OpenDeleteModal(emp)"
+                                    title="Удалить">
                                 <i class="bi bi-x-lg"></i>
                             </button>
                         </td>
@@ -90,109 +99,53 @@ else
         </table>
     </div>
 
-    <div class="mt-2 d-flex justify-content-between align-items-center">
-        <div>
-            <span class="badge bg-secondary">Всего: @employees.Count()</span>
-        </div>
+    <div class="mt-2">
+        <span class="badge bg-secondary">Всего: @ViewModel.EmployeesCount</span>
     </div>
 }
 
-@if (showCreateModal)
+@if (ViewModel.ShowCreateModal)
 {
-    <CreateEmployeeModal OnCreated="OnEmployeeCreated" OnCancel="CloseModals" />
+    <CreateEmployeeModal ViewModel="ViewModel.CreateModalViewModel" 
+                         OnCreated="ViewModel.OnEmployeeCreatedAsync"
+                         OnCancel="ViewModel.CloseModals" />
 }
 
-@if (showEditModal && selectedEmployee != null)
+@if (ViewModel.ShowEditModal && ViewModel.SelectedEmployee != null)
 {
-    <EditEmployeeModal Employee="@selectedEmployee" OnSaved="OnEmployeeSaved" OnCancel="CloseModals" />
+    <EditEmployeeModal ViewModel="ViewModel.EditModalViewModel" 
+                       Employee="@ViewModel.SelectedEmployee"
+                       OnSaved="ViewModel.OnEmployeeUpdatedAsync"
+                       OnCancel="ViewModel.CloseModals" />
 }
 
-@if (showDeleteModal && selectedEmployee != null)
+@if (ViewModel.ShowDeleteModal && ViewModel.SelectedEmployee != null)
 {
-    <DeleteEmployeeModal Employee="@selectedEmployee" OnDeleted="OnEmployeeDeleted" OnCancel="CloseModals" />
+    <DeleteEmployeeModal ViewModel="ViewModel.DeleteModalViewModel" 
+                         Employee="@ViewModel.SelectedEmployee"
+                         OnDeleted="ViewModel.OnEmployeeDeletedAsync"
+                         OnCancel="ViewModel.CloseModals" />
 }
 
-@if (showAssignModal && selectedEmployee != null)
+@if (ViewModel.ShowAssignModal && ViewModel.SelectedEmployee != null)
 {
-    <AssignEmployeeModal Employee="@selectedEmployee" OnAssigned="OnEmployeeAssigned" OnCancel="CloseModals" />
+    <AssignEmployeeModal ViewModel="ViewModel.AssignModalViewModel"
+                         Employee="@ViewModel.SelectedEmployee"
+                         OnAssigned="ViewModel.OnEmployeeAssignedAsync"
+                         OnCancel="ViewModel.CloseModals" />
+}
+
+@if (ViewModel.ShowDismissModal && ViewModel.SelectedEmployee != null)
+{
+    <DismissEmployeeModal ViewModel="ViewModel.DismissModalViewModel"
+                          Employee="@ViewModel.SelectedEmployee"
+                          OnDismissed="ViewModel.OnEmployeeDismissedAsync"
+                          OnCancel="ViewModel.CloseModals" />
 }
 
 @code {
-    private IEnumerable<EmployeeDto>? employees;
-    private bool isLoading = false;
-    private string? errorMessage;
-
-    private EmployeeDto? selectedEmployee;
-    private bool showCreateModal = false;
-    private bool showEditModal = false;
-    private bool showDeleteModal = false;
-    private bool showAssignModal = false;
-
-    #region Data Loading
-
     protected override async Task OnInitializedAsync()
     {
-        await LoadEmployees();
+        await ViewModel.LoadEmployeesAsync();
     }
-
-    private async Task LoadEmployees()
-    {
-        try
-        {  
-            isLoading = true;
-            errorMessage = null;
-            employees = null;
-
-            Operation<IEnumerable<EmployeeDto>, string> queryResult = await Mediator.Send(new GetAllEmployees.Request());
-            if (!queryResult.Ok)
-            {
-                errorMessage = queryResult.Error;
-            }
-            else
-            {
-                employees = queryResult.Result;
-            }
-        }
-        catch (RedirectToLoginException exception)
-        {
-            NavigationManager.NavigateTo("/authentication/login", forceLoad: true);
-        }
-        catch (Exception exception)
-        {
-            errorMessage = exception.Message;
-        }
-        finally
-        {
-            isLoading = false;
-        }
-    }
-
-    #endregion
-
-    #region Modal State Management
-
-    private void OpenCreateModal() => showCreateModal = true;
-    private void OpenAssignModal(EmployeeDto emp) { selectedEmployee = emp; showAssignModal = true; }
-    private void OpenEditModal(EmployeeDto emp) { selectedEmployee = emp; showEditModal = true; }
-    private void OpenDeleteModal(EmployeeDto emp) { selectedEmployee = emp; showDeleteModal = true; }
-
-    private void CloseModals()
-    {
-        showCreateModal = false;
-        showAssignModal = false;
-        showEditModal = false;
-        showDeleteModal = false;
-        selectedEmployee = null;
-    }
-
-    #endregion
-
-    #region Modal Event Handlers
-
-    private async Task OnEmployeeCreated() { CloseModals(); await LoadEmployees(); }
-    private async Task OnEmployeeAssigned() { CloseModals(); await LoadEmployees(); }
-    private async Task OnEmployeeSaved() { CloseModals(); await LoadEmployees(); }
-    private async Task OnEmployeeDeleted() { CloseModals(); await LoadEmployees(); }
-
-    #endregion
 }

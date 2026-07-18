@@ -1,8 +1,10 @@
-мне нужно изменить контент страницы "/" Home таким образом, чтобы верстка на ней была полностью адаптивна под мобильное устройство! для стилей использовалась библиотека bootstrap, 
-если используются кастомные стили css, то они все, как и js-скрипты должны выноситься в отдельные файлы!!! 100% разделение! должна быть чистая архитектура! верстка и код для этой страницы и для всех компонентов на ней 
+мне нужно изменить контент страницы "/" Home таким образом, чтобы верстка на ней была полностью адаптивна под мобильное устройство! для стилей использовалась библиотека bootstrap
+(использовать кастомные стили только когда задачу не решить одним bootstrap), 
+если используются кастомные стили css, то они все, как и js-скрипты должны выноситься в отдельные файлы!!! 100% разделение! должна быть чистая архитектура!
+верстка и код для этой страницы и для всех компонентов на ней 
 и для диалоговых окон(добавление, изменение данных) должны быть четко разделены в соответствии с паттерном mvvm!
 структура страницы приведена на прикрупленном изображении!
-в левой верхней части расположена таблица с параметрами, она без заголовка! столбцы точно как на изображении: Параметр/Значение/Действия.
+в левой верхней части расположена таблица с параметрами, она без заголовка! столбцы точно как на изображении: Параметр/Значение
 Строки таблицы(параметры): 
 Норма часов
 Отработано часов
@@ -10,3 +12,440 @@
 Надбавка
 Итого по окладу
 Премия
+
+в правом верхнем углу фильтр по шаблону <div class="col-12 col-md-4">
+    <div class="d-flex align-items-center gap-1 flex-wrap">
+        <span class="p-2 pb-1">Фильтр</span>
+        <div class="input-group input-group-sm">
+            <span class="input-group-text">Месяц</span>
+            <select class="form-select" @bind="ViewModel.Filter.Month">
+                @for (int i = 1; i <= 12; i++)
+                {
+                    <option value="@i">@i</option>
+                }
+            </select>
+        </div>
+        <div class="input-group input-group-sm">
+            <span class="input-group-text">Год</span>
+            <input type="number" class="form-control" @bind="ViewModel.Filter.Year" min="2020" max="2100" />
+        </div>
+        <div class="input-group input-group-sm">
+            <span class="input-group-text">Сотрудник</span>
+            <select class="form-select" @bind="ViewModel.Filter.EmployeeCode">
+                <option value="">-- Выберите --</option>
+                @foreach (var employee in ViewModel.Filter.Employees!)
+                {
+                    <option value="@employee.Code">@employee.FullName</option>
+                }
+            </select>
+        </div>
+        <button class="btn btn-primary btn-sm" @onclick="() => ViewModel.ApplyFilterAsync()" disabled="@ViewModel.IsLoading">
+            <i class="bi bi-arrow-clockwise"></i> Применить
+        </button>
+    </div>
+</div> только нужно внего добавить еще одно поле "Должность", которое будет показывать список должностей сотрудника.
+список должен обновляться при изменении значения поля "сотрудник". получить сотрудников можно через 
+Operation<IEnumerable<EmployeeDto>, string> queryResult = await Mediator.Send(new GetAllEmployees.Request());,
+который вернет список всех сотрудников в форме EmployeeDto(пример): {
+  "code": "019f64ae-050f-73cc-9455-09a410244a67",
+  "firstName": "Павел",
+  "secondName": "Александрович",
+  "lastName": "Пестерев",
+  "fullName": "Пестерев Павел Александрович",
+  "positions": [
+    {      
+        "position": 
+        {
+        "title": "Аналитик",
+        "code": "019f64ae-5866-717c-9a3d-7c3126534617",
+        "baseSalary": 40000,
+        "motivationPart": 40000,
+        "recalculateToHours": true,
+        "workWeekType": "пятидневка",
+        "kpis": [
+          {
+            "kpiCode": "019f65c8-e2fd-7012-8ff6-0f8ad8b51522",
+            "kpiTitle": "Общий товарооборот по отделу",
+            "orderNumber": 1,
+            "weight": 0.2,
+            "validFrom": "2026-07-01T00:00:00Z",
+            "validTo": "2028-07-31T00:00:00Z",
+            "targets": [
+              {
+                "target": 500,
+                "validFrom": "2026-07-15T14:13:15.394Z",
+                "validTo": "2026-07-15T14:13:15.394Z",
+                "fact": null
+              }
+            ],
+            "kpi": {
+              "title": "Общий товарооборот по отделу",
+              "code": "019f65c8-e2fd-7012-8ff6-0f8ad8b51522",
+              "abbreviation": "Общий товарооборот",
+              "calculationType": "стандарт",
+              "measurementUnit": {
+                "code": "019f65c8-0c74-7e8f-8790-620f3f505885",
+                "title": "т.р."
+              },
+              "kpiType": "Продажи",
+              "customerFilter": [],
+              "productFilter": [],
+              "companyFilter": [],
+              "customerResponsibleFilter": [],
+              "salesResponsibleFilter": [],
+              "productResponsibleFilter": []
+            }
+          }
+        ]
+      },
+      "assignmentDate": "2026-07-15T00:00:00Z",
+      "extraPartHistory": [],
+      "deductionHistory": [],
+      "actualHoursHistory": []
+    }
+  ]
+}, которая, в том числе содержит position - должности сотрудника
+поумолчанию не грузить никого, основные таблицы() грузить после заполнения фильтра.
+для получения нормы часов используем медиатор и готовый класс 
+using Calabonga.OperationResults;
+using Mediator;
+using Motivation.Contracts.Dto;
+using Motivation.HRWeb.Application.Clients;
+
+namespace Motivation.HRWeb.Application.Messages.TimeStandardHours;
+
+public class GetStandardHours
+{
+    public record Request(int Month, int Year, string WorkWeekType) : IRequest<Operation<StandardHoursDto, string>>;
+
+    public class Handler(StandardHoursApiClient client) : IRequestHandler<Request, Operation<StandardHoursDto, string>>
+    {
+        public async ValueTask<Operation<StandardHoursDto, string>> Handle(Request request, CancellationToken cancellationToken)
+        {
+            var result = await client.GetByMonthAsync(request.WorkWeekType, request.Month, request.Year, cancellationToken);
+            if (!result.Ok)
+                return Operation.Error(result.Error);
+            if (result.Result is null)
+                return Operation.Error("Standard hours not found!");
+            return result.Result;
+        }
+    }
+} public sealed record StandardHoursDto(Guid Id, int Value, int Month, int Year, string WorkWeekType); 
+Отработано часов тоже брать из списка EmployeeDto, который получу из await Mediator.Send(new GetAllEmployees.Request()); в EmployeeDto-> Positions-> ActualHoursHistory - 
+это список public sealed record ActualHoursDto( int Value, int Month, int Year); если в нем нет элемента с месяцем и годом, который выбран в фильтре, то выводим в поле "-"
+Оклад - это поле "baseSalary" в EmployeeDto
+Надбавка - extraPartHistory - список public sealed record ExtraPartDto(string Code, string Title, string PositionCode, decimal Value, DateTime ValidFrom, DateTime ValidTo), 
+если есть надбавка у которой интервал между ValidFrom и ValidTo содержит месяц из фильтра, то это нужная нам надбавка, если нет, то "-"
+Итого по окладу - ычисляемое значение по формуле: Оклад/норма часов * Отработано часов
+Премия - поле motivationPart из EmployeeDto
+все значения таблицы неактивны для редактирования!
+
+Основная таблица должна быть аналогична таблице <div class="table-responsive shadow-sm rounded bg-white p-2">
+    <table class="table table-sm table-hover table-bordered align-middle small mb-0">
+        <thead class="table-light">
+            <tr>
+                <th class="py-1">Сотрудник</th>
+                <th class="py-1">Должность</th>
+                <th class="py-1">Показатель</th>
+                <th class="py-1 text-center">Цель</th>
+                <th class="py-1 text-center">Действия</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in ViewModel.Items)
+            {
+                <tr>
+                    <td class="py-1"><strong>@item.EmployeeTitle</strong></td>
+                    <td class="py-1">@item.PositionTitle</td>
+                    <td class="py-1">@item.KpiTitle</td>
+                    <td class="py-1 text-center">
+                        @if (item.IsEditing)
+                        {
+                            <input type="number"
+                                   class="form-control form-control-sm d-inline-block employee-hours-input"
+                                   @bind="item.EditValue"
+                                   step="0.01"
+                                   min="0"
+                                   disabled="@item.IsSaving"
+                                   style="max-width: 120px;" />
+                        }
+                        else
+                        {
+                            <span>@(item.Target.HasValue ? item.Target.Value.ToString("N2") : "—")</span>
+                        }
+                    </td>
+                    <td class="py-1 text-center">
+                        @if (item.IsEditing)
+                        {
+                            <button class="btn btn-outline-success btn-sm me-1"
+                                    @onclick="() => ViewModel.SaveTargetAsync(item)"
+                                    disabled="@item.IsSaving"
+                                    title="Сохранить">
+                                <i class="bi bi-floppy-fill"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    @onclick="() => ViewModel.CancelEditing(item)"
+                                    disabled="@item.IsSaving"
+                                    title="Отменить">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        }
+                        else
+                        {
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    @onclick="() => ViewModel.StartEditing(item)"
+                                    title="Редактировать цель">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div> но со следующими столбцами Показатель/Единица измерения/Цель/Премия/Факт/Выполнение/%Премии/Бонус
+
+показатели должны быть отсортированы по полю orderNumber по возрастанию
+Единица измерения - выводится значение measurementUnit.Title
+Цель - соответствующий периоду фильтра(точное соответствие дат) элемент targets.target
+Премия - вычисляемое значение по формуле: motivationPart*weight поля соответствующего элемента kpi!!!!
+Факт - поле targets.fact из элемента targets выбранного для поля "Цель", если он null, то "-" 
+Выполнение - вычисляемое значение по формуле: Факт/Цель*100 поля соответствующего элемента kpi!!!!
+%Премии - вычисляемое значение по формуле: если Выполнение<90 то 0, если выполнение >= 100 то 100, если выполнение>=90 то 50+5*(выполнение-90)
+Бонус - вычисляемое значение по формуле: %Премии*Премия
+
+Мне нужен максимально чистый код, в public методах минимум операций, надо использовать инкапсуляцию и private методы для разгрузки основных,
+в файлах с версткой не должно быть кода, их делать по шаблону @page "/positions"
+@rendermode InteractiveServer
+@using Microsoft.AspNetCore.Authorization
+@using Motivation.HRWeb.Components.Pages.PositionsPage.Modals
+@attribute [Authorize]
+
+<PageTitle>Должности</PageTitle>
+
+<div class="d-flex justify-content-between align-items-center mb-3">
+    <h1 class="fs-4 m-0">Должности</h1>
+    <button class="btn btn-primary btn-sm" @onclick="() => ViewModel.OpenCreateModal()">
+        <i class="bi bi-plus-lg"></i> Добавить должность
+    </button>
+</div>
+
+@if (ViewModel.IsLoading)
+{
+    <div class="spinner-border text-primary" role="status">
+        <span class="visually-hidden">Загрузка...</span>
+    </div>
+}
+else if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
+{
+    <div class="alert alert-danger" role="alert">
+        <strong>Ошибка:</strong> @ViewModel.ErrorMessage
+    </div>
+}
+else if (ViewModel.Positions == null || !ViewModel.Positions.Any())
+{
+    <div class="alert alert-info">Должности не найдены.</div>
+}
+else
+{
+    <div class="table-responsive shadow-sm rounded bg-white p-2">
+        <table class="table table-sm table-hover table-bordered align-middle small mb-0">
+            <thead class="table-light">
+                <tr>
+                    <th class="py-1">Название</th>
+                    <th class="py-1">Оклад</th>
+                    <th class="py-1">Премия</th>
+                    <th class="py-1">Тип недели</th>
+                    <th class="py-1 text-center">Пересчет на часы</th>
+                    <th class="py-1 text-center" style="width: 110px;">Действия</th>
+                </tr>
+            </thead>
+            <tbody>
+                @foreach (var pos in ViewModel.Positions)
+                {
+                    <tr>
+                        <td class="py-1"><strong>@pos.Title</strong></td>
+                        <td class="py-1">@pos.BaseSalary</td>
+                        <td class="py-1">@pos.MotivationPart</td>
+                        <td class="py-1">@pos.WorkWeekType</td>
+                        <td class="py-1 text-center">
+                            @(pos.RecalculateToHours ? "Да" : "Нет")
+                        </td>
+                        <td class="py-1 text-center">
+                            <button class="btn btn-outline-secondary btn-sm me-1"
+                                    @onclick="() => ViewModel.OpenEditModal(pos)"
+                                    title="Редактировать">
+                                <i class="bi bi-pencil-fill"></i>
+                            </button>
+                            <button class="btn btn-outline-secondary btn-sm"
+                                    @onclick="() => ViewModel.OpenDeleteModal(pos)"
+                                    title="Удалить">
+                                <i class="bi bi-x-lg"></i>
+                            </button>
+                        </td>
+                    </tr>
+                }
+            </tbody>
+        </table>
+    </div>
+
+    <div class="mt-2 d-flex justify-content-between align-items-center">
+        <div>
+            <span class="badge bg-secondary">Всего: @ViewModel.PositionsCount</span>
+        </div>
+    </div>
+}
+
+@if (ViewModel.ShowCreateModal)
+{
+    <PositionModal IsEditMode="false"
+                   OnSaved="ViewModel.OnPositionCreatedAsync"
+                   OnCancel="ViewModel.CloseModals" />
+}
+
+@if (ViewModel.ShowEditModal && ViewModel.SelectedPosition != null)
+{
+    <PositionModal IsEditMode="true"
+                   Position="@ViewModel.SelectedPosition"
+                   OnSaved="ViewModel.OnPositionUpdatedAsync"
+                   OnCancel="ViewModel.CloseModals" />
+}
+
+@if (ViewModel.ShowDeleteModal && ViewModel.SelectedPosition != null)
+{
+    <DeletePositionModal Position="@ViewModel.SelectedPosition"
+                         OnDeleted="ViewModel.OnPositionDeletedAsync"
+                         OnCancel="ViewModel.CloseModals" />
+}
+ViewModel максимально разгрузить за счет хелперов и использования паттернов
+основной паттерн mvvm
+
+ViewModel по аналогично уже существующим, пример:using Mediator;
+using Microsoft.AspNetCore.Components;
+using Motivation.Contracts.Dto;
+using Motivation.HRWeb.Application.Messages.PositionMessages;
+using Motivation.HRWeb.Exceptions;
+
+namespace Motivation.HRWeb.Components.Pages.PositionsPage.ViewModels;
+
+public class PositionsPageViewModel : IDisposable
+{
+    private readonly IMediator _mediator;
+    private readonly NavigationManager _navigationManager;
+
+    public PositionsPageViewModel(IMediator mediator, NavigationManager navigationManager)
+    {
+        _mediator = mediator;
+        _navigationManager = navigationManager;
+    }
+
+    public IEnumerable<PositionDto>? Positions { get; private set; }
+    public bool IsLoading { get; private set; }
+    public string? ErrorMessage { get; private set; }
+
+    public PositionDto? SelectedPosition { get; private set; }
+    public bool ShowCreateModal { get; private set; }
+    public bool ShowEditModal { get; private set; }
+    public bool ShowDeleteModal { get; private set; }
+
+    public event Action? OnStateChanged;
+    public event Action? OnPositionsLoaded;
+    public event Action<string?>? OnError;
+
+    public async Task LoadPositionsAsync()
+    {
+        IsLoading = true;
+        ErrorMessage = null;
+        Positions = null;
+        NotifyStateChanged();
+
+        try
+        {
+            var queryResult = await _mediator.Send(new GetAllPositions.Request());
+
+            if (!queryResult.Ok)
+            {
+                ErrorMessage = queryResult.Error ?? "Ошибка загрузки должностей.";
+                OnError?.Invoke(ErrorMessage);
+            }
+            else
+            {
+                Positions = queryResult.Result;
+                OnPositionsLoaded?.Invoke();
+            }
+        }
+        catch (RedirectToLoginException)
+        {
+            _navigationManager.NavigateTo("/authentication/login", forceLoad: true);
+        }
+        catch (Exception ex)
+        {
+            ErrorMessage = ex.Message;
+            OnError?.Invoke(ErrorMessage);
+        }
+        finally
+        {
+            IsLoading = false;
+            NotifyStateChanged();
+        }
+    }
+
+    public void OpenCreateModal()
+    {
+        ShowCreateModal = true;
+        NotifyStateChanged();
+    }
+
+    public void OpenEditModal(PositionDto position)
+    {
+        SelectedPosition = position;
+        ShowEditModal = true;
+        NotifyStateChanged();
+    }
+
+    public void OpenDeleteModal(PositionDto position)
+    {
+        SelectedPosition = position;
+        ShowDeleteModal = true;
+        NotifyStateChanged();
+    }
+
+    public void CloseModals()
+    {
+        ShowCreateModal = false;
+        ShowEditModal = false;
+        ShowDeleteModal = false;
+        SelectedPosition = null;
+        NotifyStateChanged();
+    }
+
+    public async Task OnPositionCreatedAsync()
+    {
+        CloseModals();
+        await LoadPositionsAsync();
+    }
+
+    public async Task OnPositionUpdatedAsync()
+    {
+        CloseModals();
+        await LoadPositionsAsync();
+    }
+
+    public async Task OnPositionDeletedAsync()
+    {
+        CloseModals();
+        await LoadPositionsAsync();
+    }
+
+    public int PositionsCount => Positions?.Count() ?? 0;
+
+    private void NotifyStateChanged()
+    {
+        OnStateChanged?.Invoke();
+    }
+
+    public void Dispose()
+    {
+    }
+}
+при получении RedirectToLoginException так же обязателен редирект нп логин!!!!

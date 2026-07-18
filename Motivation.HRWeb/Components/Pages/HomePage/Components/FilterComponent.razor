@@ -1,0 +1,74 @@
+﻿@using Motivation.HRWeb.Components.Pages.HomePage.ViewModels
+
+<div class="d-flex align-items-center gap-1 flex-wrap">
+    <span class="p-2 pb-1">Фильтр</span>
+    <div class="input-group input-group-sm">
+        <span class="input-group-text">Месяц</span>
+        <select class="form-select" @bind="ViewModel.Filter.Month">
+            @for (int i = 1; i <= 12; i++)
+            {
+                <option value="@i">@i</option>
+            }
+        </select>
+    </div>
+    <div class="input-group input-group-sm">
+        <span class="input-group-text">Год</span>
+        <input type="number" class="form-control" @bind="ViewModel.Filter.Year" min="2020" max="2100" />
+    </div>
+    <div class="input-group input-group-sm">
+        <span class="input-group-text">Сотрудник</span>
+        <select class="form-select"
+                @bind="ViewModel.Filter.EmployeeCode"
+                @bind:event="oninput"
+                @onchange="() => ViewModel.OnEmployeeChanged()">
+            <option value="">-- Выберите --</option>
+            @foreach (var emp in ViewModel.Filter.Employees ?? new())
+            {
+                <option value="@emp.Code">@emp.FullName</option>
+            }
+        </select>
+    </div>
+    <div class="input-group input-group-sm">
+        <span class="input-group-text">Должность</span>
+        <select class="form-select" @bind="ViewModel.Filter.PositionCode">
+            <option value="">-- Все --</option>
+            @if (ViewModel.Filter.Positions?.Any() == true)
+            {
+                @foreach (var pos in ViewModel.Filter.Positions)
+                {
+                    <option value="@pos.Code">@pos.Title</option>
+                }
+            }
+            else
+            {
+                <option value="" disabled>Нет доступных должностей</option>
+            }
+        </select>
+    </div>
+    <button class="btn btn-primary btn-sm"
+            @onclick="() => ViewModel.ApplyFilter()"
+            disabled="@ViewModel.IsLoading">
+        <i class="bi bi-arrow-clockwise"></i> Применить
+    </button>
+</div>
+
+@code {
+    [Parameter] public FilterViewModel ViewModel { get; set; } = null!;
+    [Parameter] public EventCallback OnApplyFilter { get; set; }
+
+    protected override async Task OnInitializedAsync()
+    {
+        await ViewModel.LoadEmployeesAsync();
+        ViewModel.OnFilterApplied += HandleApplyFilter;
+    }
+
+    private async void HandleApplyFilter()
+    {
+        await OnApplyFilter.InvokeAsync();
+    }
+
+    public void Dispose()
+    {
+        ViewModel.OnFilterApplied -= HandleApplyFilter;
+    }
+}

@@ -2,7 +2,9 @@
 using Motivation.HRWeb.Application.Clients;
 using Motivation.HRWeb.Application.Validators;
 using Motivation.HRWeb.Components;
+using Motivation.HRWeb.Components.Pages.EmployeesPage.ViewModels;
 using Motivation.HRWeb.Components.Pages.ExtraPartsAndDeductions.ViewModels;
+using Motivation.HRWeb.Components.Pages.HomePage.ViewModels;
 using Motivation.HRWeb.Components.Pages.KpiPage.ViewModels;
 using Motivation.HRWeb.Components.Pages.TargetPage.ViewModels;
 using Motivation.HRWeb.Components.Pages.TimeSheet.ViewModels;
@@ -41,14 +43,21 @@ public class CommonDefinition : AppDefinition
     /// <param name="builder"></param>
     public override void ConfigureServices(WebApplicationBuilder builder)
     {
-        //builder.Services.AddRazorComponents()
-        //    .AddInteractiveServerComponents(options =>
-        //    {
-        //        options.DetailedErrors = true;
-        //    });
+        builder.Services.AddRazorComponents()
+            .AddInteractiveServerComponents(options =>
+            {
+                options.DetailedErrors = true;
+            });
 
         builder.Services.AddAuthorization();
         builder.Services.AddScoped<EmployeeApiClient>();
+        builder.Services.AddScoped<EmployeesViewModel>();
+        builder.Services.AddScoped<FilterViewModel>();
+        builder.Services.AddScoped<CreateEmployeeModalViewModel>();
+        builder.Services.AddScoped<EditEmployeeModalViewModel>();
+        builder.Services.AddScoped<DeleteEmployeeModalViewModel>();
+        builder.Services.AddScoped<AssignEmployeeModalViewModel>();
+        builder.Services.AddScoped<DismissEmployeeModalViewModel>();
         builder.Services.AddScoped<PositionApiClient>();
         builder.Services.AddScoped<StandardHoursApiClient>();
         builder.Services.AddScoped<KpiApiClient>();
@@ -58,6 +67,7 @@ public class CommonDefinition : AppDefinition
         builder.Services.AddScoped<KpiViewModel>();
         builder.Services.AddScoped<EditKpiViewModel>();
         builder.Services.AddScoped<TargetsViewModel>();
+        builder.Services.AddScoped<HomeViewModel>();
         builder.Services.AddScoped<MeasurementUnitApiClient>();
         builder.Services.AddScoped<IKpiValidator,KpiValidator>();
         builder.Services.AddMediator(options =>

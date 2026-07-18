@@ -1,7 +1,5 @@
-﻿@using Mediator
-@using Motivation.Contracts.Dto
-@using Motivation.HRWeb.Application.Messages.EmployeeMessages
-@inject IMediator Mediator
+﻿@using Motivation.HRWeb.Components.Pages.EmployeesPage.ViewModels
+@using Motivation.HRWeb.Components.Pages.EmployeesPage.Models
 
 <div class="modal fade show" style="display:block; background-color: rgba(0,0,0,0.5);" tabindex="-1">
     <div class="modal-dialog">
@@ -11,24 +9,22 @@
                 <button type="button" class="btn-close" @onclick="OnCancel"></button>
             </div>
             <div class="modal-body">
-                @if (!string.IsNullOrEmpty(createErrorMessage))
+                @if (!string.IsNullOrEmpty(ViewModel.ErrorMessage))
                 {
-                    <div class="alert alert-danger small mb-3">
-                        <strong>Ошибка:</strong> @createErrorMessage
-                    </div>
+                    <div class="alert alert-danger small mb-3">@ViewModel.ErrorMessage</div>
                 }
-                <p class="small fw-bold mb-2">Вы действительно хотите безвозвратно удалить этого сотрудника?</p>
+                <p class="small fw-bold mb-2">Вы действительно хотите удалить сотрудника?</p>
                 <ul class="list-group list-group-flush small">
-                    <li class="list-group-item py-1"><strong>Код:</strong> @Employee?.Code</li>
-                    <li class="list-group-item py-1"><strong>ФИО:</strong> @Employee?.FullName</li>
-                    @if (Employee?.Positions != null && Employee.Positions.Any())
+                    <li class="list-group-item py-1"><strong>Код:</strong> @ViewModel.Employee?.Code</li>
+                    <li class="list-group-item py-1"><strong>ФИО:</strong> @ViewModel.Employee?.FullName</li>
+                    @if (ViewModel.Employee?.Positions?.Any() == true)
                     {
                         <li class="list-group-item py-1">
                             <strong>Должности:</strong>
                             <ul class="list-unstyled mb-0 ps-2">
-                                @foreach (var pos in Employee.Positions)
+                                @foreach (var pos in ViewModel.Employee.Positions)
                                 {
-                                    <li>- @(pos.Position?.Title ?? "без названия")</li>
+                                    <li>- @pos.PositionTitle</li>
                                 }
                             </ul>
                         </li>
@@ -37,8 +33,8 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary btn-sm" @onclick="OnCancel">Отмена</button>
-                <button type="button" class="btn btn-danger btn-sm" @onclick="HandleDelete" disabled="@isDeleting">
-                    @(isDeleting ? "Удаление..." : "Удалить")
+                <button type="button" class="btn btn-danger btn-sm" @onclick="HandleDelete" disabled="@ViewModel.IsLoading">
+                    @(ViewModel.IsLoading ? "Удаление..." : "Удалить")
                 </button>
             </div>
         </div>
@@ -46,33 +42,14 @@
 </div>
 
 @code {
-    [Parameter] public EmployeeDto? Employee { get; set; }
+    [Parameter] public EmployeeItemModel Employee { get; set; } = null!;
+    [Parameter] public DeleteEmployeeModalViewModel ViewModel { get; set; } = null!;
     [Parameter] public EventCallback OnDeleted { get; set; }
     [Parameter] public EventCallback OnCancel { get; set; }
 
-    private bool isDeleting = false;
-    private string? createErrorMessage;
-
     private async Task HandleDelete()
     {
-        if (Employee == null) return;
-
-        try
-        {
-            isDeleting = true;
-            var result = await Mediator.Send(new DeleteEmployee.Request(Employee.Code));
-            if (!result.Ok)
-            {
-                createErrorMessage = result.Error ?? "Ошибка при удалении сотрудника.";
-            }
-            else
-            {
-                await OnDeleted.InvokeAsync();
-            }           
-        }
-        finally
-        {
-            isDeleting = false;
-        }
+        if (await ViewModel.DeleteAsync())
+            await OnDeleted.InvokeAsync();
     }
 }

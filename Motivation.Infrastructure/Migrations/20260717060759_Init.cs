@@ -105,7 +105,6 @@ namespace Motivation.Infrastructure.Migrations
                 columns: table => new
                 {
                     Id = table.Column<Guid>(type: "uuid", nullable: false),
-                    Type = table.Column<int>(type: "integer", nullable: false),
                     Abbreviation = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     CalculationType = table.Column<string>(type: "character varying(50)", maxLength: 50, nullable: false),
                     MeasurementUnitId = table.Column<Guid>(type: "uuid", nullable: true),

@@ -43,7 +43,7 @@ public sealed class KpiTarget
         return entity;
     }
 
-    public Operation<bool, string> Edit(TargetValue target)
+    internal Operation<bool, string> Edit(TargetValue target)
     {
         if (target is null)
             return Operation.Error("Target is null!");

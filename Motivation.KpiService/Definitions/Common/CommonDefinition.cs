@@ -1,5 +1,6 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Motivation.Contracts.Interfaces;
+using Motivation.Domain.DomainEvents.EmployeeDomainEvents;
 using Motivation.Domain.DomainEvents.KpiDomainEvents;
 using Motivation.Domain.Events.KpiDomainEvents;
 using Motivation.Infrastructure.Options;
@@ -33,6 +34,7 @@ namespace Motivation.KpiService.Definitions.Common
                     typeof(KpiDeletedDomainEvent).Name,
                     typeof(KpiRemovedFromPositionDomainEvent).Name,
                     typeof(KpiUpdatedDomainEvent).Name,
+                    typeof(KpiTargetAddedOrChangedDomainEvent).Name,
                 ];
             });
 

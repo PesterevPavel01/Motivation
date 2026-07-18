@@ -73,6 +73,57 @@ public class Employee : AggregateRoot
         return true;
     }
 
+    public Operation<bool, string> EditTarget(KpiTarget target, TargetValue targetValue) 
+    {
+        if (target is null)
+            return Operation.Error("Target is null!");
+
+        var employeeTarget = EmployeePositions
+            .SelectMany(ep => ep.Position.PositionKpiHistory)
+            .SelectMany(pk => pk.TargetHistory)
+            .FirstOrDefault(t => t.Id == target.Id);
+
+        if (employeeTarget is null)
+        {
+            Operation.Error($"Target with id {target.Id} not found for this employee!");
+        }
+
+        var editResult = target.Edit(targetValue);
+        if (!editResult.Ok)
+        {
+            return Operation.Error(editResult.Error);
+        }
+
+        RaiseDomainEvent(new KpiTargetAddedOrChangedDomainEvent(target.Id));
+
+        return true;
+    }
+
+    public Operation<bool, string> AddTarget(PositionKpi positionKpi, KpiTarget target)
+    {
+        if (target is null)
+            return Operation.Error("Target is null!");
+
+        var checkPositionKpi = EmployeePositions
+            .SelectMany(ep => ep.Position.PositionKpiHistory)
+            .FirstOrDefault(t => t.Id == positionKpi.Id);
+
+        if (checkPositionKpi is null)
+        {
+            Operation.Error($"Position Kpi with id {target.Id} not found for this employee!");
+        }
+
+        var addResult = positionKpi.AddTarget(target);
+        if (!addResult.Ok)
+        {
+            return Operation.Error(addResult.Error);
+        }
+
+        RaiseDomainEvent(new KpiTargetAddedOrChangedDomainEvent(target.Id));
+
+        return true;
+    }
+
     public Operation<bool, string> AssignToPosition(Position position, DateTime assignmentDate)
     {
         if (position is null)

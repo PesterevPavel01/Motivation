@@ -21,13 +21,13 @@ public class SourceDataSyncedEventHandler : IHandleMessages<SourceDataSyncedQueu
 
     public async Task Handle(SourceDataSyncedQueueEvent message)
     {
+
         var result = await _mediator.Send(new GetKpiCalculationPlanQuery.Request(message.DateStart, message.DateEnd));
         if (!result.Ok)
         {
             _logger.LogError(result.Error);
             return;
         }
-
-        await _bus.Publish(new RecalculateKpisQueueCommand(result.Result.ToList()));   
+        await _bus.Publish(new RecalculateKpisQueueCommand(result.Result.ToList()));
     }
 }

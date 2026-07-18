@@ -59,7 +59,22 @@ public sealed class PositionKpi : Auditable
         return true;
     }
 
-    public Operation<bool, string> AddTarget(KpiTarget target)
+    public Operation<bool, string> Edit(
+    int orderNumber,
+    WeightValue weight,
+    DateTime validFrom,
+    DateTime validTo)
+    {
+        if (weight is null)
+            return Operation.Error("Weight is null!");
+        OrderNumber = orderNumber;
+        Weight = weight;
+        ValidFrom = validFrom;
+        ValidTo = validTo;
+        return true;
+    }
+
+    internal Operation<bool, string> AddTarget(KpiTarget target)
     {
         if (target is null)
             return Operation.Error("KpiTarget is null!");

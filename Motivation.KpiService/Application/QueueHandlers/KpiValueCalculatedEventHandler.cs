@@ -1,7 +1,6 @@
 ﻿using Mediator;
 using Motivation.Contracts.QueueEvents;
 using Motivation.KpiService.Application.Messaging.Calculation;
-using Rebus.Bus;
 using Rebus.Handlers;
 
 namespace Motivation.KpiService.Application.QueueHandlers;
@@ -19,6 +18,7 @@ public class KpiValueCalculatedEventHandler : IHandleMessages<KpiValueCalculated
 
     public async Task Handle(KpiValueCalculatedQueueEvent message)
     {
+        _logger.LogInformation("Message  {@KpiValueCalculatedQueueEvent} received!", typeof(KpiValueCalculatedQueueEvent).Name.ToString());
         var result = await _mediator.Send(new SetKpiValue.Request(message.Result));
         if (!result.Ok)
         {
