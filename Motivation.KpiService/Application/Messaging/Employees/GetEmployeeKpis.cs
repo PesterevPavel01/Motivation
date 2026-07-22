@@ -26,10 +26,14 @@ public class GetEmployeeKpis
 
             var repository = unitOfWork.GetRepository<Employee>();
 
-            var employee = await unitOfWork.GetRepository<Employee>()
+            var employee = await unitOfWork
+                .GetRepository<Employee>()
                     .GetFirstOrDefaultAsync(
-                        predicate: x => x.Enabled == true,
+                        predicate: x => 
+                            x.Enabled == true
+                            && x.Code == employeeCode.Result,
                         include: query => query
+                            .Include(x => x.TargetHistory)
                             .Include(x => x.EmployeePositions)
                                 .ThenInclude(x => x.Position)
                                     .ThenInclude(x => x.PositionKpiHistory)

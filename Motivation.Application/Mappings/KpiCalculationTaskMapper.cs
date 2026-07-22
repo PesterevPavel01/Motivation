@@ -13,7 +13,8 @@ public static class KpiCalculationTaskMapper
         DateTime periodFrom,
         DateTime periodTo,
         Employee employee,
-        Position position)
+        Position position,
+        Guid TargetId)
     {
         var kpi = positionKpi?.Kpi;
 
@@ -25,7 +26,8 @@ public static class KpiCalculationTaskMapper
         var target = positionKpi.TargetHistory
             .FirstOrDefault(x => 
                 x.ValidFrom >= periodFrom
-                && x.ValidTo <= periodTo);
+                && x.ValidTo <= periodTo
+                && x.Id == TargetId);
 
         if (target is null)
         {
@@ -37,8 +39,11 @@ public static class KpiCalculationTaskMapper
             PeriodFrom = periodFrom,
             PeriodTo = periodTo,
             PositionKpiId = positionKpi.Id,
+            EmployeeId = employee.Id,
             CalculationType = kpi!.CalculationType.ToString(),
             Target = target.Target.Value,
+            MotivationPart = position.MotivationPart.MotivationPartValue.Value,
+            Weight = positionKpi.Weight.Value,
 
             MeasurementUnit = new MeasurementUnitDto(
                 kpi.MeasurementUnit.Code.Value,
@@ -49,13 +54,19 @@ public static class KpiCalculationTaskMapper
 
             CustomerFilter = filters
                 .Where(f => f.KpiFilterType == KpiFilterType.Customer)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include))
-                .ToArray(),
+                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
+
+            SupplierFilter = filters
+                .Where(f => f.KpiFilterType == KpiFilterType.Supplier)
+                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
 
             ProductFilter = filters
                 .Where(f => f.KpiFilterType == KpiFilterType.Product)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include))
-                .ToArray(),
+                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
+
+            ProductStatusFilter = filters
+                .Where(f => f.KpiFilterType == KpiFilterType.ProductStatus)
+                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
 
             CompanyFilter = filters
                 .Where(f => f.KpiFilterType == KpiFilterType.Company)
@@ -64,18 +75,15 @@ public static class KpiCalculationTaskMapper
 
             CustomerResponsibleFilter = filters
                 .Where(f => f.KpiFilterType == KpiFilterType.CustomerResponsible)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include))
-                .ToArray(),
+                .Select(x => new KpiFilterDto(employee.FullName.Value, x.Include)),
 
             SalesResponsibleFilter = filters
                 .Where(f => f.KpiFilterType == KpiFilterType.SalesResponsible)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include))
-                .ToArray(),
+                .Select(f => new KpiFilterDto(employee.FullName.Value, f.Include)),
 
             ProductResponsibleFilter = filters
                 .Where(f => f.KpiFilterType == KpiFilterType.ProductResponsible)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include))
-                .ToArray()
+                .Select(f => new KpiFilterDto(employee.FullName.Value, f.Include))
         };
     }
 }

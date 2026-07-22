@@ -1,10 +1,9 @@
 ﻿@page "/kpis"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
-@using Motivation.HRWeb.Components.Pages.KpiPage.ViewModels
-@using Motivation.HRWeb.Components.Pages.KpiPage.Modals
-@using Motivation.HRWeb.Components.Pages.KpiPage.Models
 @using Motivation.Contracts
+@using Motivation.HRWeb.Components.Pages.KpiPage.Modals
+@using Motivation.HRWeb.Components.Pages.KpiPage.ViewModels
 @inject KpiViewModel ViewModel
 @inject NavigationManager NavigationManager
 @attribute [Authorize]
@@ -45,12 +44,14 @@ else
                     <th class="py-1 align-middle" rowspan="2">Порядок расчета</th>
                     <th class="py-1 align-middle" rowspan="2">Ед. измерения</th>
                     <th class="py-1 align-middle" rowspan="2">Тип</th>
-                    <th class="py-1 text-center align-middle" colspan="3">Фильтры</th>
+                    <th class="py-1 text-center align-middle" colspan="5">Фильтры</th>
                     <th class="py-1 text-center align-middle" rowspan="2" style="width: 80px;">Действия</th>
                 </tr>
                 <tr>
                     <th class="py-1 text-center align-middle">Клиенты</th>
+                    <th class="py-1 text-center align-middle">Поставщики</th>
                     <th class="py-1 text-center align-middle">Продукты</th>
+                    <th class="py-1 text-center align-middle">Статусы</th>
                     <th class="py-1 text-center align-middle">Организации</th>
                 </tr>
             </thead>
@@ -69,8 +70,18 @@ else
                             </span>
                         </td>
                         <td class="py-1 text-center">
+                            <span class="badge @(row.HasSupplierFilter ? "bg-success" : "bg-secondary")">
+                                @(row.HasSupplierFilter ? "установлен" : "не установлен")
+                            </span>
+                        </td>
+                        <td class="py-1 text-center">
                             <span class="badge @(row.HasProductFilter ? "bg-success" : "bg-secondary")">
                                 @(row.HasProductFilter ? "установлен" : "не установлен")
+                            </span>
+                        </td>
+                        <td class="py-1 text-center">
+                            <span class="badge @(row.HasProductStatusFilter ? "bg-success" : "bg-secondary")">
+                                @(row.HasProductStatusFilter ? "установлен" : "не установлен")
                             </span>
                         </td>
                         <td class="py-1 text-center">

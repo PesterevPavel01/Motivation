@@ -1,10 +1,10 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
 using Mediator;
+using Microsoft.EntityFrameworkCore;
+using Motivation.Application.Mappings;
 using Motivation.Contracts.Dto.CalculateDto;
 using Motivation.Domain.Entities;
-using Motivation.Application.Mappings;
-using Microsoft.EntityFrameworkCore;
 
 namespace Motivation.KpiService.Application.Messaging.Calculation;
 
@@ -35,6 +35,8 @@ public class GetKpiCalculationPlanQuery
                                 .ThenInclude(x => x.Kpi)
                                     .ThenInclude(x => x.Filters)
                         .Include(x => x.Position)
+                            .ThenInclude(x => x.MotivationPart)
+                        .Include(x => x.Position)
                             .ThenInclude(x => x.PositionKpiHistory)
                                 .ThenInclude(x => x.Kpi)
                                     .ThenInclude(x => x.MeasurementUnit)
@@ -58,7 +60,10 @@ public class GetKpiCalculationPlanQuery
                     request.PeriodFrom,
                     request.PeriodTo,
                     x.Employee,
-                    x.Position))
+                    x.Position,
+                    pk.TargetHistory!.FirstOrDefault(t =>
+                        t.ValidFrom >= request.PeriodFrom
+                        && t.ValidTo <= request.PeriodTo)!.Id))
                 .Where(x => x is not null)
                 .Select(x => x!))
                 .SelectMany(x => x)

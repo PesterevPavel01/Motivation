@@ -11,7 +11,7 @@
 
     public bool IsValid => !string.IsNullOrEmpty(KpiCode) &&
                           OrderNumber > 0 &&
-                          Weight > 0 &&
+                          Weight >= 0 &&
                           ValidFrom != default &&
                           ValidTo != default &&
                           ValidTo > ValidFrom;

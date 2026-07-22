@@ -519,7 +519,7 @@ namespace Motivation.Infrastructure.Migrations
                 {
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
 
-                    b.HasDiscriminator().HasValue(3);
+                    b.HasDiscriminator().HasValue(2);
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterCustomer", b =>
@@ -533,7 +533,7 @@ namespace Motivation.Infrastructure.Migrations
                 {
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
 
-                    b.HasDiscriminator().HasValue(4);
+                    b.HasDiscriminator().HasValue(3);
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterProduct", b =>
@@ -547,6 +547,13 @@ namespace Motivation.Infrastructure.Migrations
                 {
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
 
+                    b.HasDiscriminator().HasValue(5);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterProductStatus", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
                     b.HasDiscriminator().HasValue(6);
                 });
 
@@ -554,7 +561,7 @@ namespace Motivation.Infrastructure.Migrations
                 {
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
 
-                    b.HasDiscriminator().HasValue(5);
+                    b.HasDiscriminator().HasValue(4);
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Deduction", b =>
@@ -678,6 +685,9 @@ namespace Motivation.Infrastructure.Migrations
                                 .HasColumnType("numeric");
 
                             b1.Property<decimal>("BonusAmount")
+                                .HasColumnType("numeric");
+
+                            b1.Property<decimal>("BonusPercent")
                                 .HasColumnType("numeric");
 
                             b1.Property<decimal>("Fact")

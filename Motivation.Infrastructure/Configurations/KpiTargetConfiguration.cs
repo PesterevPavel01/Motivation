@@ -54,6 +54,11 @@ namespace Motivation.Infrastructure.Configurations
                     .HasConversion(x => x.Value, x => AchievementValue.Create(x).Result);
 
                 kpiFactBuilder
+                    .Property(x => x.BonusPercent)
+                    .IsRequired()
+                    .HasConversion(x => x.Value, x => BonusPercentValue.Create(x).Result);
+
+                kpiFactBuilder
                     .Property(x => x.BonusAmount)
                     .IsRequired()
                     .HasConversion(x => x.Value, x => BonusAmountValue.Create(x).Result);

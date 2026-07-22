@@ -25,18 +25,24 @@ public class EditKpiViewModel
     public bool ProductResponsibleFilter { get; set; }
 
     public List<KpiFilterItemModel> CustomerFilter { get; set; } = [];
+    public List<KpiFilterItemModel> SupplierFilter { get; set; } = [];
     public List<KpiFilterItemModel> ProductFilter { get; set; } = [];
+    public List<KpiFilterItemModel> ProductStatusFilter { get; set; } = [];
     public List<KpiFilterItemModel> CompanyFilter { get; set; } = [];
 
     public bool IsSaving { get; set; } = false;
     public string? ErrorMessage { get; set; }
 
     public void AddCustomerFilter() => CustomerFilter.Add(new KpiFilterItemModel());
+    public void AddSupplierFilter() => SupplierFilter.Add(new KpiFilterItemModel());
     public void AddProductFilter() => ProductFilter.Add(new KpiFilterItemModel());
+    public void AddProductStatusFilter() => ProductStatusFilter.Add(new KpiFilterItemModel());
     public void AddCompanyFilter() => CompanyFilter.Add(new KpiFilterItemModel());
 
     public void RemoveCustomerFilter(int index) => CustomerFilter.RemoveAt(index);
+    public void RemoveSupplierFilter(int index) => SupplierFilter.RemoveAt(index);
     public void RemoveProductFilter(int index) => ProductFilter.RemoveAt(index);
+    public void RemoveProductStatusFilter(int index) => ProductStatusFilter.RemoveAt(index);
     public void RemoveCompanyFilter(int index) => CompanyFilter.RemoveAt(index);
 
     public static EditKpiViewModel Create(IMediator mediator, KpiRowModel? kpi)
@@ -50,7 +56,9 @@ public class EditKpiViewModel
             viewModel.MeasurementUnit = new MeasurementUnitModel() {Title = kpi.MeasurementUnit.Title, Code = kpi.MeasurementUnit.Code};
             viewModel.KpiType = kpi.KpiType;
             viewModel.CustomerFilter = kpi.CustomerFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
+            viewModel.SupplierFilter = kpi.SupplierFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
             viewModel.ProductFilter = kpi.ProductFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
+            viewModel.ProductStatusFilter = kpi.ProductStatusFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
             viewModel.CompanyFilter = kpi.CompanyFilter.Select(x => new KpiFilterItemModel { Title = x.Title, Include = x.Include }).ToList();
             viewModel.CustomerResponsibleFilter = kpi.CustomerResponsibleFilter;
             viewModel.SalesResponsibleFilter = kpi.SalesResponsibleFilter;
@@ -64,7 +72,9 @@ public class EditKpiViewModel
             viewModel.MeasurementUnit = new ();
             viewModel.KpiType = string.Empty;
             viewModel.CustomerFilter.Clear();
+            viewModel.SupplierFilter.Clear();
             viewModel.ProductFilter.Clear();
+            viewModel.ProductStatusFilter.Clear();
             viewModel.CompanyFilter.Clear();
             viewModel.CustomerResponsibleFilter = false;
             viewModel.SalesResponsibleFilter = false;

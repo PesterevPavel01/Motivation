@@ -62,11 +62,13 @@ public class PostKpi
 
             var kpiFilters = KpiFilterMapper.FromString(
                 customerFilter: kpiRequest.Model.CustomerFilter,
+                supplierFilter: kpiRequest.Model.SupplierFilter,
                 productFilter: kpiRequest.Model.ProductFilter,
                 companyFilter: kpiRequest.Model.CompanyFilter,
                 customerResponsibleFilter: kpiRequest.Model.CustomerResponsibleFilter,
                 productResponsibleFilter: kpiRequest.Model.ProductResponsibleFilter,
-                salesResponsibleFilter: kpiRequest.Model.SalesResponsibleFilter);
+                salesResponsibleFilter: kpiRequest.Model.SalesResponsibleFilter,
+                productStatusesFilter: kpiRequest.Model.ProductStatusFilter);
 
             if (!kpiFilters.Ok)
             {

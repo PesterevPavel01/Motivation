@@ -32,6 +32,7 @@ public class KpiTargetAddedOrChangedDomainEventHandler : INotificationHandler<Kp
                 predicate: x => x.TargetHistory.Any(t => t.Id == notification.TargetId),
                 include: query => query
                     .Include(x => x.Position)
+                        .ThenInclude(x => x.MotivationPart)
                     .Include(x => x.Kpi)
                         .ThenInclude(x => x.Filters)
                     .Include(x => x.Kpi)
@@ -69,7 +70,8 @@ public class KpiTargetAddedOrChangedDomainEventHandler : INotificationHandler<Kp
                 target!.ValidFrom,
                 target!.ValidTo,
                 target.Employee,
-                positionKpi.Position);
+                positionKpi.Position,
+                notification.TargetId);
 
         if (task is null)
         {
@@ -78,6 +80,7 @@ public class KpiTargetAddedOrChangedDomainEventHandler : INotificationHandler<Kp
         }
 
         await _bus.Publish(new RecalculateKpisQueueCommand([task]));
+
         _logger.LogInformation($"RecalculateKpisQueueCommand published for target {notification.TargetId}");
     }
 }

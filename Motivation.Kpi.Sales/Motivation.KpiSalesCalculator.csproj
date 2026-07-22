@@ -7,6 +7,9 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Motivation.AnalyticsCore.Contracts\Motivation.AnalyticsCore.Contracts.csproj" />
+    <ProjectReference Include="..\Motivation.AnalyticsCore.Domain\Motivation.AnalyticsCore.Domain.csproj" />
+    <ProjectReference Include="..\Motivation.AnalyticsCore.Infrastructure\Motivation.AnalyticsCore.Infrastructure.csproj" />
     <ProjectReference Include="..\Motivation.Contracts\Motivation.Contracts.csproj" />
   </ItemGroup>
 

@@ -9,11 +9,13 @@ public static class KpiFilterMapper
 {
     public static Operation<List<KpiFilter>, string> FromString(
         IEnumerable<KpiFilterDto> customerFilter,
+        IEnumerable<KpiFilterDto> supplierFilter,
         IEnumerable<KpiFilterDto> productFilter,
         IEnumerable<KpiFilterDto> companyFilter,
         IEnumerable<KpiFilterDto> customerResponsibleFilter,
         IEnumerable<KpiFilterDto> productResponsibleFilter,
-        IEnumerable<KpiFilterDto> salesResponsibleFilter)
+        IEnumerable<KpiFilterDto> salesResponsibleFilter,
+        IEnumerable<KpiFilterDto> productStatusesFilter)
     {
         List<KpiFilter> kpiFilters = [];
 
@@ -21,6 +23,15 @@ public static class KpiFilterMapper
         {
             var filters = CreateFilters(customerFilter, KpiFilterCustomer.Create);
             if(!filters.Ok)
+            {
+                return Operation.Error(filters.Error);
+            }
+            kpiFilters.AddRange(filters.Result);
+        }
+        if (supplierFilter.Any())
+        {
+            var filters = CreateFilters(supplierFilter, KpiFilterSupplier.Create);
+            if (!filters.Ok)
             {
                 return Operation.Error(filters.Error);
             }
@@ -65,6 +76,15 @@ public static class KpiFilterMapper
         if (salesResponsibleFilter.Any())
         {
             var filters = CreateFilters(salesResponsibleFilter, KpiFilterSalesResponsible.Create);
+            if (!filters.Ok)
+            {
+                return Operation.Error(filters.Error);
+            }
+            kpiFilters.AddRange(filters.Result);
+        }
+        if (productStatusesFilter.Any())
+        {
+            var filters = CreateFilters(productStatusesFilter, KpiFilterProductStatus.Create);
             if (!filters.Ok)
             {
                 return Operation.Error(filters.Error);

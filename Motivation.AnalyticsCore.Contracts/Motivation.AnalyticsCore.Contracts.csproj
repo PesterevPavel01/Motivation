@@ -10,4 +10,8 @@
     <PackageReference Include="Calabonga.Results" Version="1.1.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\Motivation.Contracts\Motivation.Contracts.csproj" />
+  </ItemGroup>
+
 </Project>

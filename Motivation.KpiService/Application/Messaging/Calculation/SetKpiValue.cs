@@ -27,12 +27,15 @@ public class SetKpiValue
                 .GetRepository<PositionKpi>();
 
             var positionKpi = await repository.GetFirstOrDefaultAsync(
-                predicate: x => x.Id == request.Result.PositionKpiId,
+                predicate: x => 
+                    x.Id == request.Result.PositionKpiId,
                 include: query => query
                     .Include(x => x.Position)
                         .ThenInclude(x => x.MotivationPart)
                     .Include(x => x.TargetHistory)
-                        .ThenInclude(x => x.KpiFact!),
+                        .ThenInclude(x => x.KpiFact!)
+                    .Include(x => x.TargetHistory)
+                        .ThenInclude(x => x.Employee!),
                 trackingType: TrackingType.Tracking);
 
             if (positionKpi is null)
@@ -43,7 +46,8 @@ public class SetKpiValue
             var target = positionKpi.TargetHistory
                 .FirstOrDefault(x => 
                     x.ValidFrom >= request.Result.PeriodFrom
-                    && x.ValidTo <= request.Result.PeriodTo);
+                    && x.ValidTo <= request.Result.PeriodTo
+                    && x.Employee.Id == request.Result.EmployeeId);
 
             if (target is null)
             {
@@ -78,6 +82,7 @@ public class SetKpiValue
 
             return true;
         }
+
         private Operation<bool, string> Create(KpiTarget target, MotivationPart motivationPart, KpiCalculationTaskResult result, WeightValue weight)
         {
             var fact = FactValue.Create(result.Value);
@@ -91,14 +96,20 @@ public class SetKpiValue
             {
                 return Operation.Error(achievementValue.Error);
             }
-            //тут должна быть учтена логика расчета бонуса в зависимости от процента выполнения
-            var bonus = BonusAmountValue.Create(motivationPart.MotivationPartValue.Value * weight.Value * result.Achievement);
+
+            var bonusPercent = BonusPercentValue.Create(result.BonusPercent);
+            if (!bonusPercent.Ok)
+            {
+                return Operation.Error(bonusPercent.Error);
+            }
+
+            var bonus = BonusAmountValue.Create(result.BonusAmount);
             if (!bonus.Ok)
             {
                 return Operation.Error(bonus.Error);
             }
 
-            var kpiFact = KpiFact.Create(fact.Result, achievementValue.Result, bonus.Result);
+            var kpiFact = KpiFact.Create(fact.Result, achievementValue.Result, bonusPercent.Result, bonus.Result);
             if (!kpiFact.Ok)
             {
                 return Operation.Error(kpiFact.Error);
@@ -131,14 +142,20 @@ public class SetKpiValue
             {
                 return Operation.Error(achievementValue.Error);
             }
-            //тут должна быть учтена логика расчета бонуса в зависимости от процента выполнения
-            var bonus = BonusAmountValue.Create(motivationPart.MotivationPartValue.Value * weight.Value * result.Achievement);
+
+            var bonusPercent = BonusPercentValue.Create(result.BonusPercent);
+            if (!bonusPercent.Ok)
+            {
+                return Operation.Error(bonusPercent.Error);
+            }
+
+            var bonus = BonusAmountValue.Create(result.BonusAmount);
             if (!bonus.Ok)
             {
                 return Operation.Error(bonus.Error);
             }
 
-            var editFact = target.KpiFact!.Edit(fact.Result, achievementValue.Result, bonus.Result);
+            var editFact = target.KpiFact!.Edit(fact.Result, achievementValue.Result, bonusPercent.Result, bonus.Result);
             if (!editFact.Ok)
             {
                 return Operation.Error(editFact.Error);

@@ -43,11 +43,11 @@ public class CommonDefinition : AppDefinition
     /// <param name="builder"></param>
     public override void ConfigureServices(WebApplicationBuilder builder)
     {
-        builder.Services.AddRazorComponents()
-            .AddInteractiveServerComponents(options =>
-            {
-                options.DetailedErrors = true;
-            });
+        /*builder.Services.AddRazorComponents()
+        .AddInteractiveServerComponents(options =>
+        {
+            options.DetailedErrors = true;
+        });*/
 
         builder.Services.AddAuthorization();
         builder.Services.AddScoped<EmployeeApiClient>();
@@ -69,7 +69,7 @@ public class CommonDefinition : AppDefinition
         builder.Services.AddScoped<TargetsViewModel>();
         builder.Services.AddScoped<HomeViewModel>();
         builder.Services.AddScoped<MeasurementUnitApiClient>();
-        builder.Services.AddScoped<IKpiValidator,KpiValidator>();
+        builder.Services.AddScoped<IKpiValidator, KpiValidator>();
         builder.Services.AddMediator(options =>
         {
             options.ServiceLifetime = ServiceLifetime.Scoped;

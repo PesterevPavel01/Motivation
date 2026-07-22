@@ -28,10 +28,12 @@ public static class PositionMapper
                     Weight = x.Weight.Value,
                     ValidFrom = x.ValidFrom,
                     ValidTo = x.ValidTo,
-                    Targets = x.TargetHistory
+                    Targets = x.TargetHistory!
                         .Select(t => t.MapToDto())
-                        .Where(d => d is not null)!,
+                        .Where(d => d is not null)
+                        .ToList()!,
                     Kpi = x.Kpi?.MapToDto()
-                }));
+                })
+                .ToList());
     }
 }

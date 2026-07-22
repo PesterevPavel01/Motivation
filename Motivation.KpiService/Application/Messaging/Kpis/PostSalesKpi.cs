@@ -62,7 +62,9 @@ namespace Motivation.KpiService.Application.Messaging.Kpis
 
                 var kpiFilters = KpiFilterMapper.FromString(
                     customerFilter: kpiRequest.Model.CustomerFilter,
+                    supplierFilter: kpiRequest.Model.SupplierFilter,
                     productFilter: kpiRequest.Model.ProductFilter,
+                    productStatusesFilter: kpiRequest.Model.ProductStatusFilter,
                     companyFilter: kpiRequest.Model.CompanyFilter,
                     customerResponsibleFilter: kpiRequest.Model.CustomerResponsibleFilter,
                     productResponsibleFilter: kpiRequest.Model.ProductResponsibleFilter,

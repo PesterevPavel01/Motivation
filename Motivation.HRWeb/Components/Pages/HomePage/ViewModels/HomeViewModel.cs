@@ -119,7 +119,7 @@ public class HomeViewModel : IDisposable
         .Where(kpi =>
             kpi.ValidFrom <= periodEnd &&
             kpi.ValidTo >= periodStart)
-        .ToList() ?? new List<PositionKpiDto>();
+        .ToList() ?? [];
 
         foreach (var kpi in filteredKpis)
         {
@@ -131,7 +131,7 @@ public class HomeViewModel : IDisposable
             var fact = target?.Fact;
             var weight = kpi.Weight;
             var motivationPart = position.Position?.MotivationPart ?? 0;
-            var bonus = HomeHelper.GetKpiBonus(motivationPart, weight, target?.Target, fact?.Value);
+            var bonusPercent = fact?.BonusPercent ?? 0;
 
             rows.Add(new KpiRowModel
             {
@@ -141,25 +141,13 @@ public class HomeViewModel : IDisposable
                 Target = target?.Target ?? 0,
                 MotivationPart = motivationPart * weight,
                 Fact = fact?.Value ?? 0,
-                Achievement = target != null && target.Target > 0 && fact != null
-                    ? (fact.Value / target.Target * 100)
-                    : 0,
-                MotivationPartPercent = target != null && target.Target > 0 && fact != null
-                    ? CalculatePremiumPercent(fact.Value, target.Target)
-                    : 0,
-                Bonus = bonus
+                Achievement = fact?.Achievement ?? 0,
+                BonusPercent = fact?.BonusPercent ?? 0,
+                Bonus = fact?.BonusAmount??0
             });
         }
 
         KpiTableData = rows.OrderBy(r => r.OrderNumber).ToList();
-    }
-
-    private decimal CalculatePremiumPercent(decimal fact, decimal target)
-    {
-        var percent = fact / target * 100;
-        if (percent < 90) return 0;
-        if (percent >= 100) return 100;
-        return 50 + 5 * (percent - 90);
     }
 
     private async Task<decimal?> GetStandardHoursAsync(EmployeePositionDto position, int month, int year)

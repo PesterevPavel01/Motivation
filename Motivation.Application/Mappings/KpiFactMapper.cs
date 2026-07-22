@@ -16,6 +16,7 @@ public static class KpiFactMapper
         (
             Value: source.Fact.Value,
             Achievement: source.Achievement.Value,
+            BonusPercent: source.BonusPercent.Value,
             BonusAmount: source.BonusAmount.Value
         );
     }

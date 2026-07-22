@@ -42,9 +42,11 @@ internal class KpiFilterConfiguration : IEntityTypeConfiguration<KpiFilter>
         builder.HasDiscriminator(x => x.KpiFilterType)
             .HasValue<KpiFilterCompany>(KpiFilterType.Company)
             .HasValue<KpiFilterProduct>(KpiFilterType.Product)
+            .HasValue<KpiFilterProductStatus>(KpiFilterType.ProductStatus)
             .HasValue<KpiFilterCustomer>(KpiFilterType.Customer)
             .HasValue<KpiFilterCustomerResponsible>(KpiFilterType.CustomerResponsible)
             .HasValue<KpiFilterSalesResponsible>(KpiFilterType.SalesResponsible)
-            .HasValue<KpiFilterProductResponsible>(KpiFilterType.ProductResponsible);
+            .HasValue<KpiFilterProductResponsible>(KpiFilterType.ProductResponsible)
+            .HasValue<KpiFilterSupplier>(KpiFilterType.Supplier);
     }
 }

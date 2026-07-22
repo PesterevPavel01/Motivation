@@ -22,7 +22,7 @@ public sealed class BasketComplexityKpiCalculator : ICalculator
         //InitializePython();
     }
 
-    public async Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(KpiCalculationTask model)
+    public async Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(KpiCalculationTask model, CancellationToken cancellationToken = default)
     {
         /*if (!_isInitialized)
         {
@@ -46,11 +46,13 @@ public sealed class BasketComplexityKpiCalculator : ICalculator
         return new KpiCalculationTaskResult
         {
             PositionKpiId = model.PositionKpiId,
+            EmployeeId = model.EmployeeId,
             PeriodFrom = model.PeriodFrom,
             PeriodTo = model.PeriodTo,
             Target = model.Target,
             Value = 12,
-            Achievement = 12 / model.Target
+            Achievement = 12 / model.Target*100,
+            BonusPercent = 85
         };
     }
 

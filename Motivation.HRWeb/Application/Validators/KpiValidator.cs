@@ -19,9 +19,9 @@ public class KpiValidator : IKpiValidator
             errors.Add("Номер должен быть больше 0");
         }
 
-        if (newKpi.Weight <= 0)
+        if (newKpi.Weight < 0)
         {
-            errors.Add("Вес должен быть больше 0");
+            errors.Add("Вес не может быть меньше 0");
         }
 
         if (newKpi.ValidFrom == default)
@@ -64,9 +64,9 @@ public class KpiValidator : IKpiValidator
             errors.Add("Номер должен быть больше 0");
         }
 
-        if (item.Weight <= 0)
+        if (item.Weight < 0)
         {
-            errors.Add("Вес должен быть больше 0");
+            errors.Add("Вес не может быть меньше 0");
         }
 
         if (item.ValidFrom == default)

@@ -4,8 +4,8 @@
 @using Motivation.HRWeb.Components.Pages.HomePage.ViewModels
 @using Motivation.HRWeb.Components.Pages.HomePage.Components
 @using Motivation.HRWeb.Application
-@inject HomeViewModel HomeVm
-@inject FilterViewModel FilterVm
+@inject HomeViewModel HomeViewModel
+@inject FilterViewModel FilterViewModel
 @attribute [Authorize]
 
 <PageTitle>Матрица</PageTitle>
@@ -13,13 +13,13 @@
 <div class="row align-items-start mb-3">
     <div class="row col-12 col-md-8">
         <h1 class="fs-4 m-0">Матрица</h1>
-        @if (HomeVm.LeftTableData.Any())
+        @if (HomeViewModel.LeftTableData.Any())
         {
             <div class="col-12 col-lg-4">
                 <div class="table-responsive shadow-sm rounded bg-white p-2">
                     <table class="table table-sm table-hover table-bordered align-middle small mb-0">
                         <tbody>
-                            @foreach (var item in HomeVm.LeftTableData)
+                            @foreach (var item in HomeViewModel.LeftTableData)
                             {
                                 <tr>
                                     <td class="py-1"><strong>@item.Parameter</strong></td>
@@ -33,23 +33,23 @@
         }
     </div>
     <div class="col-12 col-md-4">
-        <FilterComponent ViewModel="FilterVm" OnApplyFilter="ApplyFilter" />
+        <FilterComponent ViewModel="FilterViewModel" OnApplyFilter="ApplyFilter" />
     </div>
 </div>
 
-@if (HomeVm.IsLoading)
+@if (HomeViewModel.IsLoading)
 {
     <div class="spinner-border text-primary" role="status">
         <span class="visually-hidden">Загрузка...</span>
     </div>
 }
-else if (!string.IsNullOrEmpty(HomeVm.ErrorMessage))
+else if (!string.IsNullOrEmpty(HomeViewModel.ErrorMessage))
 {
-    <div class="alert alert-danger">@HomeVm.ErrorMessage</div>
+    <div class="alert alert-danger">@HomeViewModel.ErrorMessage</div>
 }
 else
 {
-    @if (!HomeVm.KpiTableData.Any())
+    @if (!HomeViewModel.KpiTableData.Any())
     {
         <div class="alert alert-info">Нет данных для отображения. Выберите сотрудника и нажмите "Применить".</div>
     }
@@ -71,7 +71,7 @@ else
                         </tr>
                     </thead>
                     <tbody>
-                        @foreach (var row in HomeVm.KpiTableData)
+                        @foreach (var row in HomeViewModel.KpiTableData)
                         {
                             <tr>
                                 <td class="py-1">@row.KpiTitle</td>
@@ -80,7 +80,7 @@ else
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.MotivationPart)</td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.Fact)</td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.Achievement)</td>
-                                <td class="py-1 text-center">@ValueFormatter.FormatValue(row.MotivationPartPercent)</td>
+                                <td class="py-1 text-center">@ValueFormatter.FormatValue(row.BonusPercent)</td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.Bonus)</td>
                             </tr>
                         }
@@ -94,15 +94,15 @@ else
 @code {
     private async Task ApplyFilter()
     {
-        await HomeVm.LoadDataAsync(
-            FilterVm.Filter.EmployeeCode ?? string.Empty,
-            FilterVm.Filter.PositionCode ?? string.Empty,
-            FilterVm.Filter.Month,
-            FilterVm.Filter.Year);
+        await HomeViewModel.LoadDataAsync(
+            FilterViewModel.Filter.EmployeeCode ?? string.Empty,
+            FilterViewModel.Filter.PositionCode ?? string.Empty,
+            FilterViewModel.Filter.Month,
+            FilterViewModel.Filter.Year);
     }
 
     protected override async Task OnInitializedAsync()
     {
-        await FilterVm.LoadEmployeesAsync();
+        await FilterViewModel.LoadEmployeesAsync();
     }
 }

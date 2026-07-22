@@ -21,6 +21,7 @@ namespace Motivation.HRService.Application.Messaging.EmployeeMessages
                     .GetAllAsync(
                         predicate: x => x.Enabled == true,
                         include: query => query
+                            .Include(x => x.TargetHistory)
                             .Include(x => x.EmployeePositions)
                                 .ThenInclude(x => x.Position)
                                     .ThenInclude(x => x.PositionKpiHistory)

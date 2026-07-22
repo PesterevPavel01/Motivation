@@ -1,12 +1,12 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
 using Mediator;
+using Microsoft.EntityFrameworkCore;
 using Motivation.Application.Mappings;
 using Motivation.Contracts.Dto;
 using Motivation.Domain.Entities;
 using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.ValueObjects;
-using Microsoft.EntityFrameworkCore;
 
 namespace Motivation.KpiService.Application.Messaging.Kpis;
 
@@ -76,7 +76,9 @@ public class PutKpi
 
             var kpiFilters = KpiFilterMapper.FromString(
                 customerFilter: kpiRequest.Model.CustomerFilter,
+                supplierFilter: kpiRequest.Model.SupplierFilter,
                 productFilter: kpiRequest.Model.ProductFilter,
+                productStatusesFilter: kpiRequest.Model.ProductStatusFilter,
                 companyFilter: kpiRequest.Model.CompanyFilter,
                 customerResponsibleFilter: kpiRequest.Model.CustomerResponsibleFilter,
                 productResponsibleFilter: kpiRequest.Model.ProductResponsibleFilter,

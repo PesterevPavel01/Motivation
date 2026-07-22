@@ -17,11 +17,15 @@ public class KpiRowModel
 
     public bool HasCustomerFilter => CustomerFilter.Any();
     public bool HasProductFilter => ProductFilter.Any();
+    public bool HasProductStatusFilter => ProductStatusFilter.Any();
     public bool HasCompanyFilter => CompanyFilter.Any();
+    public bool HasSupplierFilter => SupplierFilter.Any();
 
     public List<KpiFilterDto> CustomerFilter { get; set; } = [];
     public List<KpiFilterDto> ProductFilter { get; set; } = [];
+    public List<KpiFilterDto> ProductStatusFilter { get; set; } = [];
     public List<KpiFilterDto> CompanyFilter { get; set; } = [];
+    public List<KpiFilterDto> SupplierFilter { get; set; } = [];
 
     public bool IsEditing { get; set; } = false;
     public bool IsSaving { get; set; } = false;

@@ -95,12 +95,26 @@
                                OnAdd="EditViewModel.AddCustomerFilter"
                                OnRemove="EditViewModel.RemoveCustomerFilter" />
 
+                    <KpiFilter Title="Фильтр Поставщики"
+                               AddButtonText="Добавить поставщика"
+                               IdPrefix="cust"
+                               Items="EditViewModel.SupplierFilter"
+                               OnAdd="EditViewModel.AddSupplierFilter"
+                               OnRemove="EditViewModel.RemoveSupplierFilter" />
+
                     <KpiFilter Title="Фильтр Продукты"
                                AddButtonText="Добавить продукт"
                                IdPrefix="prod"
                                Items="EditViewModel.ProductFilter"
                                OnAdd="EditViewModel.AddProductFilter"
                                OnRemove="EditViewModel.RemoveProductFilter" />
+
+                    <KpiFilter Title="Фильтр Cтытусы продуктов"
+                               AddButtonText="Добавить Статус"
+                               IdPrefix="stat"
+                               Items="EditViewModel.ProductStatusFilter"
+                               OnAdd="EditViewModel.AddProductStatusFilter"
+                               OnRemove="EditViewModel.RemoveProductStatusFilter" />
 
                     <KpiFilter Title="Фильтр Организации"
                                AddButtonText="Добавить организацию"

@@ -8,7 +8,7 @@ public class KpiRowModel
     public decimal MotivationPart { get; set; } 
     public decimal Fact { get; set; }
     public decimal Achievement { get; set; }
-    public decimal MotivationPartPercent { get; set; }
+    public decimal BonusPercent { get; set; }
     public decimal Bonus { get; set; }
     public int OrderNumber { get; set; }
 }

@@ -10,11 +10,11 @@ public static class ValueFormatter
         return value switch
         {
             null => "-",
-            decimal d => d.ToString("N1", NumberFormatWithSpace),
-            double d => d.ToString("N1", NumberFormatWithSpace),
-            float f => f.ToString("N1", NumberFormatWithSpace),
-            int i => i.ToString("N1", NumberFormatWithSpace),
-            long l => l.ToString("N1", NumberFormatWithSpace),
+            decimal d => d.ToString("N2", NumberFormatWithSpace),
+            double d => d.ToString("N2", NumberFormatWithSpace),
+            float f => f.ToString("N2", NumberFormatWithSpace),
+            int i => i.ToString("N2", NumberFormatWithSpace),
+            long l => l.ToString("N2", NumberFormatWithSpace),
             string s => s,
             _ => value.ToString() ?? "-"
         };

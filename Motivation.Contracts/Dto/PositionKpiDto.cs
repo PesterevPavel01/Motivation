@@ -8,6 +8,6 @@ public sealed class PositionKpiDto()
     public decimal Weight { get; set; }
     public DateTime ValidFrom { get; set; }
     public DateTime ValidTo { get; set; }
-    public IEnumerable<KpiTargetDto> Targets { get; set; } = [];
+    public List<KpiTargetDto> Targets { get; set; } = [];
     public KpiDto? Kpi { get; set; }
 }
