@@ -195,13 +195,7 @@ public static class CustomerTransactionMapper
         if (entity is null)
             throw new ArgumentNullException(nameof(entity));
 
-        var customerDto = new CustomerDto
-        {
-            Code = entity.Customer?.Code?.Value ?? string.Empty,
-            Title = entity.Customer?.Title?.Value ?? string.Empty,
-            FullName = entity.Customer?.FullName?.Value ?? string.Empty,
-            Manager = entity.Customer?.Manager?.Value?.ToString() ?? string.Empty,
-        };
+        var customerDto = entity.Customer.ToDto();
 
         var companyDto = new CompanyDto
         {
@@ -223,14 +217,7 @@ public static class CustomerTransactionMapper
 
         foreach (var ctp in entity.CustomerTransactionProducts.Where(productFilter))
         {
-            var productDto = new ProductDto
-            {
-                Code = ctp.Product?.Code?.Value ?? string.Empty,
-                Title = ctp.Product?.Title?.Value ?? string.Empty,
-                Purchaser = ctp.Product?.Purchaser?.Value?.ToString() ?? string.Empty,
-                Supplier = ctp.Product?.Supplier?.Value?.ToString() ?? string.Empty,
-                Status = ctp.Product?.Status?.Value ?? string.Empty
-            };
+            var productDto = ctp.Product.ToDto();
 
             transactionDto.TransactionProducts.Add(new TransactionProductDto
             {

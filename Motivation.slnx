@@ -7,14 +7,15 @@
     <Project Path="Motivation.AnalyticsCore.Mappers/Motivation.AnalyticsCore.Mappers.csproj" Id="bd6b87ad-f9fe-4872-a586-ff0f2d86a59d" />
     <Project Path="Motivation.AnalyticsCore.SyncService/Motivation.AnalyticsCore.SyncService.csproj" />
   </Folder>
+  <Folder Name="/AnalyticsCore/plugins/">
+    <Project Path="Motivation.ComplexityKpiCalculator/Motivation.BasketComplexityKpiCalculator.csproj" Id="9f562936-72d5-4e91-ac2e-858c552b36e8" />
+    <Project Path="Motivation.Kpi.Sales/Motivation.KpiSalesCalculator.csproj" Id="0222e3eb-18b4-47a9-907f-f4f8452b00d0" />
+    <Project Path="Motivation.KpiCalculator.Core/Motivation.KpiCalculator.Core.csproj" Id="e9458770-9542-4f45-a474-a46e9ab0dd5a" />
+  </Folder>
   <Folder Name="/IdentityServer/">
     <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Domain/Motivation.IdentityServer.Domain.csproj" Id="a147d3e4-1ee5-49e9-b223-fdf4dd165ec9" />
     <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Infrastructure/Motivation.IdentityServer.Infrastructure.csproj" Id="820cca7e-4012-4ff5-935b-641955843cf9" />
     <Project Path="Motivation.IdentityServer/Motivation.IdentityServer.Web/Motivation.IdentityServer.Web.csproj" Id="1ba1b92c-8a9b-4e58-97c7-d98502434a72" />
-  </Folder>
-  <Folder Name="/plugins/">
-    <Project Path="Motivation.ComplexityKpiCalculator/Motivation.BasketComplexityKpiCalculator.csproj" Id="9f562936-72d5-4e91-ac2e-858c552b36e8" />
-    <Project Path="Motivation.Kpi.Sales/Motivation.KpiSalesCalculator.csproj" Id="0222e3eb-18b4-47a9-907f-f4f8452b00d0" />
   </Folder>
   <Folder Name="/Элементы решения/">
     <File Path="README.md" />

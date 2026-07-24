@@ -6,6 +6,8 @@ namespace Motivation.Contracts.Interfaces;
 
 public interface ICalculator
 {
-    KpiType KpiType { get; }
-    Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(KpiCalculationTask task, CancellationToken cancellationToken = default);
+    abstract KpiType KpiType { get; }
+    Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(
+        KpiCalculationTask task,
+        CancellationToken cancellationToken = default);
 }

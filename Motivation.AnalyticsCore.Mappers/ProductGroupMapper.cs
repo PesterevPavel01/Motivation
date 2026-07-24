@@ -7,6 +7,22 @@ namespace Motivation.AnalyticsCore.Application.Mappers;
 
 public static class ProductGroupMapper
 {
+    public static ProductGroupDto ToDto(this ProductGroup source) 
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+        return new ProductGroupDto()
+        {
+            Code = source.Code.Value,
+            Title = source.Title.Value,
+            ParentGroup = source.ParentGroup is null ?
+                null
+                : source.ParentGroup.ToDto(),
+        };
+    }
+
     public static Operation<ProductGroup, string> ToEntity(ProductGroupDto dto)
     {
         if (dto is null)
@@ -31,6 +47,7 @@ public static class ProductGroupMapper
 
         return ProductGroup.Create(titleResult.Result, codeResult.Result, parentGroup);
     }
+
     public static Operation<bool, string> EditEntity(this ProductGroup productGroup, ProductGroupDto model)
     {
         if (model is null)

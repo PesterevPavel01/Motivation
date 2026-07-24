@@ -11,6 +11,7 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="..\Motivation.AnalyticsCore.Domain\Motivation.AnalyticsCore.Domain.csproj" />
     <ProjectReference Include="..\Motivation.Contracts\Motivation.Contracts.csproj" />
   </ItemGroup>
 

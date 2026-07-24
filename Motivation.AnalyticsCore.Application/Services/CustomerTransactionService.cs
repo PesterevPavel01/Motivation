@@ -23,8 +23,6 @@ public class CustomerTransactionService : IEntityServices<CustomerTransactionDto
             .GroupBy(x => x.Code)
             .Select(x => CodeValue.Create(x.Key));
 
-        var customer = models.Values.Where(x => x.Customer.Code == "С00000116").ToArray();
-
         if (customerTransactionCodes.Any(x => !x.Ok))
         {
             return Operation.Error(customerTransactionCodes.FirstOrDefault(x => !x.Ok).Error);

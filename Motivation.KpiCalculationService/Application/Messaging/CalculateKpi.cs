@@ -1,5 +1,4 @@
 ﻿using Calabonga.OperationResults;
-using Calabonga.UnitOfWork;
 using Mediator;
 using Motivation.Contracts.Dto.CalculateDto;
 using Motivation.Contracts.Interfaces;
@@ -13,7 +12,6 @@ public class CalculateKpi
     public record Request(KpiCalculationTask Model) : IRequest<Operation<KpiCalculationTaskResult, string>>;
 
     public class Handler(
-        IUnitOfWork unitOfWork, 
         ILogger<CalculateKpi> logger, 
         IEnumerable<ICalculator> calculators,
         IBus bus)

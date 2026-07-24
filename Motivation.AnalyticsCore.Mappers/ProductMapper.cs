@@ -7,6 +7,29 @@ namespace Motivation.AnalyticsCore.Application.Mappers;
 
 public static class ProductMapper
 {
+    public static ProductDto ToDto(this Product source) 
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+        return new ProductDto()
+        {
+            Code = source.Code.Value,
+            Title = source.Title.Value,
+            Purchaser = source.Purchaser?.Value,
+            Status = source.Status?.Value,
+            Supplier = source.Supplier?.Value,
+            Warehouse = source.Warehouse is null ?
+                null
+                : source.Warehouse.ToDto(),
+
+            ProductGroup = source.ProductGroup is null ?
+                null
+                : source.ProductGroup.ToDto(),
+        };
+    }
+
     public static Operation<Product, string> EditEntity(this Product product, ProductDto model, Dictionary<string, Warehouse> existingWarehouses, Dictionary<string, ProductGroup> existingProductGroups)
     {
         if (model is null)

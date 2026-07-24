@@ -7,6 +7,28 @@ namespace Motivation.AnalyticsCore.Application.Mappers;
 
 public static class CustomerMapper
 {
+    public static CustomerDto ToDto(this Customer source) 
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+        return new CustomerDto()
+        {
+            Code = source.Code.Value,
+            Title = source.Title.Value,
+            CustomerGroup = source.CustomerGroup is null ?
+                null
+                : source.CustomerGroup.ToDto(),
+
+            Manager = source.Manager?.Value,
+            FullName = source.FullName?.Value,
+            MasterCustomer = source.MasterCustomer is null ?
+                null
+                : source.MasterCustomer.ToDto(),
+        };
+    }
+    
     public static Operation<Customer, string> ToEntity(CustomerDto dto, Dictionary<string, CustomerGroup> existingCustomerGroups)
     {
         if (dto is null)

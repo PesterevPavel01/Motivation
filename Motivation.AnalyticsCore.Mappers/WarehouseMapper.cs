@@ -7,6 +7,19 @@ namespace Motivation.AnalyticsCore.Application.Mappers;
 
 public static class WarehouseMapper
 {
+    public static WarehouseDto ToDto(this Warehouse source)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+        return new WarehouseDto()
+        {
+            Code = source.Code.Value,
+            Title = source.Title.Value
+        };
+    }
+
     public static Operation<Warehouse, string> ToEntity(WarehouseDto dto)
     {
         if (dto is null)

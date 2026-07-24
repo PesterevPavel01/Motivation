@@ -1,0 +1,9 @@
+﻿namespace Motivation.BasketComplexityKpiCalculator.Models;
+
+public record MasterParamGroup
+{
+    public string MasterCode { get; init; } = string.Empty;
+    public int NumberParam { get; init; }
+    public decimal TotalQuantity { get; init; }
+    public decimal TotalAmount { get; init; }
+}
