@@ -1,10 +1,8 @@
-﻿using Motivation.AnalyticsCore.Domain.Entities;
+﻿namespace Motivation.KpiCalculator.Core.Interfaces;
 
-namespace Motivation.KpiCalculator.Core.Interfaces;
-
-public interface ITransactionDataProvider
+public interface ITransactionDataProvider<TDto>
 {
-    Task<IEnumerable<CustomerTransaction>> GetTransactionsAsync(
+    Task<IEnumerable<TDto>> GetTransactionsAsync(
         DateTime periodFrom,
         DateTime periodTo,
         CancellationToken cancellationToken = default);

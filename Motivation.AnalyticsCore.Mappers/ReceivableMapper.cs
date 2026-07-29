@@ -27,4 +27,28 @@ public static class ReceivableMapper
             dto.AsOfDate
         );
     }
+
+    public static ReceivableDto ToDto(this Receivable entity)
+    {
+        if (entity is null)
+            throw new ArgumentNullException(nameof(entity));
+
+        var customerDto = entity.Customer.ToDto();
+
+        var companyDto = new CompanyDto
+        {
+            Code = entity.Company?.Code?.Value ?? string.Empty,
+            Title = entity.Company?.Title?.Value ?? string.Empty
+        };
+
+        var receivableDto = new ReceivableDto
+        {
+            Amount = entity.Amount?.Value ?? 0,
+            Customer = customerDto,
+            AsOfDate = entity.AsOfDate,
+            Company = companyDto
+        };
+
+        return receivableDto;
+    }
 }

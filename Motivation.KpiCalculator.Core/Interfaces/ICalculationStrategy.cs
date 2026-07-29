@@ -5,9 +5,10 @@ using Motivation.KpiCalculator.Core.Enums;
 
 namespace Motivation.KpiCalculator.Core.Interfaces;
 
-public interface ICalculationStrategy
+public interface ICalculationStrategy<TDto>
+    where TDto : class
 {
     CalculationStrategyType StrategyType { get; }
-    Operation<decimal, string> Calculate(IEnumerable<CustomerTransactionDto> transactions, MeasurementUnitDto measurementUnit);
+    Operation<decimal, string> Calculate(IEnumerable<TDto> transactions, MeasurementUnitDto measurementUnit);
 }
 

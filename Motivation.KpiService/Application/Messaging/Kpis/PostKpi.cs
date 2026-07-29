@@ -108,10 +108,23 @@ public class PostKpi
                         calculationType: calculationType.Result,
                         filters: kpiFilters.Result
                     );
-
                     if (!createComplexityResult.Ok)
                         return Operation.Error(createComplexityResult.Error);
                     kpi = createComplexityResult.Result;
+                    break;
+
+                case KpiType.Receivables:
+                    var createReceivablesResult = ReceivablesKpi.Create(
+                        title: title.Result,
+                        code: codeResult.Result,
+                        abbreviation: abbreviation.Result,
+                        measurementUnit: measurementUnit,
+                        calculationType: calculationType.Result,
+                        filters: kpiFilters.Result
+                    );
+                    if (!createReceivablesResult.Ok)
+                        return Operation.Error(createReceivablesResult.Error);
+                    kpi = createReceivablesResult.Result;
                     break;
 
                 default:

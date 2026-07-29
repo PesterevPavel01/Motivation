@@ -15,7 +15,7 @@ public static class ServiceCollectionExtensions
     public static void AddComplexityKpiCalculator(this IServiceCollection source)
     {
         source.AddTransient<ICalculator, ComplexityKpiCalculator>();
-        source.AddTransient<ICalculationStrategy, ComplexityCalculationStrategy>();
+        source.AddTransient<ICalculationStrategy<CustomerTransactionDto>, ComplexityCalculationStrategy>();
         source.AddScoped<IComplexityCalculationConfigurations, ComplexityCalculationConfigurations>();
         source.AddScoped<IValidator<IEnumerable<CustomerTransactionDto>>, ManagerValidator>();
         source.AddScoped<ComplexityItemsMapper>();

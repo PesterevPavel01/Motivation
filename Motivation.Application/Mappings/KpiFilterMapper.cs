@@ -7,6 +7,19 @@ namespace Motivation.Application.Mappings;
 
 public static class KpiFilterMapper
 {
+    public static KpiFilterDto ToDto(this KpiFilter source)
+    {
+        if (source is null)
+        {
+            throw new ArgumentNullException(nameof(source));
+        }
+
+        return new KpiFilterDto(
+            source.Title.Value,
+            source.Include,
+            source.KpiFilterType);
+    }
+
     public static Operation<List<KpiFilter>, string> FromString(
         IEnumerable<KpiFilterDto> customerFilter,
         IEnumerable<KpiFilterDto> supplierFilter,

@@ -2,7 +2,8 @@
 
 namespace Motivation.KpiCalculator.Core;
 
-public class KpiQueryResult
+public class KpiQueryResult<TDto>
+    where TDto : class
 {
-    public IEnumerable<CustomerTransactionDto> Transactions { get; set; } = [];
+    public IEnumerable<TDto> Transactions { get; set; } = [];
 }

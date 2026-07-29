@@ -13,6 +13,7 @@ public static class KpiMapper
         {
             KpiType.Sales => (SalesKpi)source,
             KpiType.Complexity => (ComplexityKpi)source,
+            KpiType.Receivables => (ReceivablesKpi)source,
             _ => throw new ArgumentOutOfRangeException(nameof(source.KpiType), $"Unknown KPI type: {source.KpiType}")
         };
     }
@@ -32,14 +33,14 @@ public static class KpiMapper
             CalculationType = source.CalculationType.ToRussianString(),
             KpiType = source.KpiType.ToRussianString(),
             MeasurementUnit = source.MeasurementUnit.MapToDto()!,
-            CustomerFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Customer).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
-            SupplierFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Supplier).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
-            CompanyFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Company).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
-            ProductFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Product).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
-            ProductStatusFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.ProductStatus).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
-            CustomerResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.CustomerResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
-            ProductResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.ProductResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include)),
-            SalesResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.SalesResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include))
+            CustomerFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Customer).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.Customer)),
+            SupplierFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Supplier).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.Supplier)),
+            CompanyFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Company).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.Company)),
+            ProductFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.Product).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.Product)),
+            ProductStatusFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.ProductStatus).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.ProductStatus)),
+            CustomerResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.CustomerResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.CustomerResponsible)),
+            ProductResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.ProductResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.ProductResponsible)),
+            SalesResponsibleFilter = source.Filters.Where(x => x.KpiFilterType == KpiFilterType.SalesResponsible).Select(x => new KpiFilterDto(x.Title.Value, x.Include, KpiFilterType.SalesResponsible))
         };
     }
 }
@@ -52,7 +53,7 @@ public static class KpiTypeMapper
         {
             KpiType.Sales => "Продажи",
             KpiType.Complexity => "Комплексность",
-            KpiType.CustomerDebt => "Дебиторская задолженность",
+            KpiType.Receivables => "Дебиторская задолженность",
             KpiType.AcceptedOrders => "Принятые заказы",
             KpiType.Upd => "УПД",
             KpiType.PercentageOfSales => "Процент от продаж",
@@ -68,7 +69,7 @@ public static class KpiTypeMapper
         {
             "Продажи" => KpiType.Sales,
             "Комплексность" => KpiType.Complexity,
-            "Дебиторская задолженность" => KpiType.CustomerDebt,
+            "Дебиторская задолженность" => KpiType.Receivables,
             "Принятые заказы" => KpiType.AcceptedOrders,
             "УПД" => KpiType.Upd,
             "Процент от продаж" => KpiType.PercentageOfSales,

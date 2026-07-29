@@ -1,4 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
+using Motivation.AnalyticsCore.Contracts.Models;
 using Motivation.Contracts.Dto.CalculateDto;
 using Motivation.Domain.Enum;
 using Motivation.KpiCalculator.Core;
@@ -6,14 +7,14 @@ using Motivation.KpiCalculator.Core.Enums;
 using Motivation.KpiCalculator.Core.Interfaces;
 
 namespace Motivation.KpiSalesCalculator;
-public sealed class SalesKpiCalculator : BaseKpiCalculator
+public sealed class SalesKpiCalculator : BaseKpiCalculator<CustomerTransactionDto>
 {
-    private readonly IEnumerable<ICalculationStrategy> _strategies;
+    private readonly IEnumerable<ICalculationStrategy<CustomerTransactionDto>> _strategies;
     private readonly ILogger<SalesKpiCalculator> _logger;
 
     public SalesKpiCalculator(
-        IKpiQueryBuilder queryBuilder,
-        IEnumerable<ICalculationStrategy> strategies,
+        IKpiQueryBuilder<CustomerTransactionDto> queryBuilder,
+        IEnumerable<ICalculationStrategy<CustomerTransactionDto>> strategies,
         ILogger<SalesKpiCalculator> logger)
         : base(queryBuilder, logger)
     {
@@ -23,7 +24,7 @@ public sealed class SalesKpiCalculator : BaseKpiCalculator
 
     public override KpiType KpiType => KpiType.Sales;
 
-    public override ICalculationStrategy? GetStrategy(KpiCalculationTask task)
+    public override ICalculationStrategy<CustomerTransactionDto>? GetStrategy(KpiCalculationTask task)
     {
         var StrategyType = task.MeasurementUnit.Title switch
         {

@@ -42,7 +42,8 @@ internal class KpiConfiguration : EntityConfiguration<Kpi>
 
         builder.HasDiscriminator(x => x.KpiType)
             .HasValue<SalesKpi>(KpiType.Sales)
-            .HasValue<ComplexityKpi>(KpiType.Complexity);
+            .HasValue<ComplexityKpi>(KpiType.Complexity)
+            .HasValue<ReceivablesKpi>(KpiType.Receivables);
     }
 
     protected override string TableName()

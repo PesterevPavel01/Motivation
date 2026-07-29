@@ -9,7 +9,7 @@ using Motivation.KpiCalculator.Core.Interfaces;
 
 namespace Motivation.BasketComplexityKpiCalculator.Strategies;
 
-public class ComplexityCalculationStrategy : ICalculationStrategy
+public class ComplexityCalculationStrategy : ICalculationStrategy<CustomerTransactionDto>
 {
     private readonly IValidator<IEnumerable<CustomerTransactionDto>> _managerValidator;
     private readonly ComplexityItemsMapper _complexityItemsMapper;

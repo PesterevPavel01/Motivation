@@ -7,21 +7,22 @@ using Motivation.KpiCalculator.Core.Interfaces;
 
 namespace Motivation.KpiCalculator.Core;
 
-public abstract class BaseKpiCalculator : ICalculator
+public abstract class BaseKpiCalculator<TDto> : ICalculator
+    where TDto : class
 {
-    protected readonly IKpiQueryBuilder _queryBuilder;
-    protected readonly ILogger<BaseKpiCalculator> _logger;
+    protected readonly IKpiQueryBuilder<TDto> _queryBuilder;
+    protected readonly ILogger<BaseKpiCalculator<TDto>> _logger;
 
     protected BaseKpiCalculator(
-        IKpiQueryBuilder queryBuilder,
-        ILogger<BaseKpiCalculator> logger)
+        IKpiQueryBuilder<TDto> queryBuilder,
+        ILogger<BaseKpiCalculator<TDto>> logger)
     {
         _queryBuilder = queryBuilder;
         _logger = logger;
     }
 
     public abstract KpiType KpiType { get; }
-    public abstract ICalculationStrategy? GetStrategy(KpiCalculationTask task);
+    public abstract ICalculationStrategy<TDto>? GetStrategy(KpiCalculationTask task);
 
     public async Task<Operation<KpiCalculationTaskResult, string>> CalculateKpiAsync(
         KpiCalculationTask task,
@@ -32,10 +33,6 @@ public abstract class BaseKpiCalculator : ICalculator
 
         try
         {
-            _logger.LogInformation(
-                "Starting {KpiType} KPI calculation for Employee {EmployeeId}, Period {PeriodFrom} - {PeriodTo}",
-                KpiType, task.EmployeeId, task.PeriodFrom, task.PeriodTo);
-
             var queryResult = await BuildQueryAsync(task, cancellationToken);
             if (queryResult is null)
                 return Operation.Error("Query result is null");
@@ -83,21 +80,13 @@ public abstract class BaseKpiCalculator : ICalculator
         }
     }
 
-    protected virtual async Task<KpiQueryResult?> BuildQueryAsync(
+    protected virtual async Task<KpiQueryResult<TDto>?> BuildQueryAsync(
         KpiCalculationTask task,
         CancellationToken cancellationToken)
     {
         return await _queryBuilder
             .SetPeriod(task.PeriodFrom, task.PeriodTo)
-            .ApplyCustomerFilter(task.CustomerFilter)
-            .ApplyProductSupplierFilter(task.SupplierFilter)
-            .ApplyProductFilter(task.ProductFilter)
-            .ApplyProductStatusFilter(task.ProductStatusFilter)
-            .ApplyCompanyFilter(task.CompanyFilter)
-            .ApplyResponsibleFilters(
-                task.CustomerResponsibleFilter,
-                task.SalesResponsibleFilter,
-                task.ProductResponsibleFilter)
+            .InitializeFilters(task.KpiFilters)
             .BuildAsync(cancellationToken);
     }
 

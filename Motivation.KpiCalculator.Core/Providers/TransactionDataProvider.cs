@@ -1,11 +1,13 @@
 ﻿using Calabonga.UnitOfWork;
+using Microsoft.EntityFrameworkCore;
+using Motivation.AnalyticsCore.Contracts.Models;
 using Motivation.AnalyticsCore.Domain.Entities;
 using Motivation.KpiCalculator.Core.Interfaces;
-using Microsoft.EntityFrameworkCore;
+using Motivation.AnalyticsCore.Application.Mappers;
 
 namespace Motivation.KpiCalculator.Core.Providers;
 
-public class TransactionDataProvider : ITransactionDataProvider
+public class TransactionDataProvider : ITransactionDataProvider<CustomerTransactionDto>
 {
     private readonly IUnitOfWork _unitOfWork;
     public TransactionDataProvider(IUnitOfWork unitOfWork)
@@ -13,13 +15,12 @@ public class TransactionDataProvider : ITransactionDataProvider
         _unitOfWork = unitOfWork;
     }
 
-    public async Task<IEnumerable<CustomerTransaction>> GetTransactionsAsync(
+    public async Task<IEnumerable<CustomerTransactionDto>> GetTransactionsAsync(
         DateTime periodFrom,
         DateTime periodTo,
         CancellationToken cancellationToken = default)
     {
         var transactionRepository = _unitOfWork.GetRepository<CustomerTransaction>();
-
 
         var transactions = (await transactionRepository
             .GetAllAsync(
@@ -46,6 +47,8 @@ public class TransactionDataProvider : ITransactionDataProvider
                                             .ThenInclude(pg => pg.ParentGroup!)))
             .ToList();
 
-        return transactions;
+        return transactions
+            .Select(x => x.ToDto())
+            .ToList();
     }
 }

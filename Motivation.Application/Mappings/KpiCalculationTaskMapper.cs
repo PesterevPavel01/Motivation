@@ -21,7 +21,13 @@ public static class KpiCalculationTaskMapper
         if (positionKpi is null || kpi is null || employee is null || position is null)
             return null;
 
-        var filters = kpi?.Filters ?? Enumerable.Empty<KpiFilter>();
+        var filters = kpi?.Filters ?? [];
+
+        var kpiFilterModels = filters
+            .Select(f =>
+                new KpiFilterDto(
+                    f.Title.Value != "default" ? f.Title.Value : employee.FullName.Value, f.Include, f.KpiFilterType))
+            .ToList();
 
         var target = positionKpi.TargetHistory
             .FirstOrDefault(x => 
@@ -33,6 +39,7 @@ public static class KpiCalculationTaskMapper
         {
             throw new ArgumentException("Target is null!");
         }
+
 
         return new KpiCalculationTask
         {
@@ -52,38 +59,7 @@ public static class KpiCalculationTaskMapper
 
             KpiType = kpi.KpiType.ToString(),
 
-            CustomerFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.Customer)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
-
-            SupplierFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.Supplier)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
-
-            ProductFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.Product)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
-
-            ProductStatusFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.ProductStatus)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include)),
-
-            CompanyFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.Company)
-                .Select(f => new KpiFilterDto(f.Title.Value, f.Include))
-                .ToArray(),
-
-            CustomerResponsibleFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.CustomerResponsible)
-                .Select(x => new KpiFilterDto(employee.FullName.Value, x.Include)),
-
-            SalesResponsibleFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.SalesResponsible)
-                .Select(f => new KpiFilterDto(employee.FullName.Value, f.Include)),
-
-            ProductResponsibleFilter = filters
-                .Where(f => f.KpiFilterType == KpiFilterType.ProductResponsible)
-                .Select(f => new KpiFilterDto(employee.FullName.Value, f.Include))
+            KpiFilters = kpiFilterModels
         };
     }
 }

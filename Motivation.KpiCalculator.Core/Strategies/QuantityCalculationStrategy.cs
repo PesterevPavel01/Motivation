@@ -6,7 +6,7 @@ using Motivation.KpiCalculator.Core.Interfaces;
 
 namespace Motivation.KpiCalculator.Core.Strategies;
 
-public class QuantityCalculationStrategy : ICalculationStrategy
+public class QuantityCalculationStrategy : ICalculationStrategy<CustomerTransactionDto>
 {
     public CalculationStrategyType StrategyType => CalculationStrategyType.SalesQuantity;
     public Operation<decimal, string> Calculate(IEnumerable<CustomerTransactionDto> transactions, MeasurementUnitDto measurementUnit)

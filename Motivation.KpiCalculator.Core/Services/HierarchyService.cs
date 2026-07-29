@@ -36,6 +36,25 @@ public class HierarchyService : IHierarchyService
         return codes;
     }
 
+    public IEnumerable<string> GetCustomerGroupHierarchy(CustomerDto customer)
+    {
+        if (customer is null)
+            return Enumerable.Empty<string>();
+
+        var codes = new List<string>();
+
+        codes.Add(customer.Code);
+
+        var currentGroup = customer.CustomerGroup;
+        while (currentGroup is not null)
+        {
+            codes.Add(currentGroup.Code);
+            currentGroup = currentGroup.ParentGroup;
+        }
+
+        return codes;
+    }
+
     public IEnumerable<string> GetProductGroupHierarchy(ProductDto product)
     {
         if (product is null)

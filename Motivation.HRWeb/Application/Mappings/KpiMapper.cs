@@ -1,4 +1,5 @@
 ﻿using Motivation.Contracts.Dto;
+using Motivation.Domain.Enum;
 using Motivation.HRWeb.Components.Pages.KpiPage.Models;
 using Motivation.HRWeb.Components.Pages.KpiPage.ViewModels;
 
@@ -15,14 +16,14 @@ public static class KpiMapper
             Abbreviation = model.Abbreviation,
             CalculationType = model.CalculationType,
             MeasurementUnitCode = model.MeasurementUnit.Code,
-            CustomerFilter = model.CustomerFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            SupplierFilter = model.SupplierFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            ProductFilter = model.ProductFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            ProductStatusFilter = model.ProductStatusFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            CustomerResponsibleFilter = model.CustomerResponsibleFilter ? [new KpiFilterDto("default", default) ]: [],
-            ProductResponsibleFilter = model.ProductResponsibleFilter ? [new KpiFilterDto("default", default)] : [],
-            SalesResponsibleFilter = model.SalesResponsibleFilter ? [new KpiFilterDto("default", default)] : []
+            CustomerFilter = model.CustomerFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Customer)).ToList(),
+            SupplierFilter = model.SupplierFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Supplier)).ToList(),
+            ProductFilter = model.ProductFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Product)).ToList(),
+            ProductStatusFilter = model.ProductStatusFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.ProductStatus)).ToList(),
+            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Company)).ToList(),
+            CustomerResponsibleFilter = model.CustomerResponsibleFilter ? [new KpiFilterDto("default", default, KpiFilterType.CustomerResponsible) ]: [],
+            ProductResponsibleFilter = model.ProductResponsibleFilter ? [new KpiFilterDto("default", default, KpiFilterType.ProductResponsible)] : [],
+            SalesResponsibleFilter = model.SalesResponsibleFilter ? [new KpiFilterDto("default", default, KpiFilterType.SalesResponsible)] : []
         };
     }
 
@@ -35,14 +36,14 @@ public static class KpiMapper
             KpiType = model.KpiType,
             CalculationType = model.CalculationType,
             MeasurementUnitCode = model.MeasurementUnit.Code,
-            CustomerFilter = model.CustomerFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            SupplierFilter = model.SupplierFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            ProductFilter = model.ProductFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            ProductStatusFilter = model.ProductStatusFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include)).ToList(),
-            CustomerResponsibleFilter = model.CustomerResponsibleFilter ? [new KpiFilterDto("default", default)] : [],
-            ProductResponsibleFilter = model.ProductResponsibleFilter ? [new KpiFilterDto("default", default)] : [],
-            SalesResponsibleFilter = model.SalesResponsibleFilter ? [new KpiFilterDto("default", default)] : []
+            CustomerFilter = model.CustomerFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Customer)).ToList(),
+            SupplierFilter = model.SupplierFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Supplier)).ToList(),
+            ProductFilter = model.ProductFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Product)).ToList(),
+            ProductStatusFilter = model.ProductStatusFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.ProductStatus)).ToList(),
+            CompanyFilter = model.CompanyFilter.Select(x => new KpiFilterDto(x.Title, x.Include, KpiFilterType.Company)).ToList(),
+            CustomerResponsibleFilter = model.CustomerResponsibleFilter ? [new KpiFilterDto("default", default, KpiFilterType.CustomerResponsible)] : [],
+            ProductResponsibleFilter = model.ProductResponsibleFilter ? [new KpiFilterDto("default", default, KpiFilterType.ProductResponsible)] : [],
+            SalesResponsibleFilter = model.SalesResponsibleFilter ? [new KpiFilterDto("default", default, KpiFilterType.SalesResponsible)] : []
         };
     }
 }

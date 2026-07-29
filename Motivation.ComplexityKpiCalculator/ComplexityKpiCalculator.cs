@@ -1,4 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
+using Motivation.AnalyticsCore.Contracts.Models;
+using Motivation.AnalyticsCore.Domain.Entities;
 using Motivation.Contracts.Dto.CalculateDto;
 using Motivation.Domain.Enum;
 using Motivation.KpiCalculator.Core;
@@ -7,14 +9,14 @@ using Motivation.KpiCalculator.Core.Interfaces;
 
 namespace Motivation.KpiComplexityCalculator;
 
-public sealed class ComplexityKpiCalculator : BaseKpiCalculator
+public sealed class ComplexityKpiCalculator : BaseKpiCalculator< CustomerTransactionDto>
 {
-    private readonly IEnumerable<ICalculationStrategy> _strategies;
+    private readonly IEnumerable<ICalculationStrategy<CustomerTransactionDto>> _strategies;
     private readonly ILogger<ComplexityKpiCalculator> _logger;
 
     public ComplexityKpiCalculator(
-        IKpiQueryBuilder queryBuilder,
-        IEnumerable<ICalculationStrategy> strategies,
+        IKpiQueryBuilder<CustomerTransactionDto> queryBuilder,
+        IEnumerable<ICalculationStrategy<CustomerTransactionDto>> strategies,
         ILogger<ComplexityKpiCalculator> logger)
         : base(queryBuilder, logger)
     {
@@ -24,7 +26,7 @@ public sealed class ComplexityKpiCalculator : BaseKpiCalculator
 
     public override KpiType KpiType => KpiType.Complexity;
 
-    public override ICalculationStrategy? GetStrategy(KpiCalculationTask task)
+    public override ICalculationStrategy<CustomerTransactionDto>? GetStrategy(KpiCalculationTask task)
     {
         var strategy = _strategies.FirstOrDefault(x => x.StrategyType == CalculationStrategyType.Complexity);
         if (strategy is null)

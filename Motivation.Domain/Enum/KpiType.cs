@@ -4,7 +4,7 @@ public enum KpiType
 {
     Sales,
     Complexity,
-    CustomerDebt,
+    Receivables,
     AcceptedOrders,
     Upd,
     CompanyShareInTotalSales,

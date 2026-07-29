@@ -118,6 +118,19 @@ public class PutKpi
                         return Operation.Error(updateComplexityResult.Error);
                     break;
 
+                case ReceivablesKpi receivablesKpi:
+                    var updateReceivablesResult = receivablesKpi.Update(
+                        title: title.Result,
+                        code: codeResult.Result,
+                        abbreviation: abbreviation.Result,
+                        measurementUnit: measurementUnit,
+                        filters: kpiFilters.Result
+                    );
+
+                    if (!updateReceivablesResult.Ok)
+                        return Operation.Error(updateReceivablesResult.Error);
+                    break;
+
                 default:
                     return Operation.Error($"Unsupported KPI type: {concreteKpi.KpiType}");
             }

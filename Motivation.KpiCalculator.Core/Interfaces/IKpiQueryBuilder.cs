@@ -2,17 +2,10 @@
 
 namespace Motivation.KpiCalculator.Core.Interfaces;
 
-public interface IKpiQueryBuilder
+public interface IKpiQueryBuilder<TDto>
+    where TDto : class
 {
-    IKpiQueryBuilder SetPeriod(DateTime from, DateTime to);
-    IKpiQueryBuilder ApplyCustomerFilter(IEnumerable<KpiFilterDto> filters);
-    IKpiQueryBuilder ApplyProductSupplierFilter(IEnumerable<KpiFilterDto> filters);
-    IKpiQueryBuilder ApplyProductFilter(IEnumerable<KpiFilterDto> filters);
-    IKpiQueryBuilder ApplyProductStatusFilter(IEnumerable<KpiFilterDto> filters);
-    IKpiQueryBuilder ApplyCompanyFilter(IEnumerable<KpiFilterDto> filters);
-    IKpiQueryBuilder ApplyResponsibleFilters(
-        IEnumerable<KpiFilterDto> customerResponsibleFilter,
-        IEnumerable<KpiFilterDto> salesResponsibleFilter,
-        IEnumerable<KpiFilterDto> productResponsibleFilter);
-    Task<KpiQueryResult> BuildAsync(CancellationToken cancellationToken = default);
+    IKpiQueryBuilder<TDto> SetPeriod(DateTime from, DateTime to);
+    IKpiQueryBuilder<TDto> InitializeFilters(IEnumerable<KpiFilterDto> filters);
+    Task<KpiQueryResult<TDto>> BuildAsync(CancellationToken cancellationToken = default);
 }

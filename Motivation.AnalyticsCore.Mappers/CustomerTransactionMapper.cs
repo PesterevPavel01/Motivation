@@ -135,62 +135,7 @@ public static class CustomerTransactionMapper
         return true;
     }
 
-    public static CustomerTransactionDto ToDto(CustomerTransaction entity)
-    {
-        if (entity is null)
-            throw new ArgumentNullException(nameof(entity));
-
-        var customerDto = new CustomerDto
-        {
-            Code = entity.Customer?.Code?.Value ?? string.Empty,
-            Title = entity.Customer?.Title?.Value ?? string.Empty,
-            FullName = entity.Customer?.FullName?.Value ?? string.Empty,
-            Manager = entity.Customer?.Manager?.Value?.ToString() ?? string.Empty,
-        };
-
-        var companyDto = new CompanyDto
-        {
-            Code = entity.Company?.Code?.Value ?? string.Empty,
-            Title = entity.Company?.Title?.Value ?? string.Empty
-        };
-
-        var transactionDto = new CustomerTransactionDto
-        {
-            Code = entity.Code?.Value ?? string.Empty,
-            Amount = entity.TotalAmount?.Value ?? 0,
-            Customer = customerDto,
-            AsOfDate = entity.AsOfDate,
-            Responsible = entity.Responsible?.Value?.ToString() ?? string.Empty,
-            Type = entity.Type.ToString(),
-            Company = companyDto,
-            TransactionProducts = []
-        };
-
-        foreach (var ctp in entity.CustomerTransactionProducts)
-        {
-            var productDto = new ProductDto
-            {
-                Code = ctp.Product?.Code?.Value ?? string.Empty,
-                Title = ctp.Product?.Title?.Value ?? string.Empty,
-                Purchaser = ctp.Product?.Purchaser?.Value?.ToString() ?? string.Empty,
-                Supplier = ctp.Product?.Supplier?.Value?.ToString() ?? string.Empty,
-                Status = ctp.Product?.Status?.Value ?? string.Empty
-            };
-
-            transactionDto.TransactionProducts.Add(new TransactionProductDto
-            {
-                Quantity = ctp.Quantity?.Value ?? 0,
-                Amount = ctp.Amount?.Value ?? 0,
-                Product = productDto
-            });
-        }
-
-        return transactionDto;
-    }
-
-    public static CustomerTransactionDto ToDto(
-       CustomerTransaction entity,
-       Func<CustomerTransactionProduct, bool> productFilter)
+    public static CustomerTransactionDto ToDto(this CustomerTransaction entity)
     {
         if (entity is null)
             throw new ArgumentNullException(nameof(entity));
@@ -215,7 +160,7 @@ public static class CustomerTransactionMapper
             TransactionProducts = []
         };
 
-        foreach (var ctp in entity.CustomerTransactionProducts.Where(productFilter))
+        foreach (var ctp in entity.CustomerTransactionProducts)
         {
             var productDto = ctp.Product.ToDto();
 
@@ -228,5 +173,23 @@ public static class CustomerTransactionMapper
         }
 
         return transactionDto;
+    }
+
+    public static CustomerTransactionDto ToDto(
+       this CustomerTransactionDto model,
+       Func<TransactionProductDto, bool> productFilter)
+    {
+        if (model is null)
+            throw new ArgumentNullException(nameof(model));
+
+        List<TransactionProductDto> filtredTransactionProducts = [];
+
+        foreach (var productModel in model.TransactionProducts.Where(productFilter))
+        {
+            filtredTransactionProducts.Add(productModel);
+        }
+        model.TransactionProducts = filtredTransactionProducts;
+
+        return model;
     }
 }
