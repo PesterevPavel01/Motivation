@@ -5,5 +5,6 @@ public enum CalculationStrategyType
     SalesAmount,
     SalesQuantity,
     ReceivableAmount,
-    Complexity
+    Complexity,
+    Manual
 }

@@ -264,7 +264,7 @@ namespace Motivation.Infrastructure.Migrations
                     b.Property<int>("KpiFilterType")
                         .HasColumnType("integer");
 
-                    b.Property<Guid?>("KpiId")
+                    b.Property<Guid>("KpiId")
                         .HasColumnType("uuid");
 
                     b.Property<string>("Title")
@@ -508,6 +508,20 @@ namespace Motivation.Infrastructure.Migrations
                     b.HasDiscriminator().HasValue(1);
                 });
 
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.ManualKpi", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.Kpi");
+
+                    b.HasDiscriminator().HasValue(3);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.ReceivablesKpi", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.Kpi");
+
+                    b.HasDiscriminator().HasValue(2);
+                });
+
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.SalesKpi", b =>
                 {
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.Kpi");
@@ -562,6 +576,13 @@ namespace Motivation.Infrastructure.Migrations
                     b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
 
                     b.HasDiscriminator().HasValue(4);
+                });
+
+            modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilterSupplier", b =>
+                {
+                    b.HasBaseType("Motivation.Domain.Entities.Kpis.KpiFilter");
+
+                    b.HasDiscriminator().HasValue(7);
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Deduction", b =>
@@ -657,9 +678,13 @@ namespace Motivation.Infrastructure.Migrations
 
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiFilter", b =>
                 {
-                    b.HasOne("Motivation.Domain.Entities.Kpis.Kpi", null)
+                    b.HasOne("Motivation.Domain.Entities.Kpis.Kpi", "Kpi")
                         .WithMany("Filters")
-                        .HasForeignKey("KpiId");
+                        .HasForeignKey("KpiId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Kpi");
                 });
 
             modelBuilder.Entity("Motivation.Domain.Entities.Kpis.KpiTarget", b =>

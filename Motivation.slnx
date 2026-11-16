@@ -11,6 +11,7 @@
     <Project Path="Motivation.ComplexityKpiCalculator/Motivation.BasketComplexityKpiCalculator.csproj" Id="9f562936-72d5-4e91-ac2e-858c552b36e8" />
     <Project Path="Motivation.Kpi.Sales/Motivation.KpiSalesCalculator.csproj" Id="0222e3eb-18b4-47a9-907f-f4f8452b00d0" />
     <Project Path="Motivation.KpiCalculator.Core/Motivation.KpiCalculator.Core.csproj" Id="e9458770-9542-4f45-a474-a46e9ab0dd5a" />
+    <Project Path="Motivation.ManualKpiCalculator/Motivation.ManualKpiCalculator.csproj" Id="674be423-8449-43ce-905b-fcd090530f31" />
     <Project Path="Motivation.ReceivablesKpiCalculator/Motivation.ReceivablesKpiCalculator.csproj" Id="c20c8ec7-8b45-4bb4-afc3-16d357530b2a" />
   </Folder>
   <Folder Name="/IdentityServer/">

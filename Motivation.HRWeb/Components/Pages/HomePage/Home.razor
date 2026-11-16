@@ -1,9 +1,9 @@
 ﻿@page "/"
 @rendermode InteractiveServer
 @using Microsoft.AspNetCore.Authorization
-@using Motivation.HRWeb.Components.Pages.HomePage.ViewModels
-@using Motivation.HRWeb.Components.Pages.HomePage.Components
 @using Motivation.HRWeb.Application
+@using Motivation.HRWeb.Components.Pages.HomePage.Components
+@using Motivation.HRWeb.Components.Pages.HomePage.ViewModels
 @inject HomeViewModel HomeViewModel
 @inject FilterViewModel FilterViewModel
 @attribute [Authorize]
@@ -36,6 +36,22 @@
         <FilterComponent ViewModel="FilterViewModel" OnApplyFilter="ApplyFilter" />
     </div>
 </div>
+
+@if (!string.IsNullOrEmpty(HomeViewModel.SuccessMessage))
+{
+    <div class="alert alert-success alert-dismissible fade show" role="alert">
+        @HomeViewModel.SuccessMessage
+        <button type="button" class="btn-close" @onclick="() => HomeViewModel.ClearMessages()" aria-label="Close"></button>
+    </div>
+}
+
+@if (!string.IsNullOrEmpty(HomeViewModel.ErrorMessage))
+{
+    <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        @HomeViewModel.ErrorMessage
+        <button type="button" class="btn-close" @onclick="() => HomeViewModel.ClearMessages()" aria-label="Close"></button>
+    </div>
+}
 
 @if (HomeViewModel.IsLoading)
 {
@@ -78,7 +94,18 @@ else
                                 <td class="py-1">@row.MeasurementUnit</td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.Target)</td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.MotivationPart)</td>
-                                <td class="py-1 text-center">@ValueFormatter.FormatValue(row.Fact)</td>
+                                <td class="py-1 text-center">
+                                    @if (row.IsManual && row.TargetId is not null)
+                                    {
+                                        <EditableFactCell 
+                                            Row="row"
+                                            OnSaveCompleted="HomeViewModel.EditFactCellCompleted" />
+                                    }
+                                    else
+                                    {        
+                                        <span>@ValueFormatter.FormatValue(row.Fact)</span>
+                                    }
+                                </td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.Achievement)</td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.BonusPercent)</td>
                                 <td class="py-1 text-center">@ValueFormatter.FormatValue(row.Bonus)</td>
@@ -92,6 +119,7 @@ else
 }
 
 @code {
+
     private async Task ApplyFilter()
     {
         await HomeViewModel.LoadDataAsync(

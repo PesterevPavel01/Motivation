@@ -68,6 +68,7 @@ public class CommonDefinition : AppDefinition
         builder.Services.AddScoped<EditKpiViewModel>();
         builder.Services.AddScoped<TargetsViewModel>();
         builder.Services.AddScoped<HomeViewModel>();
+        builder.Services.AddTransient<EditableFactCellViewModel>();
         builder.Services.AddScoped<MeasurementUnitApiClient>();
         builder.Services.AddScoped<IKpiValidator, KpiValidator>();
         builder.Services.AddMediator(options =>

@@ -1,4 +1,6 @@
-﻿namespace Motivation.Contracts.Dto.CalculateDto;
+﻿using Motivation.Contracts.Models;
+
+namespace Motivation.Contracts.Dto.CalculateDto;
 
 public sealed class KpiCalculationTask
 {
@@ -13,4 +15,5 @@ public sealed class KpiCalculationTask
     public decimal MotivationPart { get; set; }
     public decimal Target { get; set; }
     public IEnumerable<KpiFilterDto> KpiFilters { get; set; } = [];
+    public ManualResultDto? ManualResult { get; set; }
 }

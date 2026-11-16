@@ -13,8 +13,7 @@ public class CalculateKpi
 
     public class Handler(
         ILogger<CalculateKpi> logger, 
-        IEnumerable<ICalculator> calculators,
-        IBus bus)
+        IEnumerable<ICalculator> calculators)
         : IRequestHandler<Request, Operation<KpiCalculationTaskResult, string>>
     {
         public async ValueTask<Operation<KpiCalculationTaskResult, string>> Handle(Request request, CancellationToken cancellationToken)
@@ -34,7 +33,6 @@ public class CalculateKpi
                 return Operation.Error(calculate.Error);
             }
 
-            await bus.Publish(new KpiValueCalculatedQueueEvent(calculate.Result));
             logger.LogInformation("Message  {@KpiValueCalculatedQueueEvent} sent!", typeof(KpiValueCalculatedQueueEvent).Name.ToString());
 
             return calculate.Result;

@@ -131,6 +131,18 @@ public class PutKpi
                         return Operation.Error(updateReceivablesResult.Error);
                     break;
 
+                case ManualKpi manualKpi:
+                    var updateManualResult = manualKpi.Update(
+                        title: title.Result,
+                        code: codeResult.Result,
+                        abbreviation: abbreviation.Result,
+                        measurementUnit: measurementUnit
+                    );
+
+                    if (!updateManualResult.Ok)
+                        return Operation.Error(updateManualResult.Error);
+                    break;
+
                 default:
                     return Operation.Error($"Unsupported KPI type: {concreteKpi.KpiType}");
             }

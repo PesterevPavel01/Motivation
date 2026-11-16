@@ -46,6 +46,7 @@
 	  <ProjectReference Include="..\Motivation.ComplexityKpiCalculator\Motivation.BasketComplexityKpiCalculator.csproj" />
 	  <ProjectReference Include="..\Motivation.Kpi.Sales\Motivation.KpiSalesCalculator.csproj" />
 	  <ProjectReference Include="..\Motivation.KpiCalculator.Core\Motivation.KpiCalculator.Core.csproj" />
+	  <ProjectReference Include="..\Motivation.ManualKpiCalculator\Motivation.ManualKpiCalculator.csproj" />
 	  <ProjectReference Include="..\Motivation.ReceivablesKpiCalculator\Motivation.ReceivablesKpiCalculator.csproj" />
 	</ItemGroup>
 

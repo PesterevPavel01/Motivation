@@ -13,6 +13,13 @@ try
                 .CreateLogger();
 
     var builder = WebApplication.CreateBuilder(args);
+
+    // ✅ Поддержка замены переменных в appsettings.json
+    builder.Configuration
+        .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+        .AddJsonFile($"appsettings.{builder.Environment.EnvironmentName}.json", optional: true, reloadOnChange: true)
+        .AddEnvironmentVariables();
+
     builder.Host.UseSerilog((context, configuration) =>
         configuration.ReadFrom.Configuration(context.Configuration));
     builder.AddDefinitions(typeof(Program));

@@ -1,7 +1,9 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Motivation.Application.Settings;
+using Motivation.Contracts.Interfaces.QueueEvents;
 using Motivation.Contracts.QueueEvents;
 using Rebus.Config;
+using Rebus.Routing.TypeBased;
 using Rebus.Serialization.Json;
 using Serilog;
 
@@ -19,9 +21,13 @@ namespace Motivation.KpiCalculationService.Definitions.Rebus
                     config
                     .Logging(x => x.Serilog(Log.Logger))
                     .Serialization(x => x.UseSystemTextJson())
-                    .Transport(x => x.UseRabbitMq(rabbitSettings.RabbitUrl, "IKpiCalculationServiceQueueEvent"))
+                    .Transport(x => x.UseRabbitMq(rabbitSettings.RabbitUrl, nameof(IKpiCalculationServiceQueueEvent)))
+                    .Routing(r => r.TypeBased()
+                        .Map<RecalculateKpiResponse>(nameof(IKpiCalculationServiceQueueEvent))
+                    )
                     .Options(x =>
                     {
+                        x.EnableSynchronousRequestReply();
                         x.SetNumberOfWorkers(5);
                         x.SetBusName("KpiCalculationService");
                     });
@@ -31,6 +37,7 @@ namespace Motivation.KpiCalculationService.Definitions.Rebus
                 onCreated: async bus =>
                 {
                     await bus.Subscribe<RecalculateKpisQueueCommand>();
+                    await bus.Subscribe<RecalculateKpiRequest>();
                 });
 
             builder.Services.AutoRegisterHandlersFromAssemblyOf<KpiCalculationServiceAssemblyReference>();

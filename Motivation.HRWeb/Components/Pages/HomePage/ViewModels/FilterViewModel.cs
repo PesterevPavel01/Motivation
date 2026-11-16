@@ -1,12 +1,12 @@
 ﻿using Mediator;
 using Microsoft.AspNetCore.Components;
-using Motivation.Contracts.Dto;
 using Motivation.HRWeb.Application.Messages.EmployeeMessages;
 using Motivation.HRWeb.Exceptions;
+using Motivation.HRWeb.Components.Pages.HomePage.Models;
 
 namespace Motivation.HRWeb.Components.Pages.HomePage.ViewModels;
 
-public class FilterViewModel : IDisposable
+public partial class FilterViewModel : IDisposable
 {
     private readonly IMediator _mediator;
     private readonly NavigationManager _navigationManager;
@@ -15,22 +15,6 @@ public class FilterViewModel : IDisposable
     {
         _mediator = mediator;
         _navigationManager = navigationManager;
-    }
-
-    public class FilterModel
-    {
-        public int Month { get; set; } = DateTime.Today.Month;
-        public int Year { get; set; } = DateTime.Today.Year;
-        public string? EmployeeCode { get; set; }
-        public string? PositionCode { get; set; }
-        public List<EmployeeDto>? Employees { get; set; }
-        public List<PositionItem>? Positions { get; set; }
-    }
-
-    public class PositionItem
-    {
-        public string Code { get; set; } = string.Empty;
-        public string Title { get; set; } = string.Empty;
     }
 
     public FilterModel Filter { get; set; } = new();

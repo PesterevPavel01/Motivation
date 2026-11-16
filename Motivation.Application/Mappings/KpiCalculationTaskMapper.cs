@@ -1,5 +1,6 @@
 ﻿using Motivation.Contracts.Dto;
 using Motivation.Contracts.Dto.CalculateDto;
+using Motivation.Contracts.Models;
 using Motivation.Domain.Entities;
 using Motivation.Domain.Entities.Kpis;
 using Motivation.Domain.Enum;
@@ -40,6 +41,9 @@ public static class KpiCalculationTaskMapper
             throw new ArgumentException("Target is null!");
         }
 
+        var manualResiult = kpi?.KpiType == KpiType.Manual && target.KpiFact is not null?
+            new ManualResultDto(target.KpiFact.Fact.Value)
+            : null;
 
         return new KpiCalculationTask
         {
@@ -59,7 +63,8 @@ public static class KpiCalculationTaskMapper
 
             KpiType = kpi.KpiType.ToString(),
 
-            KpiFilters = kpiFilterModels
+            KpiFilters = kpiFilterModels,
+            ManualResult = manualResiult
         };
     }
 }

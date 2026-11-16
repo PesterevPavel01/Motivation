@@ -5,6 +5,7 @@ public enum KpiType
     Sales,
     Complexity,
     Receivables,
+    Manual,
     AcceptedOrders,
     Upd,
     CompanyShareInTotalSales,

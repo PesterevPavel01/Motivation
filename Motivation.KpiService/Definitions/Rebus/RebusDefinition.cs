@@ -1,8 +1,10 @@
 ﻿using Calabonga.AspNetCore.AppDefinitions;
 using Motivation.Application.Settings;
 using Motivation.Contracts.Events;
+using Motivation.Contracts.Interfaces.QueueEvents;
 using Motivation.Contracts.QueueEvents;
 using Rebus.Config;
+using Rebus.Routing.TypeBased;
 using Rebus.Serialization.Json;
 using Serilog;
 
@@ -19,9 +21,12 @@ public class RebusDefinition : AppDefinition
             config
             .Logging(x => x.Serilog(Log.Logger))
             .Serialization(x => x.UseSystemTextJson())
-            .Transport(x => x.UseRabbitMq(rabbitSettings.RabbitUrl, "IKpiServiceQueueEvent"))
+            .Transport(x => x.UseRabbitMq(rabbitSettings.RabbitUrl, nameof(IKpiServiceQueueEvent)))
+            .Routing(r => r.TypeBased()
+                .Map<RecalculateKpiRequest>(nameof(IKpiCalculationServiceQueueEvent)))
             .Options(x =>
             {
+                x.EnableSynchronousRequestReply();
                 x.SetNumberOfWorkers(5);
                 x.SetBusName("KpiService");
             });

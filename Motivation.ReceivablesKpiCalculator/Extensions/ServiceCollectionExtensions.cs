@@ -3,9 +3,9 @@ using Motivation.AnalyticsCore.Contracts.Models;
 using Motivation.Contracts.Interfaces;
 using Motivation.KpiCalculator.Core.Filters;
 using Motivation.KpiCalculator.Core.Interfaces;
-using Motivation.KpiCalculator.Core.Strategies;
 using Motivation.ReceivablesKpiCalculator.Filters;
 using Motivation.ReceivablesKpiCalculator.Providers;
+using Motivation.ReceivablesKpiCalculator.Strategies;
 
 namespace Motivation.ReceivablesKpiCalculator.Extensions;
 

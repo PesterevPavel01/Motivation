@@ -1,5 +1,6 @@
 ﻿using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Motivation.IdentityServer.Domain.Base;
 
@@ -19,12 +20,21 @@ namespace Motivation.IdentityServer.Infrastructure.DatabaseInitialization
         {
             using var scope = serviceProvider.CreateScope();
             using var context = scope.ServiceProvider.GetRequiredService<ApplicationDbContext>();
+            var configuration = scope.ServiceProvider.GetRequiredService<IConfiguration>();
 
             context.Database.Migrate();
 
             if (context.Users.Any())
             {
                 return;
+            }
+
+            var seedPassword = configuration["TECH_USER_PASSWORD_SECRET"];
+            if (string.IsNullOrWhiteSpace(seedPassword))
+            {
+                throw new InvalidOperationException(
+                    "TECH_USER_PASSWORD_SECRET is not configured. " +
+                    "Please set it in .env.production file or environment variables.");
             }
 
             var roles = AppData.Roles.ToArray();
@@ -75,7 +85,7 @@ namespace Motivation.IdentityServer.Infrastructure.DatabaseInitialization
             if (!context!.Users.Any(u => u.UserName == technicalUser.UserName))
             {
                 var password = new PasswordHasher<ApplicationUser>();
-                var hashed = password.HashPassword(technicalUser, "tech9185!");
+                var hashed = password.HashPassword(technicalUser, seedPassword!);
                 technicalUser.PasswordHash = hashed;
                 var userStore = scope.ServiceProvider.GetRequiredService<ApplicationUserStore>();
                 var result = userStore

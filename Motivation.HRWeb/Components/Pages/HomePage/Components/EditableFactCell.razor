@@ -1,0 +1,69 @@
+﻿@using Motivation.HRWeb.Application
+@using Motivation.HRWeb.Components.Pages.HomePage.Models
+@using Motivation.HRWeb.Components.Pages.HomePage.ViewModels
+
+@if (ViewModel.IsManual && ViewModel.IsEditing)
+{
+    <div class="d-flex align-items-center gap-1 justify-content-center">
+        <input type="number"
+               class="form-control form-control-sm text-center"
+               style="width: 100px;"
+               @bind="ViewModel.EditValue"
+               @bind:event="oninput"
+               step="0.01" />
+        <button class="btn btn-outline-success btn-sm py-0" @onclick="() => ViewModel.SaveAsync()" title="Сохранить">
+            <i class="bi bi-floppy-fill action-icon-sm"></i>
+        </button>
+        <button class="btn btn-outline-secondary btn-sm py-0" @onclick="() => ViewModel.Cancel()" title="Отменить">
+            <i class="bi bi-x-lg action-icon-sm"></i>
+        </button>
+    </div>
+}
+else
+{
+    <div class="d-flex align-items-center gap-1 justify-content-center">
+        <span>@ValueFormatter.FormatValue(ViewModel.Value)</span>
+        @if (ViewModel.IsManual && ViewModel.TargetId is not null)
+        {
+            <button class="btn btn-outline-secondary btn-sm py-0" @onclick="() => ViewModel.StartEdit()" title="Редактировать">
+                <i class="bi bi-pencil-fill action-icon-sm"></i>
+            </button>
+        }
+    </div>
+}
+
+@code {
+    [Parameter] public required KpiRowModel Row { get; set; }
+    [Parameter] public EventCallback<EditableFactCellSaveResult> OnSaveCompleted { get; set; }
+
+    
+    [Inject] private EditableFactCellViewModel ViewModel { get; set; } = null!;
+
+    protected override void OnInitialized()
+    {
+        ViewModel.Initialize(Row.Fact, Row.IsManual, Row.TargetId);
+
+        ViewModel.OnStateChanged += StateHasChanged;
+        ViewModel.OnSaveCompleted += OnSaveCompletedHandler;
+    }
+
+    private void OnSaveCompletedHandler(bool success)
+    {
+        var result = new EditableFactCellSaveResult
+        {
+            Row = Row,
+            NewValue = ViewModel.Value,
+            Success = success,
+            ErrorMessage = success ? null : ViewModel.ErrorMessage
+        };
+
+        _ = OnSaveCompleted.InvokeAsync(result);
+    }
+
+    public void Dispose()
+    {
+        ViewModel.OnStateChanged -= StateHasChanged;
+        ViewModel.OnSaveCompleted -= OnSaveCompletedHandler;
+        ViewModel.Dispose();
+    }
+}

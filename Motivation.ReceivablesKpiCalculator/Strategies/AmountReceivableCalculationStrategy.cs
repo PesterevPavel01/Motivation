@@ -4,7 +4,7 @@ using Motivation.Contracts.Dto;
 using Motivation.KpiCalculator.Core.Enums;
 using Motivation.KpiCalculator.Core.Interfaces;
 
-namespace Motivation.KpiCalculator.Core.Strategies;
+namespace Motivation.ReceivablesKpiCalculator.Strategies;
 
 public class AmountReceivableCalculationStrategy : ICalculationStrategy<ReceivableDto>
 {

@@ -127,6 +127,19 @@ public class PostKpi
                     kpi = createReceivablesResult.Result;
                     break;
 
+                case KpiType.Manual:
+                    var createManualResult = ManualKpi.Create(
+                        title: title.Result,
+                        code: codeResult.Result,
+                        abbreviation: abbreviation.Result,
+                        measurementUnit: measurementUnit,
+                        calculationType: calculationType.Result
+                    );
+                    if (!createManualResult.Ok)
+                        return Operation.Error(createManualResult.Error);
+                    kpi = createManualResult.Result;
+                    break;
+
                 default:
                     return Operation.Error($"Unsupported KPI type!");
             }

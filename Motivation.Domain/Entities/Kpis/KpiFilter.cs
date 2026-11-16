@@ -16,5 +16,7 @@ public abstract class KpiFilter : Auditable
     public Guid Id { get;}
     public TitleValue Title { get;}
 
+    public Kpi Kpi { get; private set; }
+
     public virtual KpiFilterType KpiFilterType { get; private set; }
 }

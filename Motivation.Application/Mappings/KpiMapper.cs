@@ -14,6 +14,7 @@ public static class KpiMapper
             KpiType.Sales => (SalesKpi)source,
             KpiType.Complexity => (ComplexityKpi)source,
             KpiType.Receivables => (ReceivablesKpi)source,
+            KpiType.Manual => (ManualKpi)source,
             _ => throw new ArgumentOutOfRangeException(nameof(source.KpiType), $"Unknown KPI type: {source.KpiType}")
         };
     }
@@ -54,6 +55,7 @@ public static class KpiTypeMapper
             KpiType.Sales => "Продажи",
             KpiType.Complexity => "Комплексность",
             KpiType.Receivables => "Дебиторская задолженность",
+            KpiType.Manual => "Ручной ввод",
             KpiType.AcceptedOrders => "Принятые заказы",
             KpiType.Upd => "УПД",
             KpiType.PercentageOfSales => "Процент от продаж",
@@ -70,6 +72,7 @@ public static class KpiTypeMapper
             "Продажи" => KpiType.Sales,
             "Комплексность" => KpiType.Complexity,
             "Дебиторская задолженность" => KpiType.Receivables,
+            "Ручной ввод" => KpiType.Manual,
             "Принятые заказы" => KpiType.AcceptedOrders,
             "УПД" => KpiType.Upd,
             "Процент от продаж" => KpiType.PercentageOfSales,

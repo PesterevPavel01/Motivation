@@ -71,6 +71,14 @@ public class KpiApiClient : BaseApiClient
         return result;
     }
 
+    public async Task<Operation<bool, string>> SetKpiResultAsync(SetEmployeeKpiResult model, CancellationToken cancellationToken)
+    {
+        var result = await SendAsync<bool>(HttpMethod.Put, $"/api/employee/kpi/set-result", model, cancellationToken);
+        if (!result.Ok)
+            return Operation.Error(result.Error);
+        return result;
+    }
+
     internal async Task<Operation<KpiDto?, string>> CreateAsync(KpiCreateDto model, CancellationToken cancellationToken)
     {
         var result = await SendAsync<KpiDto>(HttpMethod.Post, $"/api/kpi/create", model, cancellationToken);

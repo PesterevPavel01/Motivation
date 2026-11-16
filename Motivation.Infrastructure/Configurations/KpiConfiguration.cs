@@ -35,15 +35,21 @@ internal class KpiConfiguration : EntityConfiguration<Kpi>
         builder
             .HasOne(x => x.MeasurementUnit)
             .WithMany(x => x.Kpis)
-            .HasPrincipalKey(x => x.Id);
+            .HasPrincipalKey(x => x.Id)
+            .HasForeignKey("MeasurementUnitId");
+
+        builder.HasIndex("MeasurementUnitId");
 
         builder
-            .HasMany(x => x.Filters);
+            .HasMany(x => x.Filters)
+            .WithOne(x=>x.Kpi)
+            .OnDelete(DeleteBehavior.Cascade);
 
         builder.HasDiscriminator(x => x.KpiType)
             .HasValue<SalesKpi>(KpiType.Sales)
             .HasValue<ComplexityKpi>(KpiType.Complexity)
-            .HasValue<ReceivablesKpi>(KpiType.Receivables);
+            .HasValue<ReceivablesKpi>(KpiType.Receivables)
+            .HasValue<ManualKpi>(KpiType.Manual);
     }
 
     protected override string TableName()

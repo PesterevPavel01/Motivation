@@ -5,6 +5,7 @@ using Motivation.Application.Mappings;
 using Motivation.Contracts.QueueEvents;
 using Motivation.Domain.DomainEvents.EmployeeDomainEvents;
 using Motivation.Domain.Entities.Kpis;
+using Motivation.Domain.Enum;
 using Rebus.Bus;
 
 namespace Motivation.KpiService.Application.Messaging.DomainEventMessages;
@@ -38,7 +39,9 @@ public class KpiTargetAddedOrChangedDomainEventHandler : INotificationHandler<Kp
                     .Include(x => x.Kpi)
                         .ThenInclude(x => x.MeasurementUnit)
                     .Include(x => x.TargetHistory)
-                        .ThenInclude(x => x.Employee),
+                        .ThenInclude(x => x.Employee)
+                    .Include(x => x.TargetHistory)
+                        .ThenInclude(x => x.KpiFact!),
                 trackingType: TrackingType.NoTracking);
 
         if (positionKpi is null)
@@ -63,6 +66,10 @@ public class KpiTargetAddedOrChangedDomainEventHandler : INotificationHandler<Kp
         if (positionKpi.Position is null)
         {
             _logger.LogError($"Position is null for target id {notification.TargetId}!");
+            return;
+        }
+        if (target.PositionKpi.Kpi.KpiType == KpiType.Manual && target.KpiFact is null)
+        {
             return;
         }
 

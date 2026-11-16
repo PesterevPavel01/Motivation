@@ -1,5 +1,6 @@
 ﻿using Calabonga.OperationResults;
 using Calabonga.UnitOfWork;
+using Motivation.Domain.Enum;
 using Mediator;
 using Microsoft.EntityFrameworkCore;
 using Motivation.Application.Mappings;
@@ -51,6 +52,7 @@ public class GetKpiCalculationPlanQuery
                 .Where(pk =>
                     pk.ValidFrom <= request.PeriodTo
                     && pk.ValidTo >= request.PeriodFrom
+                    && pk.Kpi.KpiType != KpiType.Manual
                     && pk.TargetHistory
                         .Any(t => 
                             t.ValidFrom >= request.PeriodFrom 

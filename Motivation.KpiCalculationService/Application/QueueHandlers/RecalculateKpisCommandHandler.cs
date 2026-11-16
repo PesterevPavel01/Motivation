@@ -1,6 +1,7 @@
 ﻿using Mediator;
 using Motivation.Contracts.QueueEvents;
 using Motivation.KpiCalculationService.Application.Messaging;
+using Rebus.Bus;
 using Rebus.Handlers;
 
 namespace Motivation.KpiCalculationService.Application.QueueHandlers;
@@ -9,11 +10,13 @@ public class RecalculateKpisCommandHandler : IHandleMessages<RecalculateKpisQueu
 {
     private readonly IMediator _mediator;
     private readonly ILogger<RecalculateKpisCommandHandler> _logger;
+    private readonly IBus _bus;
 
-    public RecalculateKpisCommandHandler(IMediator mediator, ILogger<RecalculateKpisCommandHandler> logger)
+    public RecalculateKpisCommandHandler(IMediator mediator, ILogger<RecalculateKpisCommandHandler> logger, IBus bus)
     {
         _mediator = mediator;
         _logger = logger;
+        _bus = bus;
     }
 
     public async Task Handle(RecalculateKpisQueueCommand message)
@@ -27,6 +30,7 @@ public class RecalculateKpisCommandHandler : IHandleMessages<RecalculateKpisQueu
                 _logger.LogError(result.Error);
                 return;
             }
+            await _bus.Publish(new KpiValueCalculatedQueueEvent(result.Result));
         }
     }
 }

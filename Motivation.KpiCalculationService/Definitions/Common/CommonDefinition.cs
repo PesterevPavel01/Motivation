@@ -6,6 +6,7 @@ using Motivation.KpiComplexityCalculator.Extensions;
 using Motivation.KpiComplexityCalculator.Models;
 using Motivation.KpiSalesCalculator.Extensions;
 using Motivation.ReceivablesKpiCalculator.Extensions;
+using Motivation.ManualKpiCalculator.Extensions;
 
 namespace Motivation.KpiCalculationService.Definitions.Common
 {
@@ -44,6 +45,7 @@ namespace Motivation.KpiCalculationService.Definitions.Common
             builder.Services.AddSalesKpiCalculator();
             builder.Services.AddComplexityKpiCalculator();
             builder.Services.AddReceivablesKpiCalculator();
+            builder.Services.AddManualKpiCalculator();
 
             builder.Services.AddScoped<IOutboxProcessor, OutboxProcessor>();
             builder.Services.AddScoped<IOutboxCleanerProcessor, OutboxCleanerProcessor>();
